@@ -4,16 +4,21 @@ import { useColorScheme } from "react-native";
 import { AnimatedSplashOverlay } from "@/components/animated-icon";
 import AppTabs from "@/components/app-tabs";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import QueryProvider from "@/provider/QueryProvider";
 import "./../global.css";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   return (
-    <GluestackUIProvider mode="system">
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <AnimatedSplashOverlay />
-        <AppTabs />
-      </ThemeProvider>
-    </GluestackUIProvider>
+    <QueryProvider>
+      <GluestackUIProvider mode="system">
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <AnimatedSplashOverlay />
+          <AppTabs />
+        </ThemeProvider>
+      </GluestackUIProvider>
+    </QueryProvider>
   );
 }
