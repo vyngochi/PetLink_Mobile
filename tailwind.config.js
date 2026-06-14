@@ -42,10 +42,18 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      fontFamily: {
+        default: ["Montserrat-Regular", "sans-serif"],
+        thin: ["Montserrat-Thin", "sans-serif"],
+        bold: ["Montserrat-Bold", "sans-serif"],
+        "italic-bold": ["Montserrat-Bold-Italic", "sans-serif"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "calc(var(--radius) + 4px)",
+        "2xl": "calc(var(--radius) + 12px)",
       },
       borderWidth: {
         hairline: hairlineWidth(),
