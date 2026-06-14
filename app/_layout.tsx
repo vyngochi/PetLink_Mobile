@@ -28,6 +28,8 @@ export default function RootLayout() {
             name="modal"
             options={{ presentation: "modal", title: "Modal" }}
           />
+          {/* <Stack.Screen name="(pet-owner)" options={{ headerShown: false }} />
+          <Stack.Screen name="(guest)" options={{ headerShown: false }} /> */}
         </Stack>
         <StatusBar style="auto" />
         <PortalHost />
