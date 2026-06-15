@@ -15,7 +15,7 @@ import QueryProvider from "@/provider/QueryProvider";
 import { useEffect } from "react";
 
 export const unstable_settings = {
-  anchor: "(tabs)",
+  anchor: "(auth)",
 };
 
 export default function RootLayout() {
@@ -35,14 +35,9 @@ export default function RootLayout() {
   return (
     <QueryProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: "modal", title: "Modal" }}
-          />
-          {/* <Stack.Screen name="(pet-owner)" options={{ headerShown: false }} />
-          <Stack.Screen name="(guest)" options={{ headerShown: false }} /> */}
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(auth)" />
         </Stack>
         <StatusBar style="auto" />
         <PortalHost />
