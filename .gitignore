@@ -46,3 +46,6 @@ app-example
 
 #AI Agent for Design
 .agent
+
+# MCP local config (contains API keys)
+.mcp.json
