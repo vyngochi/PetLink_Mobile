@@ -3,7 +3,11 @@ const { hairlineWidth } = require("nativewind/theme");
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  content: [
+    "./app/**/*.{ts,tsx}",
+    "./features/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+  ],
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
@@ -45,7 +49,7 @@ module.exports = {
       fontFamily: {
         default: ["Montserrat-Regular", "sans-serif"],
         thin: ["Montserrat-Thin", "sans-serif"],
-        bold: ["Montserrat-Bold", "sans-serif"],
+        mbold: ["Montserrat-Bold", "sans-serif"],
         "italic-bold": ["Montserrat-Bold-Italic", "sans-serif"],
       },
       borderRadius: {
