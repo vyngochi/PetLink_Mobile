@@ -1,6 +1,8 @@
 import React from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
+import { authColors } from "@/features/authentication/constants/colors";
+
 type PrimaryButtonProps = {
   label: string;
   onPress?: () => void;
@@ -24,19 +26,19 @@ export function PrimaryButton({
       style={({ pressed }) => ({
         transform: [{ scale: pressed && !isDisabled ? 0.97 : 1 }],
         opacity: isDisabled ? 0.7 : 1,
-        shadowColor: "#006e1c",
+        shadowColor: authColors.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 12,
         elevation: 4,
       })}
-      className="h-touch-target items-center justify-center rounded-full bg-primary-deep"
+      className="h-12 items-center justify-center rounded-full bg-primary"
     >
       {loading ? (
-        <ActivityIndicator color="#ffffff" />
+        <ActivityIndicator color={authColors.onPrimary} />
       ) : (
         <View className="flex-row items-center justify-center">
-          <Text className="font-semibold text-[16px] leading-5 text-on-primary">
+          <Text className="font-semibold text-[16px] leading-5 text-primary-foreground">
             {label}
           </Text>
         </View>

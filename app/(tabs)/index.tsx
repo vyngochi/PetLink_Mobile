@@ -9,11 +9,11 @@ export default function Home() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-1 items-center justify-center px-margin-side">
-        <Text className="mb-2 font-bold text-[28px] leading-9 text-on-background">
+      <View className="flex-1 items-center justify-center px-6">
+        <Text className="mb-2 font-bold text-[28px] leading-9 text-foreground">
           Welcome to PetLink
         </Text>
-        <Text className="mb-section-gap-lg text-center font-default text-[14px] leading-[21px] text-on-surface-variant">
+        <Text className="mb-10 text-center font-default text-[14px] leading-[21px] text-muted-foreground">
           Log in to manage your pet&apos;s health and schedule.
         </Text>
 
@@ -27,20 +27,20 @@ export default function Home() {
             shadowRadius: 12,
             elevation: 4,
           })}
-          className="h-touch-target w-full flex-row items-center justify-center gap-2 rounded-full bg-primary-deep px-6"
+          className="h-12 w-full flex-row items-center justify-center gap-2 rounded-full bg-primary px-6"
         >
           <LogIn size={20} color="#ffffff" />
-          <Text className="font-semibold text-[16px] leading-5 text-on-primary">
+          <Text className="font-semibold text-[16px] leading-5 text-primary-foreground">
             Log In
           </Text>
         </Pressable>
 
-        <View className="mt-element-gap flex-row items-center justify-center">
-          <Text className="font-default text-[14px] leading-[21px] text-on-surface-variant">
+        <View className="mt-4 flex-row items-center justify-center">
+          <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
             Don&apos;t have an account?{" "}
           </Text>
           <Pressable hitSlop={8} onPress={() => router.push("/register")}>
-            <Text className="font-semibold text-[14px] leading-[21px] text-primary-deep">
+            <Text className="font-semibold text-[14px] leading-[21px] text-primary">
               Register
             </Text>
           </Pressable>

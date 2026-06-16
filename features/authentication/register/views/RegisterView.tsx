@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -19,28 +19,24 @@ import {
   GoogleButton,
   PrimaryButton,
 } from "@/features/authentication/components";
+import { authColors } from "@/features/authentication/constants/colors";
+import { useRegisterForm } from "@/features/authentication/register/hooks/useRegisterForm";
 
 export function RegisterView() {
   const router = useRouter();
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const mismatch =
-    submitted && confirmPassword.length > 0 && confirmPassword !== password;
-
-  const handleRegister = () => {
-    setSubmitted(true);
-    if (loading || password !== confirmPassword || password.length === 0) {
-      return;
-    }
-    setLoading(true);
-    // Placeholder for the register mutation wired up later via hooks/services.
-    setTimeout(() => setLoading(false), 1500);
-  };
+  const {
+    fullName,
+    setFullName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    loading,
+    mismatch,
+    submit,
+  } = useRegisterForm();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -50,31 +46,31 @@ export function RegisterView() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
-          contentContainerClassName="flex-grow items-center justify-center px-margin-side py-section-gap-lg"
+          contentContainerClassName="flex-grow items-center justify-center px-6 py-10"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* Brand */}
-          <View className="mb-section-gap-lg">
-            <AuthHeader badgeSize={56} />
+          <View className="mb-10">
+            <AuthHeader size={130} />
           </View>
 
           {/* Registration card */}
           <View
-            className="w-full max-w-md rounded-3xl bg-surface p-8"
+            className="w-full max-w-md rounded-3xl bg-card p-8"
             style={{
-              shadowColor: "#0b1c30",
+              shadowColor: authColors.cardShadow,
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.06,
               shadowRadius: 12,
               elevation: 3,
             }}
           >
-            <View className="mb-section-gap-sm">
-              <Text className="mb-2 font-semibold text-[20px] leading-7 text-on-surface">
+            <View className="mb-6">
+              <Text className="mb-2 font-semibold text-[20px] leading-7 text-card-foreground">
                 Create Account
               </Text>
-              <Text className="font-default text-[14px] leading-[21px] text-on-surface-variant">
+              <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
                 Join PetLink to manage your pet&apos;s health and schedule.
               </Text>
             </View>
@@ -129,7 +125,7 @@ export function RegisterView() {
               <View className="mt-2">
                 <PrimaryButton
                   label="Register"
-                  onPress={handleRegister}
+                  onPress={submit}
                   loading={loading}
                 />
               </View>
@@ -144,11 +140,11 @@ export function RegisterView() {
 
           {/* Footer */}
           <View className="mt-8 flex-row items-center justify-center">
-            <Text className="font-default text-[14px] leading-[21px] text-on-surface-variant">
+            <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
               Already have an account?{" "}
             </Text>
             <Pressable hitSlop={8} onPress={() => router.push("/login")}>
-              <Text className="font-semibold text-[14px] leading-[21px] text-primary-deep">
+              <Text className="font-semibold text-[14px] leading-[21px] text-primary">
                 Log In
               </Text>
             </Pressable>

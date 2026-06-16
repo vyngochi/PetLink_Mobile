@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Eye, EyeOff, type LucideIcon } from "lucide-react-native";
 
+import { authColors } from "@/features/authentication/constants/colors";
 import { cn } from "@/lib/utils";
 
 type AuthInputProps = TextInputProps & {
@@ -23,43 +24,49 @@ type AuthInputProps = TextInputProps & {
   fillClassName?: string;
 };
 
-const OUTLINE = "#6f7a6b";
-const PRIMARY = "#006e1c";
-const ERROR = "#ba1a1a";
-
 /** Labelled text field with a leading icon, focus ring and optional password toggle. */
 export function AuthInput({
   label,
   icon: Icon,
   secure = false,
   error,
-  fillClassName = "bg-surface",
+  fillClassName = "bg-card",
   ...inputProps
 }: AuthInputProps) {
   const [focused, setFocused] = useState(false);
   const [hidden, setHidden] = useState(secure);
 
-  const accent = error ? ERROR : focused ? PRIMARY : OUTLINE;
+  const accent = error
+    ? authColors.error
+    : focused
+      ? authColors.primary
+      : authColors.outline;
 
   return (
     <View className="gap-2">
       {label ? (
-        <Text className="ml-1 font-semibold text-[14px] leading-5 text-on-surface-variant">
+        <Text className="ml-1 font-semibold text-[14px] leading-5 text-muted-foreground">
           {label}
         </Text>
       ) : null}
 
       <View
         className={cn(
-          "h-touch-target flex-row items-center rounded-xl border px-3",
+          "h-12 flex-row items-center rounded-xl border px-3",
           fillClassName,
         )}
-        style={{ borderColor: error ? ERROR : focused ? PRIMARY : "#becab9" }}
+        style={{
+          borderColor: error
+            ? authColors.error
+            : focused
+              ? authColors.primary
+              : authColors.border,
+        }}
       >
         <Icon size={20} color={accent} />
         <TextInput
-          className="ml-2 h-full flex-1 font-default text-[14px] text-on-surface"
-          placeholderTextColor={OUTLINE}
+          className="ml-2 h-full flex-1 font-default text-[14px] text-card-foreground"
+          placeholderTextColor={authColors.outline}
           secureTextEntry={hidden}
           onFocus={(e) => {
             setFocused(true);
@@ -79,16 +86,16 @@ export function AuthInput({
             accessibilityLabel={hidden ? "Show password" : "Hide password"}
           >
             {hidden ? (
-              <Eye size={20} color={OUTLINE} />
+              <Eye size={20} color={authColors.outline} />
             ) : (
-              <EyeOff size={20} color={PRIMARY} />
+              <EyeOff size={20} color={authColors.primary} />
             )}
           </Pressable>
         ) : null}
       </View>
 
       {error ? (
-        <Text className="ml-1 font-default text-[12px] leading-4 text-error">
+        <Text className="ml-1 font-default text-[12px] leading-4 text-destructive">
           {error}
         </Text>
       ) : null}

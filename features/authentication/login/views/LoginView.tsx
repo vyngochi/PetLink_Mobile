@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -19,19 +19,12 @@ import {
   GoogleButton,
   PrimaryButton,
 } from "@/features/authentication/components";
+import { useLoginForm } from "@/features/authentication/login/hooks/useLoginForm";
 
 export function LoginView() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleLogin = () => {
-    if (loading) return;
-    setLoading(true);
-    // Placeholder for the auth mutation wired up later via the feature's hooks/services.
-    setTimeout(() => setLoading(false), 1500);
-  };
+  const { email, setEmail, password, setPassword, loading, submit } =
+    useLoginForm();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -41,27 +34,27 @@ export function LoginView() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
-          contentContainerClassName="flex-grow px-margin-side pb-8 pt-12"
+          contentContainerClassName="flex-grow px-6 pb-8 pt-12"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* Brand */}
           <View className="mb-10">
-            <AuthHeader badgeSize={64} />
+            <AuthHeader size={170} />
           </View>
 
           {/* Welcome copy */}
           <View className="mb-8">
-            <Text className="mb-2 font-bold text-[28px] leading-9 text-on-background">
+            <Text className="mb-2 font-bold text-[28px] leading-9 text-foreground">
               Welcome Back!
             </Text>
-            <Text className="font-default text-[14px] leading-[21px] text-on-surface-variant">
+            <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
               Log in to manage your pet&apos;s health and schedule.
             </Text>
           </View>
 
           {/* Form */}
-          <View className="gap-element-gap">
+          <View className="gap-4">
             <AuthInput
               label="Email Address"
               icon={Mail}
@@ -76,11 +69,11 @@ export function LoginView() {
 
             <View className="gap-2">
               <View className="flex-row items-center justify-between px-1">
-                <Text className="font-semibold text-[14px] leading-5 text-on-surface-variant">
+                <Text className="font-semibold text-[14px] leading-5 text-muted-foreground">
                   Password
                 </Text>
                 <Pressable hitSlop={8}>
-                  <Text className="font-medium text-[12px] leading-4 text-primary-deep">
+                  <Text className="font-medium text-[12px] leading-4 text-primary">
                     Forgot Password?
                   </Text>
                 </Pressable>
@@ -98,11 +91,7 @@ export function LoginView() {
             </View>
 
             <View className="mt-2">
-              <PrimaryButton
-                label="Log In"
-                onPress={handleLogin}
-                loading={loading}
-              />
+              <PrimaryButton label="Log In" onPress={submit} loading={loading} />
             </View>
           </View>
 
@@ -116,11 +105,11 @@ export function LoginView() {
 
           {/* Footer */}
           <View className="mt-auto flex-row items-center justify-center pb-4 pt-8">
-            <Text className="font-default text-[14px] leading-[21px] text-on-surface-variant">
+            <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
               Don&apos;t have an account?{" "}
             </Text>
             <Pressable hitSlop={8} onPress={() => router.push("/register")}>
-              <Text className="font-semibold text-[14px] leading-[21px] text-primary-deep">
+              <Text className="font-semibold text-[14px] leading-[21px] text-primary">
                 Register
               </Text>
             </Pressable>
