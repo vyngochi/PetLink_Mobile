@@ -12,19 +12,13 @@ import { authColors } from "@/features/authentication/constants/colors";
 import { cn } from "@/lib/utils";
 
 type AuthInputProps = TextInputProps & {
-  /** Field label. Omit when the caller renders its own label row. */
   label?: string;
-  /** Leading lucide icon shown inside the field. */
   icon: LucideIcon;
-  /** Renders a show/hide toggle and masks the value. */
   secure?: boolean;
-  /** Optional inline validation message. */
   error?: string;
-  /** Field background. Defaults to white; use a sunken tone on white cards. */
   fillClassName?: string;
 };
 
-/** Labelled text field with a leading icon, focus ring and optional password toggle. */
 export function AuthInput({
   label,
   icon: Icon,
@@ -45,7 +39,7 @@ export function AuthInput({
   return (
     <View className="gap-2">
       {label ? (
-        <Text className="ml-1 font-semibold text-[14px] leading-5 text-muted-foreground">
+        <Text className="ml-1 font-bold text-[14px] leading-5 text-muted-foreground">
           {label}
         </Text>
       ) : null}
@@ -83,7 +77,7 @@ export function AuthInput({
             hitSlop={8}
             onPress={() => setHidden((v) => !v)}
             accessibilityRole="button"
-            accessibilityLabel={hidden ? "Show password" : "Hide password"}
+            accessibilityLabel={hidden ? "Hiện mật khẩu" : "Ẩn mật khẩu"}
           >
             {hidden ? (
               <Eye size={20} color={authColors.outline} />

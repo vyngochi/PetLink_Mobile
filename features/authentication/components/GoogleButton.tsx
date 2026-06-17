@@ -7,9 +7,8 @@ type GoogleButtonProps = {
   onPress?: () => void;
 };
 
-/** Outlined "continue with Google" social button. */
 export function GoogleButton({
-  label = "Google",
+  label = "Đăng nhập với Google",
   onPress,
 }: GoogleButtonProps) {
   return (
@@ -21,7 +20,7 @@ export function GoogleButton({
       className="h-12 flex-row items-center justify-center gap-3 rounded-full border border-border bg-card"
     >
       <GoogleIcon size={20} />
-      <Text className="font-semibold text-[14px] leading-5 text-muted-foreground">
+      <Text className="font-bold text-[14px] leading-5 text-muted-foreground">
         {label}
       </Text>
     </Pressable>

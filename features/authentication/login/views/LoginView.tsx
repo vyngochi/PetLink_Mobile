@@ -38,25 +38,19 @@ export function LoginView() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Brand */}
           <View className="mb-10">
             <AuthHeader size={170} />
           </View>
 
-          {/* Welcome copy */}
           <View className="mb-8">
-            <Text className="mb-2 font-bold text-[28px] leading-9 text-foreground">
-              Welcome Back!
-            </Text>
-            <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
-              Log in to manage your pet&apos;s health and schedule.
+            <Text className="mb-2 text-center font-bold text-[28px] leading-9 text-foreground">
+              Chào mừng trở lại!
             </Text>
           </View>
 
-          {/* Form */}
           <View className="gap-4">
             <AuthInput
-              label="Email Address"
+              label="Địa chỉ email"
               icon={Mail}
               value={email}
               onChangeText={setEmail}
@@ -69,12 +63,12 @@ export function LoginView() {
 
             <View className="gap-2">
               <View className="flex-row items-center justify-between px-1">
-                <Text className="font-semibold text-[14px] leading-5 text-muted-foreground">
-                  Password
+                <Text className="font-bold text-[14px] leading-5 text-muted-foreground">
+                  Mật khẩu
                 </Text>
                 <Pressable hitSlop={8}>
-                  <Text className="font-medium text-[12px] leading-4 text-primary">
-                    Forgot Password?
+                  <Text className="font-bold text-[12px] leading-4 text-primary">
+                    Quên mật khẩu?
                   </Text>
                 </Pressable>
               </View>
@@ -91,26 +85,27 @@ export function LoginView() {
             </View>
 
             <View className="mt-2">
-              <PrimaryButton label="Log In" onPress={submit} loading={loading} />
+              <PrimaryButton
+                label="Đăng nhập"
+                onPress={submit}
+                loading={loading}
+              />
             </View>
           </View>
 
-          {/* Divider */}
           <View className="my-8">
             <AuthDivider />
           </View>
 
-          {/* Social */}
           <GoogleButton />
 
-          {/* Footer */}
           <View className="mt-auto flex-row items-center justify-center pb-4 pt-8">
             <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
-              Don&apos;t have an account?{" "}
+              Chưa có tài khoản?{" "}
             </Text>
             <Pressable hitSlop={8} onPress={() => router.push("/register")}>
-              <Text className="font-semibold text-[14px] leading-[21px] text-primary">
-                Register
+              <Text className="font-bold text-[14px] leading-[21px] text-primary">
+                Đăng ký
               </Text>
             </Pressable>
           </View>

@@ -50,12 +50,10 @@ export function RegisterView() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Brand */}
           <View className="mb-10">
             <AuthHeader size={130} />
           </View>
 
-          {/* Registration card */}
           <View
             className="w-full max-w-md rounded-3xl bg-card p-8"
             style={{
@@ -67,27 +65,24 @@ export function RegisterView() {
             }}
           >
             <View className="mb-6">
-              <Text className="mb-2 font-semibold text-[20px] leading-7 text-card-foreground">
-                Create Account
-              </Text>
-              <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
-                Join PetLink to manage your pet&apos;s health and schedule.
+              <Text className=" text-center font-bold text-[28px] leading-7 text-card-foreground">
+                Tạo tài khoản
               </Text>
             </View>
 
             <View className="gap-4">
               <AuthInput
-                label="Full Name"
+                label="Họ và tên"
                 icon={User}
                 fillClassName="bg-background"
                 value={fullName}
                 onChangeText={setFullName}
-                placeholder="John Doe"
+                placeholder="Nguyễn Văn A"
                 autoCapitalize="words"
                 textContentType="name"
               />
               <AuthInput
-                label="Email Address"
+                label="Địa chỉ email"
                 icon={Mail}
                 fillClassName="bg-background"
                 value={email}
@@ -99,7 +94,7 @@ export function RegisterView() {
                 textContentType="emailAddress"
               />
               <AuthInput
-                label="Password"
+                label="Mật khẩu"
                 icon={Lock}
                 fillClassName="bg-background"
                 value={password}
@@ -110,7 +105,7 @@ export function RegisterView() {
                 textContentType="newPassword"
               />
               <AuthInput
-                label="Confirm Password"
+                label="Xác nhận mật khẩu"
                 icon={KeyRound}
                 fillClassName="bg-background"
                 value={confirmPassword}
@@ -119,12 +114,12 @@ export function RegisterView() {
                 secure
                 autoCapitalize="none"
                 textContentType="newPassword"
-                error={mismatch ? "Passwords do not match." : undefined}
+                error={mismatch ? "Mật khẩu không khớp." : undefined}
               />
 
               <View className="mt-2">
                 <PrimaryButton
-                  label="Register"
+                  label="Đăng ký"
                   onPress={submit}
                   loading={loading}
                 />
@@ -135,17 +130,16 @@ export function RegisterView() {
               <AuthDivider />
             </View>
 
-            <GoogleButton label="Continue with Google" />
+            <GoogleButton label="Đăng ký với Google" />
           </View>
 
-          {/* Footer */}
           <View className="mt-8 flex-row items-center justify-center">
             <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
-              Already have an account?{" "}
+              Đã có tài khoản?{" "}
             </Text>
             <Pressable hitSlop={8} onPress={() => router.push("/login")}>
-              <Text className="font-semibold text-[14px] leading-[21px] text-primary">
-                Log In
+              <Text className="font-bold text-[14px] leading-[21px] text-primary">
+                Đăng nhập
               </Text>
             </Pressable>
           </View>

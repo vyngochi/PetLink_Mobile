@@ -3,11 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import type { RegisterCredentials } from "@/features/authentication/register/types";
 
 type UseRegisterFormOptions = {
-  /** Hooked up to the real auth service later; omitted while the screen is UI-only. */
   onSubmit?: (credentials: RegisterCredentials) => void;
 };
 
-/** Owns the register form state, confirm-password validation and submit flow. */
 export function useRegisterForm({ onSubmit }: UseRegisterFormOptions = {}) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,7 +31,6 @@ export function useRegisterForm({ onSubmit }: UseRegisterFormOptions = {}) {
     }
     setLoading(true);
     onSubmit?.({ fullName, email, password, confirmPassword });
-    // Placeholder timing until the register service (register/services) is wired in.
     timeoutRef.current = setTimeout(() => setLoading(false), 1500);
   };
 

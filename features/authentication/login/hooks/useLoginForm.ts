@@ -3,11 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import type { LoginCredentials } from "@/features/authentication/login/types";
 
 type UseLoginFormOptions = {
-  /** Hooked up to the real auth service later; omitted while the screen is UI-only. */
   onSubmit?: (credentials: LoginCredentials) => void;
 };
 
-/** Owns the login form state and submit flow, keeping LoginView presentation-only. */
 export function useLoginForm({ onSubmit }: UseLoginFormOptions = {}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +22,6 @@ export function useLoginForm({ onSubmit }: UseLoginFormOptions = {}) {
     if (loading) return;
     setLoading(true);
     onSubmit?.({ email, password });
-    // Placeholder timing until the login service (login/services) is wired in.
     timeoutRef.current = setTimeout(() => setLoading(false), 1500);
   };
 

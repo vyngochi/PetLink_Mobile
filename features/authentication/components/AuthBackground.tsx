@@ -1,11 +1,6 @@
 import React from "react";
 import { View } from "react-native";
 
-/**
- * Soft atmospheric blobs behind the auth screens. React Native has no cheap
- * blur primitive, so we approximate the mockup's diffused spheres with large,
- * muted-tone rounded circles. Purely decorative, so it ignores touches.
- */
 export function AuthBackground() {
   return (
     <View pointerEvents="none" className="absolute inset-0 overflow-hidden">

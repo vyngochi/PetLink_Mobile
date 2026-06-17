@@ -10,7 +10,6 @@ type PrimaryButtonProps = {
   disabled?: boolean;
 };
 
-/** Pill-shaped primary call-to-action with a press scale and loading state. */
 export function PrimaryButton({
   label,
   onPress,
@@ -38,7 +37,7 @@ export function PrimaryButton({
         <ActivityIndicator color={authColors.onPrimary} />
       ) : (
         <View className="flex-row items-center justify-center">
-          <Text className="font-semibold text-[16px] leading-5 text-primary-foreground">
+          <Text className="font-bold text-[16px] leading-5 text-primary-foreground">
             {label}
           </Text>
         </View>

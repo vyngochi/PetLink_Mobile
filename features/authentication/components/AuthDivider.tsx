@@ -5,8 +5,7 @@ type AuthDividerProps = {
   label?: string;
 };
 
-/** Horizontal rule with centered "or continue with" label. */
-export function AuthDivider({ label = "or continue with" }: AuthDividerProps) {
+export function AuthDivider({ label = "hoặc tiếp tục với" }: AuthDividerProps) {
   return (
     <View className="flex-row items-center">
       <View className="h-px flex-1 bg-border" />

@@ -5,7 +5,6 @@ type GoogleIconProps = {
   size?: number;
 };
 
-/** Multi-color Google "G" logo, ported from the auth mockups. */
 export function GoogleIcon({ size = 20 }: GoogleIconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
