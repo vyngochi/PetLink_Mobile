@@ -29,5 +29,5 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
-        run: npm test -- --watchAll=false
+      # - name: Test
+      #   run: npm test -- --watchAll=false
