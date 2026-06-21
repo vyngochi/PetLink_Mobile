@@ -1,5 +1,7 @@
 import { HapticTab } from "@/components/haptic-tab";
+import CommonHeader from "@/components/header-view";
 import { Colors } from "@/constants/theme";
+import HomeLeftHeader from "@/features/pet-owner/main/home/components/HomeLeftHeader";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Tabs } from "expo-router";
 import {
@@ -36,7 +38,9 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
+          headerShown: true,
           tabBarIcon: ({ color }) => <House size={28} color={color} />,
+          header: () => <CommonHeader RightContent={<HomeLeftHeader />} />,
         }}
       />
       <Tabs.Screen
@@ -51,6 +55,7 @@ export default function TabLayout() {
         options={{
           title: "Booking",
           tabBarIcon: ({ color }) => <CalendarHeart size={28} color={color} />,
+          href: isLogged ? "/(tabs)/booking" : null,
         }}
       />
       <Tabs.Screen
@@ -60,6 +65,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MessageCircleHeart size={28} color={color} />
           ),
+          href: isLogged ? "/(tabs)/chat" : null,
         }}
       />
       <Tabs.Screen

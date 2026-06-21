@@ -1,4 +1,7 @@
 import "@/global.css";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useLoadFonts } from "@/hooks/useLoadFonts";
+import QueryProvider from "@/provider/QueryProvider";
 import {
   DarkTheme,
   DefaultTheme,
@@ -7,16 +10,21 @@ import {
 import { PortalHost } from "@rn-primitives/portal";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
-
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useLoadFonts } from "@/hooks/useLoadFonts";
-import QueryProvider from "@/provider/QueryProvider";
 import { useEffect } from "react";
+import "react-native-reanimated";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 
 export const unstable_settings = {
   anchor: "(tabs)",
 };
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
