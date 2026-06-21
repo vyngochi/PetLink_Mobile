@@ -49,7 +49,7 @@ module.exports = {
       fontFamily: {
         default: ["Montserrat-Regular", "sans-serif"],
         thin: ["Montserrat-Thin", "sans-serif"],
-        bold: ["Montserrat-Bold", "sans-serif"],
+        mbold: ["Montserrat-Bold", "sans-serif"],
         "italic-bold": ["Montserrat-Bold-Italic", "sans-serif"],
       },
       borderRadius: {
