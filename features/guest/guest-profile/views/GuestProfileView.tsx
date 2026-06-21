@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import {
   Activity,
   ArrowRight,
@@ -21,6 +22,7 @@ import { BentoItem } from "../components/BentoItem";
 import { SettingsMenuItem } from "../components/SettingsMenuItem";
 
 export function GuestProfileView() {
+  const router = useRouter();
   return (
     <ScrollView
       className="flex-1 bg-background"
@@ -49,8 +51,8 @@ export function GuestProfileView() {
             Tham gia PetLink
           </Text>
           <Text className="font-default text-sm text-muted-foreground max-w-[280px] text-center">
-            Tạo tài khoản để truy cập các dịch vụ chăm sóc thú cưng và chuyên gia
-            của chúng tôi
+            Tạo tài khoản để truy cập các dịch vụ chăm sóc thú cưng và chuyên
+            gia của chúng tôi
           </Text>
         </View>
 
@@ -64,13 +66,21 @@ export function GuestProfileView() {
               shadowRadius: 12,
               elevation: 2,
             }}
+            onPress={() => router.push({ pathname: "/(auth)/register" })}
           >
             <Text className="text-lg text-primary-foreground font-mbold">
               Đăng Ký
             </Text>
-            <ArrowRight color={"white"} className="text-primary-foreground" size={20} />
+            <ArrowRight
+              color={"white"}
+              className="text-primary-foreground"
+              size={20}
+            />
           </Pressable>
-          <Pressable className="flex-row items-center justify-center w-full border-2 rounded-full h-14 border-primary active:bg-primary/10">
+          <Pressable
+            onPress={() => router.push({ pathname: "/(auth)/login" })}
+            className="flex-row items-center justify-center w-full border-2 rounded-full h-14 border-primary active:bg-primary/10"
+          >
             <Text className="text-lg text-primary font-mbold">Đăng Nhập</Text>
           </Pressable>
         </View>

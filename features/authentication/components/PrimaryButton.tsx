@@ -31,13 +31,13 @@ export function PrimaryButton({
         shadowRadius: 12,
         elevation: 4,
       })}
-      className="h-12 items-center justify-center rounded-full bg-primary"
+      className="items-center justify-center h-12 rounded-full bg-primary"
     >
       {loading ? (
         <ActivityIndicator color={authColors.onPrimary} />
       ) : (
         <View className="flex-row items-center justify-center">
-          <Text className="font-bold text-[16px] leading-5 text-primary-foreground">
+          <Text className="font-mbold text-[16px] leading-5 text-primary-foreground">
             {label}
           </Text>
         </View>

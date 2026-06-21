@@ -1,3 +1,5 @@
+import { useRouter } from "expo-router";
+import { KeyRound, Lock, Mail, User } from "lucide-react-native";
 import React from "react";
 import {
   KeyboardAvoidingView,
@@ -8,8 +10,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import { KeyRound, Lock, Mail, User } from "lucide-react-native";
 
 import {
   AuthBackground,
@@ -55,7 +55,7 @@ export function RegisterView() {
           </View>
 
           <View
-            className="w-full max-w-md rounded-3xl bg-card p-8"
+            className="w-full max-w-md p-8 rounded-3xl bg-card"
             style={{
               shadowColor: authColors.cardShadow,
               shadowOffset: { width: 0, height: 4 },
@@ -65,7 +65,7 @@ export function RegisterView() {
             }}
           >
             <View className="mb-6">
-              <Text className=" text-center font-bold text-[28px] leading-7 text-card-foreground">
+              <Text className=" text-center font-mbold text-[28px] leading-7 text-card-foreground">
                 Tạo tài khoản
               </Text>
             </View>
@@ -133,12 +133,12 @@ export function RegisterView() {
             <GoogleButton label="Đăng ký với Google" />
           </View>
 
-          <View className="mt-8 flex-row items-center justify-center">
+          <View className="flex-row items-center justify-center mt-8">
             <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
               Đã có tài khoản?{" "}
             </Text>
             <Pressable hitSlop={8} onPress={() => router.push("/login")}>
-              <Text className="font-bold text-[14px] leading-[21px] text-primary">
+              <Text className="font-mbold text-[14px] leading-[21px] text-primary">
                 Đăng nhập
               </Text>
             </Pressable>

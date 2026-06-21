@@ -1,3 +1,5 @@
+import { useRouter } from "expo-router";
+import { Lock, Mail } from "lucide-react-native";
 import React from "react";
 import {
   KeyboardAvoidingView,
@@ -8,8 +10,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import { Lock, Mail } from "lucide-react-native";
 
 import {
   AuthBackground,
@@ -43,7 +43,7 @@ export function LoginView() {
           </View>
 
           <View className="mb-8">
-            <Text className="mb-2 text-center font-bold text-[28px] leading-9 text-foreground">
+            <Text className="mb-2 text-center font-mbold text-[28px] leading-9 text-foreground">
               Chào mừng trở lại!
             </Text>
           </View>
@@ -63,11 +63,11 @@ export function LoginView() {
 
             <View className="gap-2">
               <View className="flex-row items-center justify-between px-1">
-                <Text className="font-bold text-[14px] leading-5 text-muted-foreground">
+                <Text className="font-mbold text-[14px] leading-5 text-muted-foreground">
                   Mật khẩu
                 </Text>
                 <Pressable hitSlop={8}>
-                  <Text className="font-bold text-[12px] leading-4 text-primary">
+                  <Text className="font-mbold text-[12px] leading-4 text-primary">
                     Quên mật khẩu?
                   </Text>
                 </Pressable>
@@ -99,12 +99,12 @@ export function LoginView() {
 
           <GoogleButton />
 
-          <View className="mt-auto flex-row items-center justify-center pb-4 pt-8">
+          <View className="flex-row items-center justify-center pt-8 pb-4 mt-auto">
             <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
               Chưa có tài khoản?{" "}
             </Text>
             <Pressable hitSlop={8} onPress={() => router.push("/register")}>
-              <Text className="font-bold text-[14px] leading-[21px] text-primary">
+              <Text className="font-mbold text-[14px] leading-[21px] text-primary">
                 Đăng ký
               </Text>
             </Pressable>
