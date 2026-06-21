@@ -1,18 +1,7 @@
-import { GuestProfileView } from "@/features/guest/guest-profile/views/GuestProfileView";
 import React from "react";
-import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function profile() {
-  const isLogged = true;
+import { ProfileView } from "@/features/pet-owner/profile/views/ProfileView";
 
-  if (isLogged) {
-    return (
-      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-        <GuestProfileView />
-      </SafeAreaView>
-    );
-  }
-
-  return <View></View>;
+export default function ProfileScreen() {
+  return <ProfileView />;
 }
