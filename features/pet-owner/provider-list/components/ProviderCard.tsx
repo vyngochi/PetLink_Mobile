@@ -85,7 +85,7 @@ export function ProviderCard({ provider, onPress }: ProviderCardProps) {
               Dịch vụ nổi bật:
             </Text>
             <View className="flex-col gap-2">
-              {provider.services.preview.map((service) => (
+              {provider.services.preview.slice(0, 2).map((service) => (
                 <View
                   key={service.id}
                   className="flex-row items-center justify-between"
