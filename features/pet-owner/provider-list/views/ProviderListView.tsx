@@ -1,3 +1,4 @@
+import { Href, useRouter } from "expo-router";
 import { Search, SlidersHorizontal } from "lucide-react-native";
 import React from "react";
 import { FlatList, Text, TextInput, View } from "react-native";
@@ -5,9 +6,10 @@ import { ProviderCard } from "../components/ProviderCard";
 import { MOCK_PROVIDERS } from "../constants/provider-mock";
 
 export function ProviderListView() {
+  const router = useRouter();
+
   return (
     <View className="flex-1 bg-background">
-      {/* Header & Search */}
       <View className="px-5 pt-6 pb-4 bg-surface-container-lowest">
         <Text className="mb-4 text-2xl font-mbold text-foreground">
           Tìm kiếm Dịch vụ
@@ -28,12 +30,17 @@ export function ProviderListView() {
           </View>
         </View>
       </View>
-
-      {/* List */}
       <FlatList
         data={MOCK_PROVIDERS}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ProviderCard provider={item} />}
+        renderItem={({ item }) => (
+          <ProviderCard
+            provider={item}
+            onPress={() =>
+              router.push(`/pet-owner/provider/${item.id}` as Href)
+            }
+          />
+        )}
         contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       />
