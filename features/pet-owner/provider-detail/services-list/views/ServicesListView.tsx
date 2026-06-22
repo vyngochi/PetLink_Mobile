@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { Href, useRouter } from "expo-router";
 import {
   CheckCircle,
   ChevronLeft,
@@ -65,8 +65,7 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
         <SafeAreaView edges={["top"]} className="absolute z-10 top-4 right-4">
           <Pressable
             onPress={() => {
-              // Placeholder for future phase: navigate to provider profile
-              console.log("Navigate to Profile", provider.id);
+              router.push(`/pet-owner/provider/${provider.id}/info` as Href);
             }}
             className="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md active:bg-white"
           >
