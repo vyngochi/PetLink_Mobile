@@ -29,6 +29,7 @@ export interface ProviderServicePreview {
   price: number;
   durationMinutes: number;
   thumbnailUrl: string;
+  description?: string; //can be tra ve
 }
 
 export interface ProviderServices {
