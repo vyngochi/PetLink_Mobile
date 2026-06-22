@@ -17,10 +17,10 @@ export function GoogleButton({
       style={({ pressed }) => ({
         transform: [{ scale: pressed ? 0.97 : 1 }],
       })}
-      className="h-12 flex-row items-center justify-center gap-3 rounded-full border border-border bg-card"
+      className="flex-row items-center justify-center h-12 gap-3 border rounded-full border-border bg-card"
     >
       <GoogleIcon size={20} />
-      <Text className="font-bold text-[14px] leading-5 text-muted-foreground">
+      <Text className="font-mbold text-[14px] leading-5 text-muted-foreground">
         {label}
       </Text>
     </Pressable>

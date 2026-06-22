@@ -1,3 +1,4 @@
+import { Eye, EyeOff, type LucideIcon } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Pressable,
@@ -6,7 +7,6 @@ import {
   type TextInputProps,
   View,
 } from "react-native";
-import { Eye, EyeOff, type LucideIcon } from "lucide-react-native";
 
 import { authColors } from "@/features/authentication/constants/colors";
 import { cn } from "@/lib/utils";
@@ -39,7 +39,7 @@ export function AuthInput({
   return (
     <View className="gap-2">
       {label ? (
-        <Text className="ml-1 font-bold text-[14px] leading-5 text-muted-foreground">
+        <Text className="ml-1 font-mbold text-[14px] leading-5 text-muted-foreground">
           {label}
         </Text>
       ) : null}
