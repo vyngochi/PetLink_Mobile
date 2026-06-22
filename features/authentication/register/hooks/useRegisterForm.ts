@@ -1,17 +1,15 @@
-import axios from "axios";
 import { useState } from "react";
 
 import { useRegister } from "@/features/authentication/register/hooks/useRegister";
 import type { AuthResponse } from "@/features/authentication/types";
+import { getApiErrorMessage } from "@/lib/http";
 
 type UseRegisterFormOptions = {
   onSuccess?: (data: AuthResponse) => void;
 };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// Số di động VN: 10 chữ số, bắt đầu bằng 0.
 const PHONE_REGEX = /^0\d{9}$/;
-// Độ dài mật khẩu tối thiểu.
 const PASSWORD_MIN_LENGTH = 6;
 
 export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {
@@ -31,15 +29,12 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {
     },
     onError: (error) => {
       if (__DEV__) console.log("[Register] error", error);
-      const message =
-        axios.isAxiosError(error) && error.response?.data?.message
-          ? (error.response.data.message as string)
-          : "Đăng ký thất bại. Vui lòng thử lại.";
-      setErrorMessage(message);
+      setErrorMessage(
+        getApiErrorMessage(error, "Đăng ký thất bại. Vui lòng thử lại."),
+      );
     },
   });
 
-  // Clear the server error banner as soon as the user edits any field.
   const clearServerError = () => {
     if (errorMessage) setErrorMessage(null);
   };
@@ -49,14 +44,15 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {
       clearServerError();
     };
 
-  const mismatch =
-    submitted && confirmPassword.length > 0 && confirmPassword !== password;
-
   const userNameInvalid = submitted && userName.trim().length === 0;
   const emailInvalid = submitted && !EMAIL_REGEX.test(email.trim());
   const phoneInvalid = submitted && !PHONE_REGEX.test(phone.trim());
+  const passwordMissing = submitted && password.length === 0;
   const passwordTooShort =
     submitted && password.length > 0 && password.length < PASSWORD_MIN_LENGTH;
+  const confirmPasswordMissing = submitted && confirmPassword.length === 0;
+  const mismatch =
+    submitted && confirmPassword.length > 0 && confirmPassword !== password;
 
   const submit = () => {
     setSubmitted(true);
@@ -116,7 +112,9 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {
     userNameInvalid,
     emailInvalid,
     phoneInvalid,
+    passwordMissing,
     passwordTooShort,
+    confirmPasswordMissing,
     errorMessage,
     submit,
   };

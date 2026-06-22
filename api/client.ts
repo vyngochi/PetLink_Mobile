@@ -5,6 +5,7 @@ import axios, {
 
 import { useAuthStore } from "@/features/authentication/stores/auth.store";
 import type { AuthTokens } from "@/features/authentication/types";
+import { unwrapData } from "@/lib/http";
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
@@ -25,10 +26,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-/**
- * Single-flight token refresh: while one refresh is in progress, other 401s
- * wait in this queue instead of each firing their own refresh request.
- */
 let isRefreshing = false;
 let pendingQueue: {
   resolve: (token: string) => void;
@@ -43,16 +40,11 @@ const flushQueue = (error: unknown, token: string | null) => {
   pendingQueue = [];
 };
 
-// Auth endpoints must never trigger the refresh-and-retry loop themselves.
 const isAuthRoute = (url = "") =>
   url.includes("/auth/login") ||
   url.includes("/auth/register") ||
   url.includes("/auth/refresh");
 
-/**
- * Refresh with a bare axios call so it bypasses these interceptors — otherwise
- * a 401 on the refresh request would recurse back into this handler.
- */
 const requestRefreshedTokens = async (
   refreshToken: string,
 ): Promise<AuthTokens> => {
@@ -61,7 +53,7 @@ const requestRefreshedTokens = async (
     { refreshToken },
     { timeout: 10000 },
   );
-  return res.data.data as AuthTokens;
+  return unwrapData<AuthTokens>(res);
 };
 
 api.interceptors.response.use(
@@ -94,22 +86,27 @@ api.interceptors.response.use(
       | undefined;
     const { refreshToken, setAuth, logout } = useAuthStore.getState();
 
+    const is401 = error.response?.status === 401;
+    const onAuthRoute = isAuthRoute(original?.url);
     const shouldRefresh =
-      error.response?.status === 401 &&
-      original &&
-      !original._retry &&
-      !isAuthRoute(original.url) &&
+      is401 &&
+      Boolean(original) &&
+      !original?._retry &&
+      !onAuthRoute &&
       Boolean(refreshToken);
 
     if (!shouldRefresh || !original) {
+      if (is401 && !onAuthRoute) {
+        logout();
+      }
       return Promise.reject(error);
     }
 
-    // A refresh is already running: queue this request until it resolves.
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         pendingQueue.push({
           resolve: (token) => {
+            original._retry = true;
             original.headers.Authorization = `Bearer ${token}`;
             resolve(api(original));
           },

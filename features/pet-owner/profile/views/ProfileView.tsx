@@ -11,10 +11,17 @@ import {
 } from "@/features/pet-owner/profile/components";
 import { useProfile } from "@/features/pet-owner/profile/hooks/useProfile";
 import type { ProfileMenuItem } from "@/features/pet-owner/profile/types";
+import { useAuth } from "@/lib/auth";
 
 export function ProfileView() {
   const router = useRouter();
   const { profile } = useProfile();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    router.replace("/login");
+  };
 
   const handleMenuPress = (item: ProfileMenuItem) => {
     if (item.route) router.push(item.route as never);
@@ -44,7 +51,7 @@ export function ProfileView() {
         </View>
 
         <View className="mt-8">
-          <LogoutButton onPress={() => router.replace("/login")} />
+          <LogoutButton onPress={handleLogout} />
         </View>
       </ScrollView>
     </SafeAreaView>

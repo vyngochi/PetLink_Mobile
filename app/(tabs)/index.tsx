@@ -1,4 +1,4 @@
-import { HomeView } from "@/features/pet-owner/main/home/views/HomeView";
+import { HomeView } from "@/features/pet-owner/home/views/HomeView";
 import { useAuth } from "@/lib/auth";
 import React from "react";
 import { View } from "react-native";

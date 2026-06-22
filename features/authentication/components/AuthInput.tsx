@@ -17,15 +17,9 @@ type AuthInputProps = TextInputProps & {
   secure?: boolean;
   error?: string;
   fillClassName?: string;
-  /**
-   * Enable for fields that accept Vietnamese text (e.g. full name).
-   * Disables autocorrect/spellcheck/autocomplete so the diacritics (dấu)
-   * composed by Telex/VNI keyboards aren't dropped or duplicated.
-   */
   vietnamese?: boolean;
 };
 
-// Props that keep Vietnamese diacritics intact while typing on Android/iOS.
 const vietnameseInputProps: TextInputProps = {
   autoCorrect: false,
   spellCheck: false,

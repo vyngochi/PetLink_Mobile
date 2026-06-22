@@ -4,6 +4,7 @@ import type { RegisterPayload } from "@/features/authentication/register/types";
 import { authService } from "@/features/authentication/services/auth.service";
 import { useAuthStore } from "@/features/authentication/stores/auth.store";
 import type { AuthResponse } from "@/features/authentication/types";
+import { unwrapData } from "@/lib/http";
 
 type UseRegisterOptions = {
   onSuccess?: (data: AuthResponse) => void;
@@ -11,10 +12,10 @@ type UseRegisterOptions = {
 };
 
 export const useRegister = ({ onSuccess, onError }: UseRegisterOptions = {}) => {
-  const { mutate, mutateAsync, isPending, error } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationFn: async (payload: RegisterPayload): Promise<AuthResponse> => {
       const res = await authService.register(payload);
-      return res.data.data;
+      return unwrapData<AuthResponse>(res);
     },
     onSuccess: (data) => {
       useAuthStore.getState().setAuth(data);
@@ -27,7 +28,6 @@ export const useRegister = ({ onSuccess, onError }: UseRegisterOptions = {}) => 
 
   return {
     register: mutate,
-    registerAsync: mutateAsync,
     isRegistering: isPending,
     error,
   };

@@ -43,13 +43,14 @@ export default function RootLayout() {
     }
   }, [ready]);
 
-  // Guests can browse the tabs; once logged in, kick them out of the auth
-  // screens back into the app. Runs after fonts + persisted auth are ready.
   useEffect(() => {
     if (!ready) return;
     const inAuthGroup = segments[0] === "(auth)";
+    const inProtectedGroup = segments[0] === "pet-owner";
     if (isAuthenticated && inAuthGroup) {
       router.replace("/(tabs)");
+    } else if (!isAuthenticated && inProtectedGroup) {
+      router.replace("/login");
     }
   }, [ready, isAuthenticated, segments, router]);
 

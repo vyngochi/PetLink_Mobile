@@ -6,6 +6,7 @@ import type {
 } from "@/features/authentication/login/types";
 import { authService } from "@/features/authentication/services/auth.service";
 import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { unwrapData } from "@/lib/http";
 
 type UseLoginOptions = {
   onSuccess?: (data: LoginResponse) => void;
@@ -13,10 +14,10 @@ type UseLoginOptions = {
 };
 
 export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
-  const { mutate, mutateAsync, isPending, error } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationFn: async (payload: LoginPayload): Promise<LoginResponse> => {
       const res = await authService.login(payload);
-      return res.data.data;
+      return unwrapData<LoginResponse>(res);
     },
     onSuccess: (data) => {
       useAuthStore.getState().setAuth(data);
@@ -29,7 +30,6 @@ export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
 
   return {
     login: mutate,
-    loginAsync: mutateAsync,
     isLoggingIn: isPending,
     error,
   };

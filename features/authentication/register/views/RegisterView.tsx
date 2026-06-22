@@ -40,12 +40,12 @@ export function RegisterView() {
     userNameInvalid,
     emailInvalid,
     phoneInvalid,
+    passwordMissing,
     passwordTooShort,
+    confirmPasswordMissing,
     errorMessage,
     submit,
-  } = useRegisterForm({
-    onSuccess: () => router.replace("/(tabs)"),
-  });
+  } = useRegisterForm();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -131,9 +131,11 @@ export function RegisterView() {
                 autoCapitalize="none"
                 textContentType="newPassword"
                 error={
-                  passwordTooShort
-                    ? "Mật khẩu phải có ít nhất 6 ký tự."
-                    : undefined
+                  passwordMissing
+                    ? "Vui lòng nhập mật khẩu."
+                    : passwordTooShort
+                      ? "Mật khẩu phải có ít nhất 6 ký tự."
+                      : undefined
                 }
               />
               <AuthInput
@@ -146,7 +148,13 @@ export function RegisterView() {
                 secure
                 autoCapitalize="none"
                 textContentType="newPassword"
-                error={mismatch ? "Mật khẩu không khớp." : undefined}
+                error={
+                  confirmPasswordMissing
+                    ? "Vui lòng xác nhận mật khẩu."
+                    : mismatch
+                      ? "Mật khẩu không khớp."
+                      : undefined
+                }
               />
 
               {errorMessage ? (

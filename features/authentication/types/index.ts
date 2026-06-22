@@ -3,5 +3,4 @@ export type AuthTokens = {
   refreshToken: string;
 };
 
-/** Both login and register return the same auth token pair. */
 export type AuthResponse = AuthTokens;

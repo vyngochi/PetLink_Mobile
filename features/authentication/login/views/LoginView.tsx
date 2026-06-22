@@ -31,9 +31,7 @@ export function LoginView() {
     loading,
     errorMessage,
     submit,
-  } = useLoginForm({
-    onSuccess: () => router.replace("/(tabs)"),
-  });
+  } = useLoginForm();
 
   return (
     <SafeAreaView className="flex-1 bg-background">

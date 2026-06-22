@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useState } from "react";
 
 import { useLogin } from "@/features/authentication/login/hooks/useLogin";
 import type { LoginResponse } from "@/features/authentication/login/types";
+import { getApiErrorMessage } from "@/lib/http";
 
 type UseLoginFormOptions = {
   onSuccess?: (data: LoginResponse) => void;
@@ -21,15 +21,12 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
     },
     onError: (error) => {
       if (__DEV__) console.log("[Login] error", error);
-      const message =
-        axios.isAxiosError(error) && error.response?.data?.message
-          ? (error.response.data.message as string)
-          : "Đăng nhập thất bại. Vui lòng thử lại.";
-      setErrorMessage(message);
+      setErrorMessage(
+        getApiErrorMessage(error, "Đăng nhập thất bại. Vui lòng thử lại."),
+      );
     },
   });
 
-  // Clear any visible error as soon as the user starts correcting their input.
   const handleUserNameChange = (value: string) => {
     setUserName(value);
     if (errorMessage) setErrorMessage(null);

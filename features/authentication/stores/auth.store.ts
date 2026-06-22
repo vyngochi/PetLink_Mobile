@@ -8,7 +8,6 @@ type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
-  /** True until the persisted state has finished loading from storage. */
   hydrating: boolean;
   setAuth: (tokens: AuthTokens) => void;
   logout: () => void;
@@ -33,12 +32,15 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "petlink-auth",
       storage: createJSONStorage(() => secureStorage),
-      // Only persist the tokens; derive the rest on load.
       partialize: (state) => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
       }),
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          useAuthStore.setState({ hydrating: false });
+          return;
+        }
         if (state) {
           state.isAuthenticated = Boolean(state.accessToken);
           state.hydrating = false;
