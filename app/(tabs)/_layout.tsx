@@ -3,6 +3,7 @@ import CommonHeader from "@/components/header-view";
 import { Colors } from "@/constants/theme";
 import HomeLeftHeader from "@/features/pet-owner/home/components/HomeLeftHeader";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAuth } from "@/lib/auth";
 import { Tabs } from "expo-router";
 import {
   CalendarHeart,
@@ -15,7 +16,7 @@ import React from "react";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const isLogged = false;
+  const { isAuthenticated: isLogged } = useAuth();
   return (
     <Tabs
       screenOptions={{

@@ -1,6 +1,7 @@
 import "@/global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useLoadFonts } from "@/hooks/useLoadFonts";
+import { useAuth } from "@/lib/auth";
 import QueryProvider from "@/provider/QueryProvider";
 import {
   DarkTheme,
@@ -8,7 +9,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
-import { SplashScreen, Stack } from "expo-router";
+import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -29,14 +30,30 @@ configureReanimatedLogger({
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { loaded, error } = useLoadFonts();
+  const { isAuthenticated, hydrating } = useAuth();
+  const router = useRouter();
+  const segments = useSegments();
+
+  const fontsReady = loaded || error;
+  const ready = fontsReady && !hydrating;
 
   useEffect(() => {
-    if (loaded || error) {
+    if (ready) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, error]);
+  }, [ready]);
 
-  if (!loaded && !error) {
+  // Guests can browse the tabs; once logged in, kick them out of the auth
+  // screens back into the app. Runs after fonts + persisted auth are ready.
+  useEffect(() => {
+    if (!ready) return;
+    const inAuthGroup = segments[0] === "(auth)";
+    if (isAuthenticated && inAuthGroup) {
+      router.replace("/(tabs)");
+    }
+  }, [ready, isAuthenticated, segments, router]);
+
+  if (!ready) {
     return null;
   }
 

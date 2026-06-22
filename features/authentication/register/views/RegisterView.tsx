@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { KeyRound, Lock, Mail, User } from "lucide-react-native";
+import { KeyRound, Lock, Mail, Phone, User } from "lucide-react-native";
 import React from "react";
 import {
   KeyboardAvoidingView,
@@ -25,18 +25,27 @@ import { useRegisterForm } from "@/features/authentication/register/hooks/useReg
 export function RegisterView() {
   const router = useRouter();
   const {
-    fullName,
-    setFullName,
+    userName,
+    setUserName,
     email,
     setEmail,
+    phone,
+    setPhone,
     password,
     setPassword,
     confirmPassword,
     setConfirmPassword,
     loading,
     mismatch,
+    userNameInvalid,
+    emailInvalid,
+    phoneInvalid,
+    passwordTooShort,
+    errorMessage,
     submit,
-  } = useRegisterForm();
+  } = useRegisterForm({
+    onSuccess: () => router.replace("/(tabs)"),
+  });
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -72,14 +81,18 @@ export function RegisterView() {
 
             <View className="gap-4">
               <AuthInput
-                label="Họ và tên"
+                label="Tên đăng nhập"
                 icon={User}
                 fillClassName="bg-background"
-                value={fullName}
-                onChangeText={setFullName}
-                placeholder="Nguyễn Văn A"
-                autoCapitalize="words"
-                textContentType="name"
+                value={userName}
+                onChangeText={setUserName}
+                placeholder="Nhập tên đăng nhập"
+                autoCapitalize="none"
+                autoComplete="username-new"
+                textContentType="username"
+                error={
+                  userNameInvalid ? "Vui lòng nhập tên đăng nhập." : undefined
+                }
               />
               <AuthInput
                 label="Địa chỉ email"
@@ -92,6 +105,20 @@ export function RegisterView() {
                 autoCapitalize="none"
                 autoComplete="email"
                 textContentType="emailAddress"
+                error={emailInvalid ? "Email không hợp lệ." : undefined}
+              />
+              <AuthInput
+                label="Số điện thoại"
+                icon={Phone}
+                fillClassName="bg-background"
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="0901234567"
+                keyboardType="phone-pad"
+                autoComplete="tel"
+                textContentType="telephoneNumber"
+                maxLength={10}
+                error={phoneInvalid ? "Số điện thoại không hợp lệ." : undefined}
               />
               <AuthInput
                 label="Mật khẩu"
@@ -103,6 +130,11 @@ export function RegisterView() {
                 secure
                 autoCapitalize="none"
                 textContentType="newPassword"
+                error={
+                  passwordTooShort
+                    ? "Mật khẩu phải có ít nhất 6 ký tự."
+                    : undefined
+                }
               />
               <AuthInput
                 label="Xác nhận mật khẩu"
@@ -116,6 +148,12 @@ export function RegisterView() {
                 textContentType="newPassword"
                 error={mismatch ? "Mật khẩu không khớp." : undefined}
               />
+
+              {errorMessage ? (
+                <Text className="px-1 font-default text-[13px] leading-5 text-destructive">
+                  {errorMessage}
+                </Text>
+              ) : null}
 
               <View className="mt-2">
                 <PrimaryButton

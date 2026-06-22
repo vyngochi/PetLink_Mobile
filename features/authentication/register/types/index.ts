@@ -1,6 +1,6 @@
-export type RegisterCredentials = {
-  fullName: string;
-  email: string;
+export type RegisterPayload = {
+  userName: string;
   password: string;
-  confirmPassword: string;
+  email: string;
+  phone: string;
 };

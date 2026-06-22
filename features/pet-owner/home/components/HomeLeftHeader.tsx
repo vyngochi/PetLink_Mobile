@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -6,8 +7,8 @@ import { Text, View } from "react-native";
 
 export default function HomeLeftHeader() {
   const router = useRouter();
-  const isLogged = false;
-  const url = "./../../../../assets/images/PetLink/PetLink.png";
+  const { isAuthenticated: isLogged } = useAuth();
+  const url = "../../../../../assets/images/PetLink/PetLink.png";
   return (
     <View>
       {!isLogged ? (
