@@ -29,6 +29,7 @@ export function LoginView() {
     password,
     setPassword,
     loading,
+    errors,
     errorMessage,
     submit,
   } = useLoginForm();
@@ -65,6 +66,7 @@ export function LoginView() {
               autoCapitalize="none"
               autoComplete="username"
               textContentType="username"
+              error={errors.userName}
             />
 
             <View className="gap-2">
@@ -90,6 +92,7 @@ export function LoginView() {
                 secure
                 autoCapitalize="none"
                 textContentType="password"
+                error={errors.password}
               />
             </View>
 

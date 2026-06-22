@@ -17,12 +17,6 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  if (__DEV__) {
-    console.log(
-      `[API →] ${config.method?.toUpperCase()} ${config.baseURL ?? ""}${config.url ?? ""}`,
-      config.data ?? "",
-    );
-  }
   return config;
 });
 
@@ -57,30 +51,8 @@ const requestRefreshedTokens = async (
 };
 
 api.interceptors.response.use(
-  (response) => {
-    if (__DEV__) {
-      console.log(
-        `[API ←] ${response.status} ${response.config.url ?? ""}`,
-        response.data,
-      );
-    }
-    return response;
-  },
+  (response) => response,
   async (error: AxiosError) => {
-    if (__DEV__) {
-      if (error.response) {
-        console.log(
-          `[API ✕] ${error.response.status} ${error.config?.url ?? ""}`,
-          error.response.data,
-        );
-      } else {
-        console.log(
-          `[API ✕] no response ${error.config?.url ?? ""}`,
-          error.message,
-        );
-      }
-    }
-
     const original = error.config as
       | (InternalAxiosRequestConfig & { _retry?: boolean })
       | undefined;

@@ -30,33 +30,9 @@ configureReanimatedLogger({
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { loaded, error } = useLoadFonts();
-  const { isAuthenticated, hydrating } = useAuth();
-  const router = useRouter();
-  const segments = useSegments();
 
   const fontsReady = loaded || error;
-  const ready = fontsReady && !hydrating;
 
-  useEffect(() => {
-    if (ready) {
-      SplashScreen.hideAsync();
-    }
-  }, [ready]);
-
-  useEffect(() => {
-    if (!ready) return;
-    const inAuthGroup = segments[0] === "(auth)";
-    const inProtectedGroup = segments[0] === "pet-owner";
-    if (isAuthenticated && inAuthGroup) {
-      router.replace("/(tabs)");
-    } else if (!isAuthenticated && inProtectedGroup) {
-      router.replace("/login");
-    }
-  }, [ready, isAuthenticated, segments, router]);
-
-  if (!ready) {
-    return null;
-  }
 
   return (
     <QueryProvider>

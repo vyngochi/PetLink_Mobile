@@ -23,9 +23,7 @@ export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
       useAuthStore.getState().setAuth(data);
       onSuccess?.(data);
     },
-    onError: (err) => {
-      onError?.(err);
-    },
+    onError,
   });
 
   return {

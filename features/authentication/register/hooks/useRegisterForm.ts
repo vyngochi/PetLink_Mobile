@@ -1,16 +1,19 @@
 import { useState } from "react";
 
+import { useFieldErrors } from "@/features/authentication/hooks/useFieldErrors";
+import { REGISTER_ERROR_MESSAGES } from "@/features/authentication/register/constants/register-error-messages";
 import { useRegister } from "@/features/authentication/register/hooks/useRegister";
-import type { AuthResponse } from "@/features/authentication/types";
+import {
+  registerSchema,
+  type RegisterFormValues,
+} from "@/features/authentication/register/schemas/register.schema";
+import type { RegisterResponse } from "@/features/authentication/register/types";
 import { getApiErrorMessage } from "@/lib/http";
+import { validate } from "@/lib/validation";
 
 type UseRegisterFormOptions = {
-  onSuccess?: (data: AuthResponse) => void;
+  onSuccess?: (data: RegisterResponse) => void;
 };
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^0\d{9}$/;
-const PASSWORD_MIN_LENGTH = 6;
 
 export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {
   const [userName, setUserName] = useState("");
@@ -18,103 +21,56 @@ export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const {
+    errors,
+    setErrors,
+    errorMessage,
+    setErrorMessage,
+    bindField,
+    resetErrors,
+  } = useFieldErrors<RegisterFormValues>();
 
   const { register, isRegistering } = useRegister({
     onSuccess: (data) => {
-      if (__DEV__) console.log("[Register] success");
       setErrorMessage(null);
       onSuccess?.(data);
     },
     onError: (error) => {
-      if (__DEV__) console.log("[Register] error", error);
-      setErrorMessage(
-        getApiErrorMessage(error, "Đăng ký thất bại. Vui lòng thử lại."),
-      );
+      setErrorMessage(getApiErrorMessage(error, REGISTER_ERROR_MESSAGES));
     },
   });
 
-  const clearServerError = () => {
-    if (errorMessage) setErrorMessage(null);
-  };
-  const withClear =
-    (setter: (value: string) => void) => (value: string) => {
-      setter(value);
-      clearServerError();
-    };
-
-  const userNameInvalid = submitted && userName.trim().length === 0;
-  const emailInvalid = submitted && !EMAIL_REGEX.test(email.trim());
-  const phoneInvalid = submitted && !PHONE_REGEX.test(phone.trim());
-  const passwordMissing = submitted && password.length === 0;
-  const passwordTooShort =
-    submitted && password.length > 0 && password.length < PASSWORD_MIN_LENGTH;
-  const confirmPasswordMissing = submitted && confirmPassword.length === 0;
-  const mismatch =
-    submitted && confirmPassword.length > 0 && confirmPassword !== password;
-
   const submit = () => {
-    setSubmitted(true);
-    const userNameOk = userName.trim().length > 0;
-    const emailOk = EMAIL_REGEX.test(email.trim());
-    const phoneOk = PHONE_REGEX.test(phone.trim());
-    const passwordOk = password.length >= PASSWORD_MIN_LENGTH;
-    if (
-      isRegistering ||
-      !userNameOk ||
-      !emailOk ||
-      !phoneOk ||
-      !passwordOk ||
-      password !== confirmPassword
-    ) {
-      if (__DEV__) {
-        console.log("[Register] submit blocked", {
-          isRegistering,
-          userNameOk,
-          emailOk,
-          phoneOk,
-          passwordOk,
-          passwordMatch: password === confirmPassword,
-        });
-      }
+    if (isRegistering) return;
+    const result = validate(registerSchema, {
+      userName,
+      email,
+      phone,
+      password,
+      confirmPassword,
+    });
+    if (!result.success) {
+      setErrors(result.errors);
       return;
     }
-    if (__DEV__) {
-      console.log("[Register] submit", {
-        userName: userName.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-      });
-    }
-    setErrorMessage(null);
-    register({
-      userName: userName.trim(),
-      password,
-      email: email.trim(),
-      phone: phone.trim(),
-    });
+    const { confirmPassword: _confirmPassword, ...payload } = result.data;
+    resetErrors();
+    register(payload);
   };
 
   return {
     userName,
-    setUserName: withClear(setUserName),
+    setUserName: bindField("userName", setUserName),
     email,
-    setEmail: withClear(setEmail),
+    setEmail: bindField("email", setEmail),
     phone,
-    setPhone: withClear(setPhone),
+    setPhone: bindField("phone", setPhone),
     password,
-    setPassword: withClear(setPassword),
+    setPassword: bindField("password", setPassword),
     confirmPassword,
-    setConfirmPassword: withClear(setConfirmPassword),
+    setConfirmPassword: bindField("confirmPassword", setConfirmPassword),
     loading: isRegistering,
-    mismatch,
-    userNameInvalid,
-    emailInvalid,
-    phoneInvalid,
-    passwordMissing,
-    passwordTooShort,
-    confirmPasswordMissing,
+    errors,
     errorMessage,
     submit,
   };

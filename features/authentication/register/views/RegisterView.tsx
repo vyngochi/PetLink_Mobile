@@ -36,13 +36,7 @@ export function RegisterView() {
     confirmPassword,
     setConfirmPassword,
     loading,
-    mismatch,
-    userNameInvalid,
-    emailInvalid,
-    phoneInvalid,
-    passwordMissing,
-    passwordTooShort,
-    confirmPasswordMissing,
+    errors,
     errorMessage,
     submit,
   } = useRegisterForm();
@@ -90,9 +84,7 @@ export function RegisterView() {
                 autoCapitalize="none"
                 autoComplete="username-new"
                 textContentType="username"
-                error={
-                  userNameInvalid ? "Vui lòng nhập tên đăng nhập." : undefined
-                }
+                error={errors.userName}
               />
               <AuthInput
                 label="Địa chỉ email"
@@ -105,7 +97,7 @@ export function RegisterView() {
                 autoCapitalize="none"
                 autoComplete="email"
                 textContentType="emailAddress"
-                error={emailInvalid ? "Email không hợp lệ." : undefined}
+                error={errors.email}
               />
               <AuthInput
                 label="Số điện thoại"
@@ -118,7 +110,7 @@ export function RegisterView() {
                 autoComplete="tel"
                 textContentType="telephoneNumber"
                 maxLength={10}
-                error={phoneInvalid ? "Số điện thoại không hợp lệ." : undefined}
+                error={errors.phone}
               />
               <AuthInput
                 label="Mật khẩu"
@@ -130,13 +122,7 @@ export function RegisterView() {
                 secure
                 autoCapitalize="none"
                 textContentType="newPassword"
-                error={
-                  passwordMissing
-                    ? "Vui lòng nhập mật khẩu."
-                    : passwordTooShort
-                      ? "Mật khẩu phải có ít nhất 6 ký tự."
-                      : undefined
-                }
+                error={errors.password}
               />
               <AuthInput
                 label="Xác nhận mật khẩu"
@@ -148,13 +134,7 @@ export function RegisterView() {
                 secure
                 autoCapitalize="none"
                 textContentType="newPassword"
-                error={
-                  confirmPasswordMissing
-                    ? "Vui lòng xác nhận mật khẩu."
-                    : mismatch
-                      ? "Mật khẩu không khớp."
-                      : undefined
-                }
+                error={errors.confirmPassword}
               />
 
               {errorMessage ? (

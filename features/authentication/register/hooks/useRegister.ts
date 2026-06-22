@@ -1,29 +1,29 @@
 import { useMutation } from "@tanstack/react-query";
 
-import type { RegisterPayload } from "@/features/authentication/register/types";
+import type {
+  RegisterPayload,
+  RegisterResponse,
+} from "@/features/authentication/register/types";
 import { authService } from "@/features/authentication/services/auth.service";
 import { useAuthStore } from "@/features/authentication/stores/auth.store";
-import type { AuthResponse } from "@/features/authentication/types";
 import { unwrapData } from "@/lib/http";
 
 type UseRegisterOptions = {
-  onSuccess?: (data: AuthResponse) => void;
+  onSuccess?: (data: RegisterResponse) => void;
   onError?: (error: unknown) => void;
 };
 
 export const useRegister = ({ onSuccess, onError }: UseRegisterOptions = {}) => {
   const { mutate, isPending, error } = useMutation({
-    mutationFn: async (payload: RegisterPayload): Promise<AuthResponse> => {
+    mutationFn: async (payload: RegisterPayload): Promise<RegisterResponse> => {
       const res = await authService.register(payload);
-      return unwrapData<AuthResponse>(res);
+      return unwrapData<RegisterResponse>(res);
     },
     onSuccess: (data) => {
       useAuthStore.getState().setAuth(data);
       onSuccess?.(data);
     },
-    onError: (err) => {
-      onError?.(err);
-    },
+    onError,
   });
 
   return {
