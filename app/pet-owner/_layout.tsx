@@ -10,6 +10,7 @@ export default function PetOwnerLayout() {
       }}
     >
       <Stack.Screen name="edit-profile" />
+      <Stack.Screen name="provider/[id]" />
     </Stack>
   );
 }
