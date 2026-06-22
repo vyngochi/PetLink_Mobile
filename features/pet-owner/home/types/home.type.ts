@@ -1,9 +1,7 @@
-import { LucideIcon } from 'lucide-react-native';
-
 export interface QuickServiceType {
   id: string;
   name: string;
-  iconName: string; // Used for LucideIcon mapping if needed
+  iconName: string;
   bgColorClass: string;
   textColorClass: string;
 }
