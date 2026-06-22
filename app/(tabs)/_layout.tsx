@@ -51,24 +51,32 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <SearchCheck size={28} color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="booking"
-        options={{
-          title: "Booking",
-          tabBarIcon: ({ color }) => <CalendarHeart size={28} color={color} />,
-          href: isLogged ? "/(tabs)/booking" : null,
-        }}
-      />
-      <Tabs.Screen
-        name="chat"
-        options={{
-          title: "Chat",
-          tabBarIcon: ({ color }) => (
-            <MessageCircleHeart size={28} color={color} />
-          ),
-          href: isLogged ? "/(tabs)/chat" : null,
-        }}
-      />
+      <Tabs.Protected guard={isLogged}>
+        <Tabs.Screen
+          name="booking"
+          options={{
+            title: "Booking",
+            tabBarIcon: ({ color }) => (
+              <CalendarHeart size={28} color={color} />
+            ),
+            href: isLogged ? "/(tabs)/booking" : null,
+          }}
+        />
+      </Tabs.Protected>
+
+      <Tabs.Protected guard={isLogged}>
+        <Tabs.Screen
+          name="chat"
+          options={{
+            title: "Chat",
+            tabBarIcon: ({ color }) => (
+              <MessageCircleHeart size={28} color={color} />
+            ),
+            href: isLogged ? "/(tabs)/chat" : null,
+          }}
+        />
+      </Tabs.Protected>
+
       <Tabs.Screen
         name="profile"
         options={{
