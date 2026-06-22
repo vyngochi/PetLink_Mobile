@@ -1,50 +1,77 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
-import type { RegisterCredentials } from "@/features/authentication/register/types";
+import { useFieldErrors } from "@/features/authentication/hooks/useFieldErrors";
+import { REGISTER_ERROR_MESSAGES } from "@/features/authentication/register/constants/register-error-messages";
+import { useRegister } from "@/features/authentication/register/hooks/useRegister";
+import {
+  registerSchema,
+  type RegisterFormValues,
+} from "@/features/authentication/register/utils/register.schema";
+import type { RegisterResponse } from "@/features/authentication/register/types";
+import { getApiErrorMessage } from "@/lib/http";
+import { validate } from "@/lib/validation";
 
 type UseRegisterFormOptions = {
-  onSubmit?: (credentials: RegisterCredentials) => void;
+  onSuccess?: (data: RegisterResponse) => void;
 };
 
-export function useRegisterForm({ onSubmit }: UseRegisterFormOptions = {}) {
-  const [fullName, setFullName] = useState("");
+export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const {
+    errors,
+    setErrors,
+    errorMessage,
+    setErrorMessage,
+    bindField,
+    resetErrors,
+  } = useFieldErrors<RegisterFormValues>();
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  const mismatch =
-    submitted && confirmPassword.length > 0 && confirmPassword !== password;
+  const { register, isRegistering } = useRegister({
+    onSuccess: (data) => {
+      setErrorMessage(null);
+      onSuccess?.(data);
+    },
+    onError: (error) => {
+      setErrorMessage(getApiErrorMessage(error, REGISTER_ERROR_MESSAGES));
+    },
+  });
 
   const submit = () => {
-    setSubmitted(true);
-    if (loading || password !== confirmPassword || password.length === 0) {
+    if (isRegistering) return;
+    const result = validate(registerSchema, {
+      userName,
+      email,
+      phone,
+      password,
+      confirmPassword,
+    });
+    if (!result.success) {
+      setErrors(result.errors);
       return;
     }
-    setLoading(true);
-    onSubmit?.({ fullName, email, password, confirmPassword });
-    timeoutRef.current = setTimeout(() => setLoading(false), 1500);
+    const { confirmPassword: _confirmPassword, ...payload } = result.data;
+    resetErrors();
+    register(payload);
   };
 
   return {
-    fullName,
-    setFullName,
+    userName,
+    setUserName: bindField("userName", setUserName),
     email,
-    setEmail,
+    setEmail: bindField("email", setEmail),
+    phone,
+    setPhone: bindField("phone", setPhone),
     password,
-    setPassword,
+    setPassword: bindField("password", setPassword),
     confirmPassword,
-    setConfirmPassword,
-    loading,
-    mismatch,
+    setConfirmPassword: bindField("confirmPassword", setConfirmPassword),
+    loading: isRegistering,
+    errors,
+    errorMessage,
     submit,
   };
 }
