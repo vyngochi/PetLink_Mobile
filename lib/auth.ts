@@ -1,15 +1,13 @@
-import { useRouter } from "expo-router";
+import { useShallow } from "zustand/react/shallow";
 
-const router = useRouter();
+import { useAuthStore } from "@/features/authentication/stores/auth.store";
 
-export const withAuth =
-  (action: (...args: any[]) => void) =>
-  (...args: any[]) => {
-    const isLoggedIn = true;
-    if (!isLoggedIn) {
-      router.push({ pathname: "/(auth)/login" });
-      return;
-    }
-
-    return action(...args);
-  };
+export const useAuth = () =>
+  useAuthStore(
+    useShallow((s) => ({
+      isAuthenticated: s.isAuthenticated,
+      accessToken: s.accessToken,
+      hydrating: s.hydrating,
+      logout: s.logout,
+    })),
+  );

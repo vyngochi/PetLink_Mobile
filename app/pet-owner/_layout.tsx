@@ -1,7 +1,10 @@
+import { useAuthStore } from "@/features/authentication/stores/auth.store";
 import { Stack } from "expo-router";
 import React from "react";
 
 export default function PetOwnerLayout() {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <Stack
       screenOptions={{
@@ -9,7 +12,10 @@ export default function PetOwnerLayout() {
         contentStyle: { backgroundColor: "#f8f9ff" },
       }}
     >
-      <Stack.Screen name="edit-profile" />
+      <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen name="edit-profile" />
+      </Stack.Protected>
+
       <Stack.Screen name="provider/[id]" />
     </Stack>
   );

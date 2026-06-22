@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { Clock } from 'lucide-react-native';
-import { ProviderServicePreview } from '../../provider-list/types/provider.type';
+import { ProviderServicePreview } from '../../../provider-list/types/provider.type';
 
 interface ServiceCardProps {
   service: ProviderServicePreview;

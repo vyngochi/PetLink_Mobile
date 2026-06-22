@@ -17,6 +17,15 @@ type AuthInputProps = TextInputProps & {
   secure?: boolean;
   error?: string;
   fillClassName?: string;
+  vietnamese?: boolean;
+};
+
+const vietnameseInputProps: TextInputProps = {
+  autoCorrect: false,
+  spellCheck: false,
+  autoComplete: "off",
+  keyboardType: "default",
+  importantForAutofill: "no",
 };
 
 export function AuthInput({
@@ -25,6 +34,7 @@ export function AuthInput({
   secure = false,
   error,
   fillClassName = "bg-card",
+  vietnamese = false,
   ...inputProps
 }: AuthInputProps) {
   const [focused, setFocused] = useState(false);
@@ -71,6 +81,7 @@ export function AuthInput({
             inputProps.onBlur?.(e);
           }}
           {...inputProps}
+          {...(vietnamese ? vietnameseInputProps : null)}
         />
         {secure ? (
           <Pressable
