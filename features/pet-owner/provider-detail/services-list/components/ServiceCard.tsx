@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
-import { Clock } from 'lucide-react-native';
-import { ProviderServicePreview } from '../../../provider-list/types/provider.type';
+import { Clock } from "lucide-react-native";
+import React from "react";
+import { Image, Pressable, Text, View } from "react-native";
+import { ProviderServicePreview } from "../../../provider-list/types/provider.type";
 
 interface ServiceCardProps {
   service: ProviderServicePreview;
@@ -10,9 +10,9 @@ interface ServiceCardProps {
 
 export function ServiceCard({ service, onPress }: ServiceCardProps) {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(amount);
   };
 
@@ -28,13 +28,19 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
           resizeMode="cover"
         />
       </View>
-      <View className="p-3">
-        <Text className="mb-1 text-base text-foreground font-mbold line-clamp-2" numberOfLines={2}>
+      <View className="flex-1 p-3">
+        <Text
+          className="mb-1 text-base text-foreground font-mbold line-clamp-2 min-h-12"
+          numberOfLines={2}
+        >
           {service.name}
         </Text>
-        
+
         {service.description && (
-          <Text className="mb-2 text-xs text-muted-foreground font-default line-clamp-2" numberOfLines={2}>
+          <Text
+            className="mb-2 text-xs text-muted-foreground font-default line-clamp-2"
+            numberOfLines={2}
+          >
             {service.description}
           </Text>
         )}
@@ -46,7 +52,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
           </Text>
         </View>
 
-        <Text className="text-sm text-primary font-mbold">
+        <Text className="mt-auto text-sm text-primary font-mbold">
           {formatCurrency(service.price)}
         </Text>
       </View>
