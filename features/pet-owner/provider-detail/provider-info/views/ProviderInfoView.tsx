@@ -1,11 +1,11 @@
-import React from 'react';
-import { View, Text, ScrollView, Pressable, Image } from 'react-native';
-import { useRouter } from 'expo-router';
-import { ChevronLeft } from 'lucide-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ProviderAboutSection } from '../components/ProviderAboutSection';
-import { ProviderReviewsSection } from '../components/ProviderReviewsSection';
-import { MOCK_PROVIDERS } from '../../../provider-list/constants/provider-mock';
+import { useRouter } from "expo-router";
+import { ChevronLeft } from "lucide-react-native";
+import React from "react";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { MOCK_PROVIDERS } from "../../../provider-list/constants/provider-mock";
+import { ProviderAboutSection } from "../components/ProviderAboutSection";
+import { ProviderReviewsSection } from "../components/ProviderReviewsSection";
 
 interface ProviderInfoViewProps {
   providerId: string;
@@ -14,13 +14,18 @@ interface ProviderInfoViewProps {
 export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
   const router = useRouter();
 
-  const provider = MOCK_PROVIDERS.find(p => p.id === providerId);
+  const provider = MOCK_PROVIDERS.find((p) => p.id === providerId);
 
   if (!provider) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
-        <Text className="text-lg text-muted-foreground font-mbold">Không tìm thấy thông tin cơ sở</Text>
-        <Pressable onPress={() => router.back()} className="mt-4 px-4 py-2 bg-primary rounded-full">
+      <View className="items-center justify-center flex-1 bg-background">
+        <Text className="text-lg text-muted-foreground font-mbold">
+          Không tìm thấy thông tin cơ sở
+        </Text>
+        <Pressable
+          onPress={() => router.back()}
+          className="px-4 py-2 mt-4 rounded-full bg-primary"
+        >
           <Text className="text-white font-mbold">Quay lại</Text>
         </Pressable>
       </View>
@@ -29,20 +34,22 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
 
   return (
     <View className="flex-1 bg-background">
-      {/* Header */}
-      <SafeAreaView edges={['top']} className="bg-surface-container-lowest border-b border-border/50">
-        <View className="flex-row items-center px-4 py-3 gap-3">
-          <Pressable 
+      <SafeAreaView
+        edges={["top"]}
+        className="border-b bg-surface-container-lowest border-border/50"
+      >
+        <View className="flex-row items-center gap-3 px-4 py-3">
+          <Pressable
             onPress={() => router.back()}
-            className="w-10 h-10 bg-card rounded-full flex items-center justify-center border border-border/50 active:bg-muted"
+            className="flex items-center justify-center w-10 h-10 border rounded-full bg-card border-border/50 active:bg-muted"
           >
             <ChevronLeft size={24} className="text-foreground" />
           </Pressable>
-          
-          <View className="flex-1 flex-row items-center gap-3">
-            <Image 
-              source={{ uri: provider.avatarUrl }} 
-              className="w-10 h-10 rounded-full border border-border/50"
+
+          <View className="flex-row items-center flex-1 gap-3">
+            <Image
+              source={{ uri: provider.avatarUrl }}
+              className="w-10 h-10 border rounded-full border-border/50"
               resizeMode="cover"
             />
             <View>
@@ -57,15 +64,14 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
         </View>
       </SafeAreaView>
 
-      <ScrollView 
+      <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         <ProviderAboutSection provider={provider} />
-        
-        {/* Divider */}
-        <View className="h-2 bg-muted/30 w-full" />
-        
+
+        <View className="w-full h-2 bg-muted/30" />
+
         <ProviderReviewsSection providerId={providerId} />
       </ScrollView>
     </View>
