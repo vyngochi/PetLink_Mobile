@@ -8,9 +8,28 @@ export function unwrapData<T>(res: AxiosResponse): T {
   return body as T;
 }
 
-export function getApiErrorMessage(error: unknown, fallback: string): string {
+export type ApiErrorMessageOptions = {
+  fallback: string;
+  network?: string;
+  byStatus?: Record<number, string>;
+};
+
+export function getApiErrorMessage(
+  error: unknown,
+  options: string | ApiErrorMessageOptions,
+): string {
+  const config: ApiErrorMessageOptions =
+    typeof options === "string" ? { fallback: options } : options;
+
   if (axios.isAxiosError(error)) {
-    const data = error.response?.data;
+    if (!error.response) {
+      return config.network ?? config.fallback;
+    }
+
+    const byStatus = config.byStatus?.[error.response.status];
+    if (byStatus) return byStatus;
+
+    const data = error.response.data;
     if (typeof data === "string" && data.trim()) return data;
 
     const envelope = data as
@@ -26,5 +45,5 @@ export function getApiErrorMessage(error: unknown, fallback: string): string {
       if (first) return first as string;
     }
   }
-  return fallback;
+  return config.fallback;
 }
