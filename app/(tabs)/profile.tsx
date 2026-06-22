@@ -4,7 +4,7 @@ import { ProfileView } from "@/features/pet-owner/profile/views/ProfileView";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function profile() {
+export default function Profile() {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
