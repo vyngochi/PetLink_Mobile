@@ -6,7 +6,7 @@ import { useRegister } from "@/features/authentication/register/hooks/useRegiste
 import {
   registerSchema,
   type RegisterFormValues,
-} from "@/features/authentication/register/schemas/register.schema";
+} from "@/features/authentication/register/utils/register.schema";
 import type { RegisterResponse } from "@/features/authentication/register/types";
 import { getApiErrorMessage } from "@/lib/http";
 import { validate } from "@/lib/validation";

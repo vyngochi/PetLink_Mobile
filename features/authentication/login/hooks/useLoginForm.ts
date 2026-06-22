@@ -6,7 +6,7 @@ import { useLogin } from "@/features/authentication/login/hooks/useLogin";
 import {
   loginSchema,
   type LoginFormValues,
-} from "@/features/authentication/login/schemas/login.schema";
+} from "@/features/authentication/login/utils/login.schema";
 import type { LoginResponse } from "@/features/authentication/login/types";
 import { getApiErrorMessage } from "@/lib/http";
 import { validate } from "@/lib/validation";
