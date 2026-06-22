@@ -1,7 +1,7 @@
-import * as LucideIcons from 'lucide-react-native';
-import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
-import { QuickServiceType } from '../../../types/home.type';
+import * as LucideIcons from "lucide-react-native";
+import React from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { QuickServiceType } from "../types/home.type";
 
 export function QuickServiceItem({ service }: { service: QuickServiceType }) {
   const Icon = (LucideIcons as any)[service.iconName] || LucideIcons.HelpCircle;
@@ -13,12 +13,18 @@ export function QuickServiceItem({ service }: { service: QuickServiceType }) {
       >
         <Icon className={service.textColorClass} size={32} />
       </View>
-      <Text className="font-label-sm text-xs text-muted-foreground">{service.name}</Text>
+      <Text className="font-label-sm text-xs text-muted-foreground">
+        {service.name}
+      </Text>
     </Pressable>
   );
 }
 
-export function QuickServicesSection({ services }: { services: QuickServiceType[] }) {
+export function QuickServicesSection({
+  services,
+}: {
+  services: QuickServiceType[];
+}) {
   return (
     <View className="mt-6">
       <Text className="font-headline-sm text-lg text-foreground mb-4 font-mbold">

@@ -7,7 +7,7 @@ import { Text, View } from "react-native";
 export default function HomeLeftHeader() {
   const router = useRouter();
   const isLogged = false;
-  const url = "../../../../../assets/images/PetLink/PetLink.png";
+  const url = "./../../../../assets/images/PetLink/PetLink.png";
   return (
     <View>
       {!isLogged ? (

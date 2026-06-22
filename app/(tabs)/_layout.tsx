@@ -1,7 +1,7 @@
 import { HapticTab } from "@/components/haptic-tab";
 import CommonHeader from "@/components/header-view";
 import { Colors } from "@/constants/theme";
-import HomeLeftHeader from "@/features/pet-owner/main/home/components/HomeLeftHeader";
+import HomeLeftHeader from "@/features/pet-owner/home/components/HomeLeftHeader";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Tabs } from "expo-router";
 import {
@@ -44,9 +44,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="services"
+        name="providers"
         options={{
-          title: "Services",
+          title: "Providers",
           tabBarIcon: ({ color }) => <SearchCheck size={28} color={color} />,
         }}
       />

@@ -1,7 +1,7 @@
-import { ArrowRight } from 'lucide-react-native';
-import React from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
-import { PetCareTipType } from '../../../types/home.type';
+import { ArrowRight } from "lucide-react-native";
+import React from "react";
+import { Image, Pressable, Text, View } from "react-native";
+import { PetCareTipType } from "../types/home.type";
 
 export function TipCard({ tip }: { tip: PetCareTipType }) {
   return (
@@ -15,9 +15,13 @@ export function TipCard({ tip }: { tip: PetCareTipType }) {
       </View>
       <View className="p-6">
         <View className="bg-primary/10 self-start px-3 py-1 rounded-full mb-3">
-          <Text className="text-primary text-xs font-mbold">{tip.category}</Text>
+          <Text className="text-primary text-xs font-mbold">
+            {tip.category}
+          </Text>
         </View>
-        <Text className="font-mbold text-lg text-foreground mb-2">{tip.title}</Text>
+        <Text className="font-mbold text-lg text-foreground mb-2">
+          {tip.title}
+        </Text>
         <Text className="font-default text-sm text-muted-foreground line-clamp-2">
           {tip.excerpt}
         </Text>
@@ -33,7 +37,9 @@ export function TipCard({ tip }: { tip: PetCareTipType }) {
 export function PetTipsSection({ tips }: { tips: PetCareTipType[] }) {
   return (
     <View className="mt-8 mb-10">
-      <Text className="font-mbold text-xl text-foreground mb-4">Mẹo chăm sóc thú cưng</Text>
+      <Text className="font-mbold text-xl text-foreground mb-4">
+        Mẹo chăm sóc thú cưng
+      </Text>
       <View className="flex-col gap-4">
         {tips.map((tip) => (
           <TipCard key={tip.id} tip={tip} />
