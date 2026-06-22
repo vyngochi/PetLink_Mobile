@@ -20,7 +20,7 @@ export function ProfileView() {
 
   const handleLogout = () => {
     logout();
-    router.replace("/login");
+    router.replace("/(tabs)");
   };
 
   const handleMenuPress = (item: ProfileMenuItem) => {
