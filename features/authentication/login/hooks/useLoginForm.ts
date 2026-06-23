@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useFieldErrors } from "@/features/authentication/hooks/useFieldErrors";
+import { useFieldErrors } from "@/features/authentication/shared/hooks/useFieldErrors";
 import { LOGIN_ERROR_MESSAGES } from "@/features/authentication/login/constants/login-error-messages";
 import { useLogin } from "@/features/authentication/login/hooks/useLogin";
 import {

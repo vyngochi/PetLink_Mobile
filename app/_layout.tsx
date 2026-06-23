@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import "@/global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useLoadFonts } from "@/hooks/useLoadFonts";

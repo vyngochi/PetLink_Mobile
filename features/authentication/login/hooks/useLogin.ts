@@ -4,8 +4,8 @@ import type {
   LoginPayload,
   LoginResponse,
 } from "@/features/authentication/login/types";
-import { authService } from "@/features/authentication/services/auth.service";
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { authService } from "@/features/authentication/shared/services/auth.service";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import { unwrapData } from "@/lib/http";
 
 type UseLoginOptions = {

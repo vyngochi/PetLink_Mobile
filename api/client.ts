@@ -1,7 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
-import type { AuthTokens } from "@/features/authentication/types";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
+import type { AuthTokens } from "@/features/authentication/shared/types";
 import { unwrapData } from "@/lib/http";
 
 const api = axios.create({

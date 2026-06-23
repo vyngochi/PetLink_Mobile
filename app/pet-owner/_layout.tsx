@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import { Stack } from "expo-router";
 import React from "react";
 

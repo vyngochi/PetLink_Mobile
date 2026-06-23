@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
 
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 
 export const useAuth = () =>
   useAuthStore(

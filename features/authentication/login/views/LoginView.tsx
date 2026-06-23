@@ -18,7 +18,7 @@ import {
   AuthInput,
   GoogleButton,
   PrimaryButton,
-} from "@/features/authentication/components";
+} from "@/features/authentication/shared/components";
 import { useLoginForm } from "@/features/authentication/login/hooks/useLoginForm";
 
 export function LoginView() {

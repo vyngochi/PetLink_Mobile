@@ -1,4 +1,4 @@
-import type { AuthTokens } from "@/features/authentication/types";
+import type { AuthTokens } from "@/features/authentication/shared/types";
 
 export type LoginPayload = {
   userName: string;
