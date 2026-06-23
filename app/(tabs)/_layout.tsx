@@ -38,7 +38,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Trang chủ",
           headerShown: true,
           tabBarIcon: ({ color }) => <House size={28} color={color} />,
           header: () => <CommonHeader RightContent={<HomeLeftHeader />} />,
@@ -47,7 +47,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="providers"
         options={{
-          title: "Providers",
+          title: "Dịch vụ",
           tabBarIcon: ({ color }) => <SearchCheck size={28} color={color} />,
         }}
       />
@@ -55,7 +55,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="booking"
           options={{
-            title: "Booking",
+            title: "Đặt lịch",
             tabBarIcon: ({ color }) => (
               <CalendarHeart size={28} color={color} />
             ),
@@ -68,7 +68,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="chat"
           options={{
-            title: "Chat",
+            title: "Tin nhắn",
             tabBarIcon: ({ color }) => (
               <MessageCircleHeart size={28} color={color} />
             ),
@@ -80,7 +80,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "Tôi",
           tabBarIcon: ({ color }) => (
             <CircleUserRound size={28} color={color} />
           ),
