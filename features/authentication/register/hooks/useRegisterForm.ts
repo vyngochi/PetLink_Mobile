@@ -7,12 +7,12 @@ import {
   registerSchema,
   type RegisterFormValues,
 } from "@/features/authentication/register/utils/register.schema";
-import type { RegisterResponse } from "@/features/authentication/register/types";
+import type { User } from "@/features/authentication/shared/types";
 import { getApiErrorMessage } from "@/lib/http";
 import { validate } from "@/lib/validation";
 
 type UseRegisterFormOptions = {
-  onSuccess?: (data: RegisterResponse) => void;
+  onSuccess?: (user: User) => void;
 };
 
 export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {

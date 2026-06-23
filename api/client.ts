@@ -53,7 +53,7 @@ api.interceptors.response.use(
     const original = error.config as
       | (InternalAxiosRequestConfig & { _retry?: boolean })
       | undefined;
-    const { refreshToken, setAuth, logout } = useAuthStore.getState();
+    const { refreshToken, setTokens, logout } = useAuthStore.getState();
 
     const is401 = error.response?.status === 401;
     const onAuthRoute = isAuthRoute(original?.url);
@@ -88,7 +88,7 @@ api.interceptors.response.use(
     isRefreshing = true;
     try {
       const tokens = await requestRefreshedTokens(refreshToken as string);
-      setAuth(tokens);
+      setTokens(tokens);
       flushQueue(null, tokens.accessToken);
       original.headers.Authorization = `Bearer ${tokens.accessToken}`;
       return api(original);

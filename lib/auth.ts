@@ -7,6 +7,7 @@ export const useAuth = () =>
     useShallow((s) => ({
       isAuthenticated: s.isAuthenticated,
       accessToken: s.accessToken,
+      user: s.user,
       hydrating: s.hydrating,
       logout: s.logout,
     })),

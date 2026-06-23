@@ -10,4 +10,8 @@ export const authService = {
   register: (payload: RegisterPayload) => {
     return api.post("/auth/register", payload);
   },
+
+  getMe: () => {
+    return api.get("/auth/get-info");
+  },
 };
