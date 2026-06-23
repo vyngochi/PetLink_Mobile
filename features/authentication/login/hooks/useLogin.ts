@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 
+import { toast } from "@/components/toast";
 import type {
   LoginPayload,
   LoginResponse,
@@ -7,7 +8,6 @@ import type {
 import { authService } from "@/features/authentication/shared/services/auth.service";
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import type { User } from "@/features/authentication/shared/types";
-import { toast } from "@/components/toast";
 import { unwrapData } from "@/lib/http";
 
 type UseLoginOptions = {
@@ -31,7 +31,10 @@ export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
     },
     onSuccess: (user) => {
       useAuthStore.getState().setUser(user);
-      toast.success("Đăng nhập thành công");
+      toast.success("Đăng nhập thành công", {
+        position: "bottom",
+        duration: 600,
+      });
       onSuccess?.(user);
     },
     onError,

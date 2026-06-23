@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 
+import { toast } from "@/components/toast";
 import type {
   RegisterPayload,
   RegisterResponse,
@@ -7,7 +8,6 @@ import type {
 import { authService } from "@/features/authentication/shared/services/auth.service";
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import type { User } from "@/features/authentication/shared/types";
-import { toast } from "@/components/toast";
 import { unwrapData } from "@/lib/http";
 
 type UseRegisterOptions = {
@@ -15,7 +15,10 @@ type UseRegisterOptions = {
   onError?: (error: unknown) => void;
 };
 
-export const useRegister = ({ onSuccess, onError }: UseRegisterOptions = {}) => {
+export const useRegister = ({
+  onSuccess,
+  onError,
+}: UseRegisterOptions = {}) => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: async (payload: RegisterPayload): Promise<User> => {
       const registerRes = await authService.register(payload);
@@ -31,7 +34,10 @@ export const useRegister = ({ onSuccess, onError }: UseRegisterOptions = {}) => 
     },
     onSuccess: (user) => {
       useAuthStore.getState().setUser(user);
-      toast.success("Đăng ký thành công");
+      toast.success("Đăng ký thành công", {
+        position: "bottom",
+        duration: 600,
+      });
       onSuccess?.(user);
     },
     onError,
