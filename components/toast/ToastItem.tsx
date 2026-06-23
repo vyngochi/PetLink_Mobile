@@ -6,7 +6,12 @@ import {
 } from "lucide-react-native";
 import React, { useEffect } from "react";
 import { Pressable, Text } from "react-native";
-import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  FadeInUp,
+  FadeOutDown,
+  FadeOutUp,
+} from "react-native-reanimated";
 
 import {
   useToastStore,
@@ -31,6 +36,7 @@ export function ToastItem({ toast }: ToastItemProps) {
   const dismiss = useToastStore((s) => s.dismiss);
   const config = variantConfig[toast.variant];
   const Icon = config.icon;
+  const isBottom = toast.position === "bottom";
 
   useEffect(() => {
     const timer = setTimeout(() => dismiss(toast.id), toast.duration);
@@ -39,9 +45,9 @@ export function ToastItem({ toast }: ToastItemProps) {
 
   return (
     <Animated.View
-      entering={FadeInDown.duration(220)}
-      exiting={FadeOutUp.duration(180)}
-      className="mb-2"
+      entering={(isBottom ? FadeInUp : FadeInDown).duration(220)}
+      exiting={(isBottom ? FadeOutDown : FadeOutUp).duration(180)}
+      className={isBottom ? "mt-2" : "mb-2"}
       style={{
         shadowColor: "#0b1c30",
         shadowOffset: { width: 0, height: 4 },

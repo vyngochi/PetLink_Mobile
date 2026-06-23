@@ -11,15 +11,33 @@ export function Toaster() {
 
   if (toasts.length === 0) return null;
 
+  const topToasts = toasts.filter((t) => t.position === "top");
+  const bottomToasts = toasts.filter((t) => t.position === "bottom");
+
   return (
-    <View
-      pointerEvents="box-none"
-      className="absolute left-0 right-0 z-50 px-4"
-      style={{ top: insets.top + 8 }}
-    >
-      {toasts.map((toast) => (
-        <ToastItem key={toast.id} toast={toast} />
-      ))}
-    </View>
+    <>
+      {topToasts.length > 0 && (
+        <View
+          pointerEvents="box-none"
+          className="absolute left-0 right-0 z-50 px-4"
+          style={{ top: insets.top + 8 }}
+        >
+          {topToasts.map((toast) => (
+            <ToastItem key={toast.id} toast={toast} />
+          ))}
+        </View>
+      )}
+      {bottomToasts.length > 0 && (
+        <View
+          pointerEvents="box-none"
+          className="absolute left-0 right-0 z-50 px-4"
+          style={{ bottom: insets.bottom + 8 }}
+        >
+          {bottomToasts.map((toast) => (
+            <ToastItem key={toast.id} toast={toast} />
+          ))}
+        </View>
+      )}
+    </>
   );
 }
