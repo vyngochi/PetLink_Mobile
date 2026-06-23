@@ -3,12 +3,20 @@ import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ProviderServicePreview } from "../../../provider-list/types/provider.type";
 
+import { Href, useRouter } from 'expo-router';
+
 interface ServiceCardProps {
   service: ProviderServicePreview;
   onPress?: () => void;
 }
 
 export function ServiceCard({ service, onPress }: ServiceCardProps) {
+  const router = useRouter();
+
+  const handlePress = onPress || (() => {
+    router.push(`/pet-owner/service/${service.id}` as Href);
+  });
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -18,7 +26,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       className="flex-1 m-2 overflow-hidden border shadow-sm bg-card rounded-2xl border-border/50 active:opacity-90"
     >
       <View className="w-full h-32 bg-muted">
