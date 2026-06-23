@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 
-import { authColors } from "@/features/authentication/constants/colors";
+import { authColors } from "@/features/authentication/shared/constants/colors";
 import { cn } from "@/lib/utils";
 
 type AuthInputProps = TextInputProps & {

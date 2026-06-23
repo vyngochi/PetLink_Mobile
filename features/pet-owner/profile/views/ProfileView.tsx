@@ -1,8 +1,9 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 
+import { toast } from "@/components/toast";
 import {
   LogoutButton,
   ProfileInfoCard,
@@ -20,6 +21,10 @@ export function ProfileView() {
 
   const handleLogout = () => {
     logout();
+    toast.success("Đăng xuất thành công", {
+      position: "bottom",
+      duration: 600,
+    });
     router.replace("/(tabs)");
   };
 
