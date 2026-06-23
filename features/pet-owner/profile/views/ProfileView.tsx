@@ -11,6 +11,7 @@ import {
 } from "@/features/pet-owner/profile/components";
 import { useProfile } from "@/features/pet-owner/profile/hooks/useProfile";
 import type { ProfileMenuItem } from "@/features/pet-owner/profile/types";
+import { toast } from "@/components/toast";
 import { useAuth } from "@/lib/auth";
 
 export function ProfileView() {
@@ -20,6 +21,7 @@ export function ProfileView() {
 
   const handleLogout = () => {
     logout();
+    toast.success("Đăng xuất thành công");
     router.replace("/(tabs)");
   };
 
