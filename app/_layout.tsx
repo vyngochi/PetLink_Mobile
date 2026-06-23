@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import "@/global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useLoadFonts } from "@/hooks/useLoadFonts";
@@ -9,6 +9,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
+import { Toaster } from "@/components/toast";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -58,6 +59,7 @@ export default function RootLayout() {
         </Stack>
         <StatusBar style="auto" />
         <PortalHost />
+        <Toaster />
       </ThemeProvider>
     </QueryProvider>
   );

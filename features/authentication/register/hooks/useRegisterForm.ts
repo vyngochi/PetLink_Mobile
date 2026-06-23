@@ -1,18 +1,18 @@
 import { useState } from "react";
 
-import { useFieldErrors } from "@/features/authentication/hooks/useFieldErrors";
+import { useFieldErrors } from "@/features/authentication/shared/hooks/useFieldErrors";
 import { REGISTER_ERROR_MESSAGES } from "@/features/authentication/register/constants/register-error-messages";
 import { useRegister } from "@/features/authentication/register/hooks/useRegister";
 import {
   registerSchema,
   type RegisterFormValues,
 } from "@/features/authentication/register/utils/register.schema";
-import type { RegisterResponse } from "@/features/authentication/register/types";
+import type { User } from "@/features/authentication/shared/types";
 import { getApiErrorMessage } from "@/lib/http";
 import { validate } from "@/lib/validation";
 
 type UseRegisterFormOptions = {
-  onSuccess?: (data: RegisterResponse) => void;
+  onSuccess?: (user: User) => void;
 };
 
 export function useRegisterForm({ onSuccess }: UseRegisterFormOptions = {}) {

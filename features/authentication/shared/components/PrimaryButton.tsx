@@ -1,7 +1,7 @@
 import React from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
-import { authColors } from "@/features/authentication/constants/colors";
+import { authColors } from "@/features/authentication/shared/constants/colors";
 
 type PrimaryButtonProps = {
   label: string;

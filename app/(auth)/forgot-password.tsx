@@ -4,7 +4,7 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AuthBackground, AuthHeader } from "@/features/authentication/components";
+import { AuthBackground, AuthHeader } from "@/features/authentication/shared/components";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
