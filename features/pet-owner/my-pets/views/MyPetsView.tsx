@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useRouter, type Href } from "expo-router";
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,10 +9,15 @@ import {
   PetCard,
 } from "@/features/pet-owner/my-pets/components";
 import { usePets } from "@/features/pet-owner/my-pets/hooks/usePets";
+import type { Pet } from "@/features/pet-owner/my-pets/types";
 
 export function MyPetsView() {
   const router = useRouter();
   const { pets } = usePets();
+
+  const handleViewProfile = (pet: Pet) => {
+    router.push(`/pet-owner/pet/${pet.id}` as Href);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -26,7 +31,11 @@ export function MyPetsView() {
       >
         <View className="gap-6">
           {pets.map((pet) => (
-            <PetCard key={pet.id} pet={pet} />
+            <PetCard
+              key={pet.id}
+              pet={pet}
+              onViewProfile={handleViewProfile}
+            />
           ))}
           <AddPetButton />
         </View>

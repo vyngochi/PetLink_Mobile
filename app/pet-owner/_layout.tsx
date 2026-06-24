@@ -15,6 +15,7 @@ export default function PetOwnerLayout() {
       <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="edit-profile" />
         <Stack.Screen name="my-pets" />
+        <Stack.Screen name="pet/[id]" />
       </Stack.Protected>
 
       <Stack.Screen name="provider/[id]" />
