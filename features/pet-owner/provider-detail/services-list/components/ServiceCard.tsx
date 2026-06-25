@@ -3,19 +3,21 @@ import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ProviderServicePreview } from "../../../provider-list/types/provider.type";
 
-import { Href, useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 
 interface ServiceCardProps {
   service: ProviderServicePreview;
-  onPress?: () => void;
 }
 
-export function ServiceCard({ service, onPress }: ServiceCardProps) {
+export function ServiceCard({ service }: ServiceCardProps) {
   const router = useRouter();
 
-  const handlePress = onPress || (() => {
-    router.push(`/pet-owner/service/${service.id}` as Href);
-  });
+  const handlePress = () => {
+    router.push({
+      pathname: "/pet-owner/service/[id]",
+      params: { id: service.id },
+    });
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {

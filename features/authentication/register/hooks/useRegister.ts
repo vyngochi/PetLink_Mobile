@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@/components/toast";
 import type {
@@ -9,36 +9,34 @@ import { authService } from "@/features/authentication/shared/services/auth.serv
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import type { User } from "@/features/authentication/shared/types";
 import { unwrapData } from "@/lib/http";
+import { useIntendedRoute } from "@/stores/useIntendedRoute";
+import { router } from "expo-router";
 
 type UseRegisterOptions = {
   onSuccess?: (user: User) => void;
   onError?: (error: unknown) => void;
 };
 
-export const useRegister = ({
-  onSuccess,
-  onError,
-}: UseRegisterOptions = {}) => {
+export const useRegister = ({ onError }: UseRegisterOptions = {}) => {
+  const queryClient = useQueryClient();
   const { mutate, isPending, error } = useMutation({
-    mutationFn: async (payload: RegisterPayload): Promise<User> => {
+    mutationFn: async (payload: RegisterPayload) => {
       const registerRes = await authService.register(payload);
-      const tokens = unwrapData<RegisterResponse>(registerRes);
-      useAuthStore.getState().setTokens(tokens);
-      try {
-        const meRes = await authService.getMe();
-        return unwrapData<User>(meRes);
-      } catch (meError) {
-        useAuthStore.getState().logout();
-        throw meError;
-      }
+      return unwrapData<RegisterResponse>(registerRes);
     },
-    onSuccess: (user) => {
-      useAuthStore.getState().setUser(user);
+    onSuccess: async (data) => {
+      useAuthStore.getState().setTokens(data);
+
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+
       toast.success("Đăng ký thành công", {
         position: "bottom",
         duration: 600,
       });
-      onSuccess?.(user);
+
+      const intendedRoute = useIntendedRoute.getState().intendedRoute;
+      intendedRoute && router.replace(intendedRoute);
+      useIntendedRoute.getState().setIntendedRoute(null);
     },
     onError,
   });

@@ -1,17 +1,19 @@
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
-import { Route, useRouter } from "expo-router";
+import { useIntendedRoute } from "@/stores/useIntendedRoute";
+import { Href, useRouter } from "expo-router";
 
 interface protectRouteFunc {
   callback: Function | undefined;
-  fallback: Route;
-  params?: any;
+  redirect: () => void;
+  intendedRoute?: Href;
 }
 
 /**
  * Kiểm tra người dùng đã đăng nhập hay chưa trước khi thực hiện callback.
  *
  * @param callback Hàm sẽ được thực thi khi người dùng đã xác thực.
- * @param fallback Route chuyển hướng tới khi chưa xác thực.
+ * @param redirect Hàm chuyển hướng route sang login khi chưa xác thực.
+ * @param intendedRoute Props lưu route trước khi chuyển hướng
  *
  * @example
  * const protectedRoute = useProtectedRoute();
@@ -25,9 +27,16 @@ export const useProtectedRoute = () => {
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
 
-  const protectedRoute = ({ callback, fallback, params }: protectRouteFunc) => {
+  const protectedRoute = ({
+    callback,
+    redirect,
+    intendedRoute,
+  }: protectRouteFunc) => {
     if (!isAuthenticated) {
-      router.replace(fallback, params);
+      useIntendedRoute
+        .getState()
+        .setIntendedRoute(intendedRoute ? intendedRoute : null);
+      redirect();
       return;
     }
 

@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@/components/toast";
 import type {
@@ -9,33 +9,35 @@ import { authService } from "@/features/authentication/shared/services/auth.serv
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import type { User } from "@/features/authentication/shared/types";
 import { unwrapData } from "@/lib/http";
+import { useIntendedRoute } from "@/stores/useIntendedRoute";
+import { router } from "expo-router";
 
 type UseLoginOptions = {
   onSuccess?: (user: User) => void;
   onError?: (error: unknown) => void;
 };
 
-export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
+export const useLogin = ({ onError }: UseLoginOptions = {}) => {
+  const queryClient = useQueryClient();
   const { mutate, isPending, error } = useMutation({
-    mutationFn: async (payload: LoginPayload): Promise<User> => {
+    mutationFn: async (payload: LoginPayload) => {
       const loginRes = await authService.login(payload);
-      const tokens = unwrapData<LoginResponse>(loginRes);
-      useAuthStore.getState().setTokens(tokens);
-      try {
-        const meRes = await authService.getMe();
-        return unwrapData<User>(meRes);
-      } catch (meError) {
-        useAuthStore.getState().logout();
-        throw meError;
-      }
+      return unwrapData<LoginResponse>(loginRes);
     },
-    onSuccess: (user) => {
-      useAuthStore.getState().setUser(user);
+    onSuccess: async (data) => {
+      useAuthStore.getState().setTokens(data);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["me"],
+      });
+
       toast.success("Đăng nhập thành công", {
         position: "bottom",
         duration: 600,
       });
-      onSuccess?.(user);
+      const intendedRoute = useIntendedRoute.getState().intendedRoute;
+      intendedRoute && router.replace(intendedRoute);
+      useIntendedRoute.getState().setIntendedRoute(null);
     },
     onError,
   });
