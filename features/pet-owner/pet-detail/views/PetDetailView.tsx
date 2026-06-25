@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useRouter, type Href } from "expo-router";
+import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 import {
@@ -21,7 +21,6 @@ type PetDetailViewProps = {
 export function PetDetailView({ petId }: PetDetailViewProps) {
   const router = useRouter();
   const { pet } = usePetDetail(petId);
-  const [isFavorite, setIsFavorite] = useState(false);
 
   if (!pet) {
     return (
@@ -66,14 +65,12 @@ export function PetDetailView({ petId }: PetDetailViewProps) {
         </View>
       </ScrollView>
 
-      <PetDetailTopNav
-        isFavorite={isFavorite}
-        onBack={() => router.back()}
-        onToggleFavorite={() => setIsFavorite((prev) => !prev)}
-      />
+      <PetDetailTopNav onBack={() => router.back()} />
 
       <PetDetailFooter
-        onEditProfile={() => router.push("/pet-owner/edit-profile")}
+        onEditProfile={() =>
+          router.push(`/pet-owner/pet/${pet.id}/edit` as Href)
+        }
         onBookVet={() => router.push("/(tabs)/booking")}
       />
     </View>

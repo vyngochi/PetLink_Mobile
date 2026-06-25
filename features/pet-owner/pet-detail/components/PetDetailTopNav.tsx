@@ -1,21 +1,15 @@
 import React from "react";
 import { Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft, Heart } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 
 import { Colors } from "@/constants/theme";
 
 type PetDetailTopNavProps = {
-  isFavorite: boolean;
   onBack?: () => void;
-  onToggleFavorite?: () => void;
 };
 
-export function PetDetailTopNav({
-  isFavorite,
-  onBack,
-  onToggleFavorite,
-}: PetDetailTopNavProps) {
+export function PetDetailTopNav({ onBack }: PetDetailTopNavProps) {
   return (
     <SafeAreaView
       edges={["top"]}
@@ -33,21 +27,6 @@ export function PetDetailTopNav({
           className="h-12 w-12 items-center justify-center rounded-full bg-background/80 shadow-lg"
         >
           <ChevronLeft size={24} color={Colors.light.text} />
-        </Pressable>
-        <Pressable
-          onPress={onToggleFavorite}
-          accessibilityRole="button"
-          accessibilityLabel="Yêu thích"
-          style={({ pressed }) => ({
-            transform: [{ scale: pressed ? 0.9 : 1 }],
-          })}
-          className="h-12 w-12 items-center justify-center rounded-full bg-background/80 shadow-lg"
-        >
-          <Heart
-            size={24}
-            color={isFavorite ? "#ef4444" : Colors.light.text}
-            fill={isFavorite ? "#ef4444" : "transparent"}
-          />
         </Pressable>
       </View>
     </SafeAreaView>
