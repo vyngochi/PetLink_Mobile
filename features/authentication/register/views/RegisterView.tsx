@@ -18,8 +18,8 @@ import {
   AuthInput,
   GoogleButton,
   PrimaryButton,
-} from "@/features/authentication/components";
-import { authColors } from "@/features/authentication/constants/colors";
+} from "@/features/authentication/shared/components";
+import { authColors } from "@/features/authentication/shared/constants/colors";
 import { useRegisterForm } from "@/features/authentication/register/hooks/useRegisterForm";
 
 export function RegisterView() {

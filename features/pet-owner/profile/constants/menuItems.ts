@@ -8,6 +8,7 @@ export const profileMenuItems: ProfileMenuItem[] = [
     label: "Thú cưng của tôi",
     icon: PawPrint,
     tone: "primary",
+    route: "/pet-owner/my-pets",
   },
   {
     key: "payment-methods",

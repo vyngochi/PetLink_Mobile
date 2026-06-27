@@ -1,15 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth";
-import { Image } from "expo-image";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import { useRouter } from "expo-router";
-import React from "react";
+import { MapPin } from "lucide-react-native";
+import React, { useState } from "react";
 import { Text, View } from "react-native";
-
-const avatarPlaceholder = require("@/assets/images/PetLink/PetLink.png");
+import { useSetLocationName } from "../hooks/useSetLocationName";
 
 export default function HomeLeftHeader() {
   const router = useRouter();
-  const { isAuthenticated: isLogged } = useAuth();
+  const { isAuthenticated: isLogged, user } = useAuthStore();
+  const [locationName, setLocationName] =
+    useState<string>("Đang tìm vị trí...");
+
+  useSetLocationName(setLocationName);
+
   return (
     <View>
       {!isLogged ? (
@@ -17,12 +21,19 @@ export default function HomeLeftHeader() {
           <Text className="text-white font-mbold">Bắt đầu</Text>
         </Button>
       ) : (
-        <View className="p-0.5 border-primary border-2 rounded-full">
-          <Image
-            source={avatarPlaceholder}
-            style={{ width: 40, height: 40 }}
-            contentFit="cover"
-          />
+        <View className="flex-col justify-center">
+          <Text className="text-sm text-foreground font-mbold">
+            Xin chào, {user?.fullName || user?.userName || "Bạn"}
+          </Text>
+          <View className="flex-row items-center gap-1 mt-1">
+            <MapPin size={12} className="mr-1 text-primary" />
+            <Text
+              className="text-xs text-muted-foreground font-default max-w-32"
+              numberOfLines={1}
+            >
+              {locationName}
+            </Text>
+          </View>
         </View>
       )}
     </View>

@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import { Stack } from "expo-router";
 import React from "react";
 
@@ -14,6 +14,9 @@ export default function PetOwnerLayout() {
     >
       <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="edit-profile" />
+        <Stack.Screen name="my-pets" />
+        <Stack.Screen name="pet/[id]" />
+        <Stack.Screen name="pet/[id]/edit" />
       </Stack.Protected>
 
       <Stack.Screen name="provider/[id]" />

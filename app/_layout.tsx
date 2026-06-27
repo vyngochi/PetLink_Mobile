@@ -1,4 +1,5 @@
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { Toaster } from "@/components/toast";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import "@/global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useLoadFonts } from "@/hooks/useLoadFonts";
@@ -30,6 +31,7 @@ configureReanimatedLogger({
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { loaded, error } = useLoadFonts();
+
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
@@ -58,6 +60,7 @@ export default function RootLayout() {
         </Stack>
         <StatusBar style="auto" />
         <PortalHost />
+        <Toaster />
       </ThemeProvider>
     </QueryProvider>
   );

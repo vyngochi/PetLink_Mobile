@@ -1,27 +1,43 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { toast } from "@/components/toast";
 import type {
   LoginPayload,
   LoginResponse,
 } from "@/features/authentication/login/types";
-import { authService } from "@/features/authentication/services/auth.service";
-import { useAuthStore } from "@/features/authentication/stores/auth.store";
+import { authService } from "@/features/authentication/shared/services/auth.service";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
+import type { User } from "@/features/authentication/shared/types";
 import { unwrapData } from "@/lib/http";
+import { useIntendedRoute } from "@/stores/useIntendedRoute";
+import { router } from "expo-router";
 
 type UseLoginOptions = {
-  onSuccess?: (data: LoginResponse) => void;
+  onSuccess?: (user: User) => void;
   onError?: (error: unknown) => void;
 };
 
-export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
+export const useLogin = ({ onError }: UseLoginOptions = {}) => {
+  const queryClient = useQueryClient();
   const { mutate, isPending, error } = useMutation({
-    mutationFn: async (payload: LoginPayload): Promise<LoginResponse> => {
-      const res = await authService.login(payload);
-      return unwrapData<LoginResponse>(res);
+    mutationFn: async (payload: LoginPayload) => {
+      const loginRes = await authService.login(payload);
+      return unwrapData<LoginResponse>(loginRes);
     },
-    onSuccess: (data) => {
-      useAuthStore.getState().setAuth(data);
-      onSuccess?.(data);
+    onSuccess: async (data) => {
+      useAuthStore.getState().setTokens(data);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["me"],
+      });
+
+      toast.success("Đăng nhập thành công", {
+        position: "bottom",
+        duration: 600,
+      });
+      const intendedRoute = useIntendedRoute.getState().intendedRoute;
+      intendedRoute && router.replace(intendedRoute);
+      useIntendedRoute.getState().setIntendedRoute(null);
     },
     onError,
   });

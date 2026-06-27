@@ -1,12 +1,12 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 
+import { toast } from "@/components/toast";
 import {
   LogoutButton,
   ProfileInfoCard,
-  ProfileTopBar,
   SettingsMenu,
 } from "@/features/pet-owner/profile/components";
 import { useProfile } from "@/features/pet-owner/profile/hooks/useProfile";
@@ -20,6 +20,10 @@ export function ProfileView() {
 
   const handleLogout = () => {
     logout();
+    toast.success("Đăng xuất thành công", {
+      position: "bottom",
+      duration: 600,
+    });
     router.replace("/(tabs)");
   };
 
@@ -29,18 +33,10 @@ export function ProfileView() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="px-5">
-        <ProfileTopBar avatarUrl={profile.avatarUrl} />
-      </View>
-
       <ScrollView
         contentContainerClassName="px-5 pb-12 pt-4"
         showsVerticalScrollIndicator={false}
       >
-        <Text className="mb-6 font-mbold text-[28px] leading-9 text-foreground">
-          Hồ sơ
-        </Text>
-
         <ProfileInfoCard
           profile={profile}
           onEditPress={() => router.push("/pet-owner/edit-profile")}
