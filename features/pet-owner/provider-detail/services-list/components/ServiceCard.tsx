@@ -3,12 +3,29 @@ import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ProviderServicePreview } from "../../../provider-list/types/provider.type";
 
+import { useProtectedRoute } from "@/hooks/useProtectedRoute";
+import { useRouter } from "expo-router";
+
 interface ServiceCardProps {
   service: ProviderServicePreview;
-  onPress?: () => void;
 }
 
-export function ServiceCard({ service, onPress }: ServiceCardProps) {
+export function ServiceCard({ service }: ServiceCardProps) {
+  const router = useRouter();
+  const { protectedRoute } = useProtectedRoute();
+
+  const handlePress = () =>
+    protectedRoute({
+      callback: () => {
+        router.push({
+          pathname: "/pet-owner/service/[id]",
+          params: { id: service.id },
+        });
+      },
+      redirect: () => router.push("/(auth)/login"),
+      intendedRoute: `/pet-owner/service/${service.id}`,
+    });
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -18,7 +35,7 @@ export function ServiceCard({ service, onPress }: ServiceCardProps) {
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       className="flex-1 m-2 overflow-hidden border shadow-sm bg-card rounded-2xl border-border/50 active:opacity-90"
     >
       <View className="w-full h-32 bg-muted">

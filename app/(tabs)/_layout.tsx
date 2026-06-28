@@ -1,6 +1,7 @@
 import { HapticTab } from "@/components/haptic-tab";
 import CommonHeader from "@/components/header-view";
 import { Colors } from "@/constants/theme";
+import { useGetMe } from "@/features/authentication/shared/hooks/useGetMe";
 import HomeLeftHeader from "@/features/pet-owner/home/components/HomeLeftHeader";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAuth } from "@/lib/auth";
@@ -17,6 +18,8 @@ import React from "react";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { isAuthenticated: isLogged } = useAuth();
+  useGetMe();
+
   return (
     <Tabs
       screenOptions={{

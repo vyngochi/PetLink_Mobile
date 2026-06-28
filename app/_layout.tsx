@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/toast";
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import "@/global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -9,7 +10,6 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
-import { Toaster } from "@/components/toast";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -31,6 +31,7 @@ configureReanimatedLogger({
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { loaded, error } = useLoadFonts();
+
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {

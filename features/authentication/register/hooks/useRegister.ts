@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@/components/toast";
 import type {
@@ -8,6 +8,7 @@ import type {
 import { authService } from "@/features/authentication/shared/services/auth.service";
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import type { User } from "@/features/authentication/shared/types";
+import { replaceIntended } from "@/lib/helper/replace-intended.helper";
 import { unwrapData } from "@/lib/http";
 
 type UseRegisterOptions = {
@@ -15,30 +16,24 @@ type UseRegisterOptions = {
   onError?: (error: unknown) => void;
 };
 
-export const useRegister = ({
-  onSuccess,
-  onError,
-}: UseRegisterOptions = {}) => {
+export const useRegister = ({ onError }: UseRegisterOptions = {}) => {
+  const queryClient = useQueryClient();
   const { mutate, isPending, error } = useMutation({
-    mutationFn: async (payload: RegisterPayload): Promise<User> => {
+    mutationFn: async (payload: RegisterPayload) => {
       const registerRes = await authService.register(payload);
-      const tokens = unwrapData<RegisterResponse>(registerRes);
-      useAuthStore.getState().setTokens(tokens);
-      try {
-        const meRes = await authService.getMe();
-        return unwrapData<User>(meRes);
-      } catch (meError) {
-        useAuthStore.getState().logout();
-        throw meError;
-      }
+      return unwrapData<RegisterResponse>(registerRes);
     },
-    onSuccess: (user) => {
-      useAuthStore.getState().setUser(user);
+    onSuccess: async (data) => {
+      useAuthStore.getState().setTokens(data);
+
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+
       toast.success("Đăng ký thành công", {
         position: "bottom",
         duration: 600,
       });
-      onSuccess?.(user);
+
+      replaceIntended();
     },
     onError,
   });
