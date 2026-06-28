@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Lock, Mail } from "lucide-react-native";
+import { Lock, User } from "lucide-react-native";
 import React from "react";
 import {
   KeyboardAvoidingView,
@@ -18,13 +18,21 @@ import {
   AuthInput,
   GoogleButton,
   PrimaryButton,
-} from "@/features/authentication/components";
+} from "@/features/authentication/shared/components";
 import { useLoginForm } from "@/features/authentication/login/hooks/useLoginForm";
 
 export function LoginView() {
   const router = useRouter();
-  const { email, setEmail, password, setPassword, loading, submit } =
-    useLoginForm();
+  const {
+    userName,
+    setUserName,
+    password,
+    setPassword,
+    loading,
+    errors,
+    errorMessage,
+    submit,
+  } = useLoginForm();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -50,15 +58,15 @@ export function LoginView() {
 
           <View className="gap-4">
             <AuthInput
-              label="Địa chỉ email"
-              icon={Mail}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="hello@petlink.com"
-              keyboardType="email-address"
+              label="Tên đăng nhập"
+              icon={User}
+              value={userName}
+              onChangeText={setUserName}
+              placeholder="Nhập tên đăng nhập"
               autoCapitalize="none"
-              autoComplete="email"
-              textContentType="emailAddress"
+              autoComplete="username"
+              textContentType="username"
+              error={errors.userName}
             />
 
             <View className="gap-2">
@@ -66,7 +74,10 @@ export function LoginView() {
                 <Text className="font-mbold text-[14px] leading-5 text-muted-foreground">
                   Mật khẩu
                 </Text>
-                <Pressable hitSlop={8}>
+                <Pressable
+                  hitSlop={8}
+                  onPress={() => router.push("/forgot-password")}
+                >
                   <Text className="font-mbold text-[12px] leading-4 text-primary">
                     Quên mật khẩu?
                   </Text>
@@ -81,8 +92,15 @@ export function LoginView() {
                 secure
                 autoCapitalize="none"
                 textContentType="password"
+                error={errors.password}
               />
             </View>
+
+            {errorMessage ? (
+              <Text className="px-1 font-default text-[13px] leading-5 text-destructive">
+                {errorMessage}
+              </Text>
+            ) : null}
 
             <View className="mt-2">
               <PrimaryButton
