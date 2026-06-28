@@ -10,7 +10,6 @@ import { useAuthStore } from "@/features/authentication/shared/stores/auth.store
 import type { User } from "@/features/authentication/shared/types";
 import { unwrapData } from "@/lib/http";
 import { useIntendedRoute } from "@/stores/useIntendedRoute";
-import { router } from "expo-router";
 
 type UseLoginOptions = {
   onSuccess?: (user: User) => void;
@@ -36,7 +35,7 @@ export const useLogin = ({ onError }: UseLoginOptions = {}) => {
         duration: 600,
       });
       const intendedRoute = useIntendedRoute.getState().intendedRoute;
-      intendedRoute && router.replace(intendedRoute);
+      // intendedRoute && router.replace(intendedRoute);
       useIntendedRoute.getState().setIntendedRoute(null);
     },
     onError,

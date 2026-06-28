@@ -4,29 +4,38 @@ import { useAuthStore } from "@/features/authentication/shared/stores/auth.store
 import type { AuthTokens } from "@/features/authentication/shared/types";
 import { unwrapData } from "@/lib/http";
 
+const baseURL = process.env.EXPO_PUBLIC_BASE_URL;
+
 const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_BASE_URL,
+  baseURL,
   timeout: 10000,
 });
 
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    if (config.headers.set) {
+      config.headers.set("Authorization", `Bearer ${token}`);
+    } else {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 });
 
 let isRefreshing = false;
-let pendingQueue: {
+let pendingQueue: Array<{
   resolve: (token: string) => void;
   reject: (error: unknown) => void;
-}[] = [];
+}> = [];
 
-const flushQueue = (error: unknown, token: string | null) => {
-  pendingQueue.forEach((p) => {
-    if (token) p.resolve(token);
-    else p.reject(error);
+const processQueue = (error: unknown, token: string | null = null) => {
+  pendingQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token as string);
+    }
   });
   pendingQueue = [];
 };
@@ -36,69 +45,111 @@ const isAuthRoute = (url = "") =>
   url.includes("/auth/register") ||
   url.includes("/auth/refresh");
 
-const requestRefreshedTokens = async (
-  refreshToken: string,
-): Promise<AuthTokens> => {
-  const res = await axios.post(
-    `${process.env.EXPO_PUBLIC_BASE_URL ?? ""}/auth/refresh`,
-    { refreshToken },
-    { timeout: 10000 },
-  );
-  return unwrapData<AuthTokens>(res);
-};
-
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const original = error.config as
-      | (InternalAxiosRequestConfig & { _retry?: boolean })
-      | undefined;
-    const { refreshToken, setTokens, logout } = useAuthStore.getState();
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
-    const is401 = error.response?.status === 401;
-    const onAuthRoute = isAuthRoute(original?.url);
-    const shouldRefresh =
-      is401 &&
-      Boolean(original) &&
-      !original?._retry &&
-      !onAuthRoute &&
-      Boolean(refreshToken);
-
-    if (!shouldRefresh || !original) {
-      if (is401 && !onAuthRoute) {
-        logout();
-      }
+    if (!originalRequest) {
       return Promise.reject(error);
     }
 
-    if (isRefreshing) {
-      return new Promise((resolve, reject) => {
-        pendingQueue.push({
-          resolve: (token) => {
-            original._retry = true;
-            original.headers.Authorization = `Bearer ${token}`;
-            resolve(api(original));
-          },
-          reject,
-        });
-      });
+    // Skip intercepting auth routes to prevent loops on login/register/refresh
+    if (isAuthRoute(originalRequest.url)) {
+      return Promise.reject(error);
     }
 
-    original._retry = true;
-    isRefreshing = true;
-    try {
-      const tokens = await requestRefreshedTokens(refreshToken as string);
-      setTokens(tokens);
-      flushQueue(null, tokens.accessToken);
-      original.headers.Authorization = `Bearer ${tokens.accessToken}`;
-      return api(original);
-    } catch (refreshError) {
-      flushQueue(refreshError, null);
-      logout();
-      return Promise.reject(refreshError);
-    } finally {
-      isRefreshing = false;
+    // Check custom header to prevent infinite loops (Axios strips _retry on retry)
+    const isRetry =
+      originalRequest._retry || originalRequest.headers["x-retry"] === "true";
+
+    if (error.response?.status === 403 && !isRetry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          pendingQueue.push({
+            resolve: (token: string) => {
+              originalRequest._retry = true;
+              if (originalRequest.headers.set) {
+                originalRequest.headers.set("x-retry", "true");
+                originalRequest.headers.set("Authorization", `Bearer ${token}`);
+              } else {
+                originalRequest.headers["x-retry"] = "true";
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+              }
+              resolve(api(originalRequest));
+            },
+            reject: (err: unknown) => {
+              reject(err);
+            },
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      if (originalRequest.headers.set) {
+        originalRequest.headers.set("x-retry", "true");
+      } else {
+        originalRequest.headers["x-retry"] = "true";
+      }
+      isRefreshing = true;
+
+      const { accessToken, refreshToken, setTokens, logout } = useAuthStore.getState();
+
+      if (!refreshToken) {
+        logout();
+        isRefreshing = false;
+        return Promise.reject(error);
+      }
+
+      try {
+        const response = await axios.post(
+          `${baseURL || ""}/auth/refresh-token`,
+          { refreshToken },
+          {
+            timeout: 10000,
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        const tokens = unwrapData<AuthTokens>(response);
+
+        setTokens(tokens);
+
+        if (originalRequest.headers.set) {
+          originalRequest.headers.set(
+            "Authorization",
+            `Bearer ${tokens.accessToken}`,
+          );
+        } else {
+          originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
+        }
+
+        processQueue(null, tokens.accessToken);
+
+        return api(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+
+        // Log out user only if refresh token is rejected due to auth error (4xx)
+        if (axios.isAxiosError(err)) {
+          const status = err.response?.status;
+          if (status && status >= 400 && status < 500) {
+            logout();
+          }
+        } else {
+          logout();
+        }
+
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
+    return Promise.reject(error);
   },
 );
 
