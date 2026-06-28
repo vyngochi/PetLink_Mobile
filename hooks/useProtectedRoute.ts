@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import { useIntendedRoute } from "@/stores/useIntendedRoute";
-import { Href, useRouter } from "expo-router";
+import { Href } from "expo-router";
 
 interface protectRouteFunc {
   callback: Function | undefined;
@@ -24,7 +24,6 @@ interface protectRouteFunc {
  * );
  */
 export const useProtectedRoute = () => {
-  const router = useRouter();
   const { isAuthenticated } = useAuthStore();
 
   const protectedRoute = ({
