@@ -16,7 +16,12 @@ export type EditProfilePayload = {
   location: string;
 };
 
-export type MenuItemTone = "primary" | "secondary" | "tertiary" | "neutral";
+export type MenuItemTone =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "neutral"
+  | "favorite";
 
 export type ProfileMenuItem = {
   key: string;
