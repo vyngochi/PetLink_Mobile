@@ -22,6 +22,7 @@ export const profileMenuItems: ProfileMenuItem[] = [
     label: "Phương thức thanh toán",
     icon: CreditCard,
     tone: "secondary",
+    route: "/pet-owner/payment-methods",
   },
   {
     key: "notifications",
