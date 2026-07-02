@@ -20,6 +20,7 @@ export default function PetOwnerLayout() {
         <Stack.Screen name="favorites" />
         <Stack.Screen name="pet/[id]" />
         <Stack.Screen name="pet/[id]/edit" />
+        <Stack.Screen name="chat/[id]" />
       </Stack.Protected>
 
       <Stack.Screen name="provider/[id]" />
