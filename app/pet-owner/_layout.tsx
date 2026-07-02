@@ -23,6 +23,12 @@ export default function PetOwnerLayout() {
       </Stack.Protected>
 
       <Stack.Screen name="provider/[id]" />
+      <Stack.Screen name="booking/create" />
+      <Stack.Screen name="booking/review" />
+      <Stack.Screen
+        name="booking/success"
+        options={{ gestureEnabled: false }}
+      />
     </Stack>
   );
 }
