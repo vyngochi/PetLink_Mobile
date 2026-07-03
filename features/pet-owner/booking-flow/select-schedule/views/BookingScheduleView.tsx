@@ -1,13 +1,8 @@
-import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { toast } from "@/components/toast";
-import {
-  BookingBottomBar,
-  BookingStepHeader,
-} from "@/features/pet-owner/booking-flow/shared/components";
+import { BookingBottomBar } from "@/features/pet-owner/booking-flow/shared/components";
 import { useBookingOptions } from "@/features/pet-owner/booking-flow/shared/hooks/useBookingOptions";
 import { useBookingFlowStore } from "@/features/pet-owner/booking-flow/shared/stores/booking-flow.store";
 import { formatCurrency } from "@/features/pet-owner/booking-flow/shared/utils/currency";
@@ -24,23 +19,18 @@ interface BookingScheduleViewProps {
 }
 
 export function BookingScheduleView({ serviceId }: BookingScheduleViewProps) {
-  const router = useRouter();
   const { data: options, isLoading } = useBookingOptions(serviceId);
   const {
     serviceId: selectedServiceId,
     petId,
     dayId,
     timeSlotId,
-    startFlow,
     selectService,
     selectPet,
     selectDay,
     selectTimeSlot,
+    nextStep,
   } = useBookingFlowStore();
-
-  useEffect(() => {
-    startFlow(serviceId);
-  }, [serviceId, startFlow]);
 
   useEffect(() => {
     if (!options) return;
@@ -71,14 +61,8 @@ export function BookingScheduleView({ serviceId }: BookingScheduleViewProps) {
     toast.info("Tính năng đang được phát triển", { position: "bottom" });
   };
 
-  const handleNext = () => {
-    router.push("/pet-owner/booking/review");
-  };
-
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
-      <BookingStepHeader title="Đặt lịch hẹn" step={1} />
-
+    <>
       {isLoading || !options ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={Colors.light.tint} />
@@ -132,9 +116,9 @@ export function BookingScheduleView({ serviceId }: BookingScheduleViewProps) {
       <BookingBottomBar
         totalLabel={selectedService ? formatCurrency(selectedService.price) : "—"}
         ctaLabel="Tiếp tục"
-        onPress={handleNext}
+        onPress={nextStep}
         disabled={!canContinue}
       />
-    </SafeAreaView>
+    </>
   );
 }

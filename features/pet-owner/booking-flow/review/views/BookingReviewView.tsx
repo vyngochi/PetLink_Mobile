@@ -1,13 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 
 import { toast } from "@/components/toast";
 import { Colors } from "@/constants/theme";
@@ -15,10 +8,7 @@ import {
   BookingSummaryCard,
   PaymentCardPicker,
 } from "@/features/pet-owner/booking-flow/review/components";
-import {
-  BookingBottomBar,
-  BookingStepHeader,
-} from "@/features/pet-owner/booking-flow/shared/components";
+import { BookingBottomBar } from "@/features/pet-owner/booking-flow/shared/components";
 import { useBookingOptions } from "@/features/pet-owner/booking-flow/shared/hooks/useBookingOptions";
 import { useCreateBooking } from "@/features/pet-owner/booking-flow/shared/hooks/useCreateBooking";
 import { usePaymentCards } from "@/features/pet-owner/booking-flow/shared/hooks/usePaymentCards";
@@ -35,6 +25,7 @@ export function BookingReviewView() {
     paymentCardId,
     selectPaymentCard,
     setConfirmedBooking,
+    nextStep,
   } = useBookingFlowStore();
 
   const { data: options } = useBookingOptions(serviceId ?? "");
@@ -51,22 +42,6 @@ export function BookingReviewView() {
     }
   }, [cards]);
 
-  if (!serviceId || !petId || !dayId || !timeSlotId) {
-    return (
-      <View className="flex-1 items-center justify-center bg-background">
-        <Text className="text-lg text-muted-foreground font-mbold">
-          Phiên đặt lịch không hợp lệ
-        </Text>
-        <Pressable
-          onPress={() => router.back()}
-          className="px-4 py-2 mt-4 rounded-full bg-primary"
-        >
-          <Text className="text-white font-mbold">Quay lại</Text>
-        </Pressable>
-      </View>
-    );
-  }
-
   const pet = options?.pets.find((item) => item.id === petId);
   const service = options?.services.find((item) => item.id === serviceId);
   const day = options?.days.find((item) => item.id === dayId);
@@ -74,7 +49,7 @@ export function BookingReviewView() {
   const isReady = Boolean(options && cards && pet && service && day && slot);
 
   const handleConfirm = () => {
-    if (!paymentCardId) {
+    if (!serviceId || !petId || !dayId || !timeSlotId || !paymentCardId) {
       toast.info("Vui lòng chọn phương thức thanh toán", {
         position: "bottom",
       });
@@ -86,7 +61,7 @@ export function BookingReviewView() {
       {
         onSuccess: (booking) => {
           setConfirmedBooking(booking);
-          router.replace("/pet-owner/booking/success");
+          nextStep();
         },
         onError: () => {
           toast.error("Đặt lịch thất bại, vui lòng thử lại", {
@@ -98,9 +73,7 @@ export function BookingReviewView() {
   };
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
-      <BookingStepHeader title="Xác nhận đặt lịch" step={2} />
-
+    <>
       {!isReady ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={Colors.light.tint} />
@@ -138,6 +111,6 @@ export function BookingReviewView() {
         disabled={!isReady || !paymentCardId}
         loading={createBooking.isPending}
       />
-    </SafeAreaView>
+    </>
   );
 }

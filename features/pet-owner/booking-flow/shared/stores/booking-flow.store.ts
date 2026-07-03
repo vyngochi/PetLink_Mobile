@@ -2,7 +2,12 @@ import { create } from "zustand";
 
 import type { ConfirmedBooking } from "@/features/pet-owner/booking-flow/shared/types";
 
+export const BOOKING_STEP_FLOW = ["schedule", "review", "success"] as const;
+
+export type BookingStep = (typeof BOOKING_STEP_FLOW)[number];
+
 interface BookingFlowState {
+  step: BookingStep;
   serviceId: string | null;
   petId: string | null;
   dayId: string | null;
@@ -10,6 +15,8 @@ interface BookingFlowState {
   paymentCardId: string | null;
   confirmedBooking: ConfirmedBooking | null;
   startFlow: (serviceId: string) => void;
+  nextStep: () => void;
+  prevStep: () => void;
   selectService: (serviceId: string) => void;
   selectPet: (petId: string) => void;
   selectDay: (dayId: string) => void;
@@ -20,6 +27,7 @@ interface BookingFlowState {
 }
 
 const initialState = {
+  step: "schedule" as BookingStep,
   serviceId: null,
   petId: null,
   dayId: null,
@@ -31,6 +39,18 @@ const initialState = {
 export const useBookingFlowStore = create<BookingFlowState>((set) => ({
   ...initialState,
   startFlow: (serviceId) => set({ ...initialState, serviceId }),
+  nextStep: () =>
+    set((state) => {
+      const index = BOOKING_STEP_FLOW.indexOf(state.step);
+      const nextIndex = Math.min(index + 1, BOOKING_STEP_FLOW.length - 1);
+      return { step: BOOKING_STEP_FLOW[nextIndex] };
+    }),
+  prevStep: () =>
+    set((state) => {
+      const index = BOOKING_STEP_FLOW.indexOf(state.step);
+      const prevIndex = Math.max(index - 1, 0);
+      return { step: BOOKING_STEP_FLOW[prevIndex] };
+    }),
   selectService: (serviceId) => set({ serviceId }),
   selectPet: (petId) => set({ petId }),
   selectDay: (dayId) => set({ dayId }),
