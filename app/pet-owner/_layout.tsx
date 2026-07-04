@@ -24,6 +24,7 @@ export default function PetOwnerLayout() {
       </Stack.Protected>
 
       <Stack.Screen name="provider/[id]" />
+      <Stack.Screen name="booking/create" />
     </Stack>
   );
 }
