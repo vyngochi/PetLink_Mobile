@@ -37,6 +37,13 @@ export function BookingsView() {
     );
   };
 
+  const handleRebook = (booking: Booking) => {
+    router.push({
+      pathname: "/pet-owner/booking/create",
+      params: { serviceId: booking.serviceId, petId: booking.petId },
+    });
+  };
+
   const notifyComingSoon = () => {
     toast.info("Tính năng đang được phát triển", { position: "bottom" });
   };
@@ -84,7 +91,7 @@ export function BookingsView() {
                 onCancel={() => handleCancel(booking)}
                 onReschedule={notifyComingSoon}
                 onViewDetails={notifyComingSoon}
-                onRebook={notifyComingSoon}
+                onRebook={() => handleRebook(booking)}
               />
             ))}
           </View>
