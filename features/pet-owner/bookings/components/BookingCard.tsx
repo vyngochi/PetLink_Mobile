@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { CalendarDays, MapPin, Scissors, Stethoscope } from "lucide-react-native";
 import React from "react";
-import { View, Text } from "react-native";
+import { Pressable, View, Text } from "react-native";
 
 import { BookingActionButton } from "@/features/pet-owner/bookings/components/BookingActionButton";
 import { BookingInfoRow } from "@/features/pet-owner/bookings/components/BookingInfoRow";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 type BookingCardProps = {
   booking: Booking;
+  onPress?: () => void;
   onCancel?: () => void;
   onReschedule?: () => void;
   onViewDetails?: () => void;
@@ -19,6 +20,7 @@ type BookingCardProps = {
 
 export function BookingCard({
   booking,
+  onPress,
   onCancel,
   onReschedule,
   onViewDetails,
@@ -29,7 +31,11 @@ export function BookingCard({
   const ServiceIcon = booking.serviceType === "medical" ? Stethoscope : Scissors;
 
   return (
-    <View className="rounded-[20px] border border-border bg-card p-4 shadow-sm">
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`Xem chi tiết lịch hẹn ${booking.serviceName} cho ${booking.petName}`}
+      className="rounded-[20px] border border-border bg-card p-4 shadow-sm active:opacity-95">
       <View className="flex-row gap-4">
         <Image
           source={{ uri: booking.petImageUrl }}
@@ -110,6 +116,6 @@ export function BookingCard({
           />
         )}
       </View>
-    </View>
+    </Pressable>
   );
 }
