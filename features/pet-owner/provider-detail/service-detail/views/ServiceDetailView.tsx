@@ -37,12 +37,10 @@ export function ServiceDetailView({ serviceId }: ServiceDetailViewProps) {
   }
 
   const handleBookPress = () => {
-    console.log(
-      "Navigate to booking for service:",
-      service.id,
-      "provider:",
-      service.providerId,
-    );
+    router.push({
+      pathname: "/pet-owner/booking/create",
+      params: { serviceId: service.id },
+    });
   };
 
   const headerOpacity = scrollY.interpolate({
