@@ -18,6 +18,8 @@ export default function PetOwnerLayout() {
         <Stack.Screen name="payment-methods" />
         <Stack.Screen name="add-payment-method" />
         <Stack.Screen name="favorites" />
+        <Stack.Screen name="notifications/index" />
+        <Stack.Screen name="notifications/[id]" />
         <Stack.Screen name="pet/[id]" />
         <Stack.Screen name="pet/[id]/edit" />
         <Stack.Screen name="chat/[id]" />
