@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useRouter, type Href } from "expo-router";
 import React, { useState } from "react";
 import { Alert, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -33,7 +33,7 @@ export function BookingsView() {
             toast.success("Đã hủy lịch hẹn", { position: "bottom" });
           },
         },
-      ]
+      ],
     );
   };
 
@@ -42,6 +42,8 @@ export function BookingsView() {
       pathname: "/pet-owner/booking/create",
       params: { serviceId: booking.serviceId, petId: booking.petId },
     });
+  const openDetail = (booking: Booking) => {
+    router.push(`/pet-owner/booking/${booking.id}` as Href);
   };
 
   const notifyComingSoon = () => {
@@ -88,10 +90,13 @@ export function BookingsView() {
               <BookingCard
                 key={booking.id}
                 booking={booking}
+                onPress={() => openDetail(booking)}
                 onCancel={() => handleCancel(booking)}
                 onReschedule={notifyComingSoon}
                 onViewDetails={notifyComingSoon}
                 onRebook={() => handleRebook(booking)}
+                onViewDetails={() => openDetail(booking)}
+                onRebook={notifyComingSoon}
               />
             ))}
           </View>

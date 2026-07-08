@@ -1,0 +1,99 @@
+import { useRouter } from "expo-router";
+import React from "react";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { toast } from "@/components/toast";
+import {
+  BookingAppointmentCard,
+  BookingDetailActions,
+  BookingDetailPetCard,
+  BookingDetailTopBar,
+  CheckInPassCard,
+} from "@/features/pet-owner/booking-detail/components";
+import { useBookingDetail } from "@/features/pet-owner/booking-detail/hooks/useBookingDetail";
+import { BookingStatusBadge } from "@/features/pet-owner/bookings/components";
+
+type BookingDetailViewProps = {
+  bookingId: string;
+};
+
+export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const { detail } = useBookingDetail(bookingId);
+
+  if (!detail) {
+    return (
+      <View className="flex-1 items-center justify-center gap-4 bg-background px-5">
+        <Text className="text-center font-mbold text-[18px] text-muted-foreground">
+          Không tìm thấy lịch hẹn
+        </Text>
+        <Pressable
+          onPress={() => router.back()}
+          className="rounded-full bg-primary px-6 py-3 active:opacity-90"
+        >
+          <Text className="font-mbold text-primary-foreground">Quay lại</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  const showCheckIn = detail.status === "confirmed";
+
+  const handleCancel = () => {
+    Alert.alert(
+      "Hủy lịch hẹn",
+      `Bạn có chắc muốn hủy lịch hẹn "${detail.serviceName}" cho ${detail.petName}?`,
+      [
+        { text: "Giữ lịch", style: "cancel" },
+        {
+          text: "Hủy lịch",
+          style: "destructive",
+          onPress: () => {
+            toast.success("Đã hủy lịch hẹn", { position: "bottom" });
+            router.back();
+          },
+        },
+      ]
+    );
+  };
+
+  const notifyComingSoon = () => {
+    toast.info("Tính năng đang được phát triển", { position: "bottom" });
+  };
+
+  return (
+    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+      <BookingDetailTopBar />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="gap-6 px-5 pt-2"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+      >
+        <View className="items-center gap-2">
+          <BookingStatusBadge status={detail.status} />
+          <Text className="font-default text-[12px] uppercase tracking-widest text-muted-foreground">
+            Mã đặt lịch #{detail.reference}
+          </Text>
+        </View>
+
+        <BookingDetailPetCard booking={detail} />
+
+        <BookingAppointmentCard booking={detail} />
+
+        {showCheckIn ? <CheckInPassCard booking={detail} /> : null}
+
+        <View className="gap-3">
+          <BookingDetailActions
+            status={detail.status}
+            onReschedule={notifyComingSoon}
+            onCancel={handleCancel}
+            onRebook={notifyComingSoon}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
