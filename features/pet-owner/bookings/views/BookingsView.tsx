@@ -37,6 +37,11 @@ export function BookingsView() {
     );
   };
 
+  const handleRebook = (booking: Booking) => {
+    router.push({
+      pathname: "/pet-owner/booking/create",
+      params: { serviceId: booking.serviceId, petId: booking.petId },
+    });
   const openDetail = (booking: Booking) => {
     router.push(`/pet-owner/booking/${booking.id}` as Href);
   };
@@ -88,6 +93,8 @@ export function BookingsView() {
                 onPress={() => openDetail(booking)}
                 onCancel={() => handleCancel(booking)}
                 onReschedule={notifyComingSoon}
+                onViewDetails={notifyComingSoon}
+                onRebook={() => handleRebook(booking)}
                 onViewDetails={() => openDetail(booking)}
                 onRebook={notifyComingSoon}
               />
