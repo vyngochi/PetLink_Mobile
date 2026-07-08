@@ -14,7 +14,7 @@ interface BookingFlowState {
   timeSlotId: string | null;
   paymentCardId: string | null;
   confirmedBooking: ConfirmedBooking | null;
-  startFlow: (serviceId: string) => void;
+  startFlow: (serviceId: string, petId?: string | null) => void;
   nextStep: () => void;
   prevStep: () => void;
   selectService: (serviceId: string) => void;
@@ -38,7 +38,8 @@ const initialState = {
 
 export const useBookingFlowStore = create<BookingFlowState>((set) => ({
   ...initialState,
-  startFlow: (serviceId) => set({ ...initialState, serviceId }),
+  startFlow: (serviceId, petId = null) =>
+    set({ ...initialState, serviceId, petId }),
   nextStep: () =>
     set((state) => {
       const index = BOOKING_STEP_FLOW.indexOf(state.step);
