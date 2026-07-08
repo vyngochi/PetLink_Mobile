@@ -6,6 +6,8 @@ export type BookingServiceType = "medical" | "grooming";
 
 export interface Booking {
   id: string;
+  serviceId: string;
+  petId: string;
   petName: string;
   petBreed: string;
   petImageUrl: string;

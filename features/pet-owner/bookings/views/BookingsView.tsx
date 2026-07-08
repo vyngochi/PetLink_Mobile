@@ -33,7 +33,7 @@ export function BookingsView() {
             toast.success("Đã hủy lịch hẹn", { position: "bottom" });
           },
         },
-      ]
+      ],
     );
   };
 

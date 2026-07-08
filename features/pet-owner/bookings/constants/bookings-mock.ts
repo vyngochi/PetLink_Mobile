@@ -3,6 +3,8 @@ import type { Booking } from "@/features/pet-owner/bookings/types";
 export const BOOKINGS_MOCK: Booking[] = [
   {
     id: "booking-bella-checkup",
+    serviceId: "service-general-checkup",
+    petId: "bella",
     petName: "Bella",
     petBreed: "Golden Retriever",
     petImageUrl:
@@ -15,6 +17,8 @@ export const BOOKINGS_MOCK: Booking[] = [
   },
   {
     id: "booking-luna-grooming",
+    serviceId: "66f1a2b3c4d5e6f789000002",
+    petId: "luna",
     petName: "Luna",
     petBreed: "Mèo Xiêm",
     petImageUrl:
@@ -27,6 +31,8 @@ export const BOOKINGS_MOCK: Booking[] = [
   },
   {
     id: "booking-bella-vaccine",
+    serviceId: "service-rabies-vaccine",
+    petId: "bella",
     petName: "Bella",
     petBreed: "Golden Retriever",
     petImageUrl:
@@ -39,6 +45,8 @@ export const BOOKINGS_MOCK: Booking[] = [
   },
   {
     id: "booking-luna-bath",
+    serviceId: "66f1a2b3c4d5e6f789000001",
+    petId: "luna",
     petName: "Luna",
     petBreed: "Mèo Xiêm",
     petImageUrl:
