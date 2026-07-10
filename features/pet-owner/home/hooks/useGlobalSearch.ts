@@ -1,7 +1,7 @@
 import { unwrapData } from "@/lib/http";
 import { useQuery } from "@tanstack/react-query";
 import { providerService } from "../../provider-list/services/provider.service";
-import type { GlobalSearchResponse } from "../../provider-list/types/provider.type";
+import type { GlobalSearchResponse } from "@/features/pet-owner/shared/types/provider.type";
 
 export const useGlobalSearch = (q: string) => {
   const { data, isLoading, isError } = useQuery({

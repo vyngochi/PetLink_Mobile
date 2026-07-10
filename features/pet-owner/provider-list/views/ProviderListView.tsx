@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { ProviderCard } from "../components/ProviderCard";
-import { useCurrentCoords } from "../hooks/useCurrentCoords";
+import { useCurrentCoords } from "@/features/pet-owner/shared/hooks/useCurrentCoords";
 import { useGetProviders } from "../hooks/useGetProviders";
 import { useSearchStore } from "../../shared/stores/search.store";
 import { ProviderFilterModal, FilterState } from "../components/ProviderFilterModal";

@@ -1,7 +1,7 @@
 import { CheckCircle, MapPin, Star } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { ProviderItem } from "../types/provider.type";
+import { ProviderItem } from "@/features/pet-owner/shared/types/provider.type";
 
 interface ProviderCardProps {
   provider: ProviderItem;

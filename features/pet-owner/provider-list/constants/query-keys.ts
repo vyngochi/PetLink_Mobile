@@ -1,4 +1,4 @@
-import type { GetProvidersParams } from "../types/provider.type";
+import type { GetProvidersParams } from "@/features/pet-owner/shared/types/provider.type";
 
 export const providerKeys = {
   all: ["providers"] as const,
