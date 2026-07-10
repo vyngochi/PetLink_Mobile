@@ -1,5 +1,5 @@
-import { petKeys } from "@/features/pet-owner/my-pets/constants/query-keys";
-import { petService } from "@/features/pet-owner/my-pets/services/pet.service";
+import { petKeys } from "@/features/pet-owner/shared/constants/query-keys";
+import { petService } from "@/features/pet-owner/shared/services/pet.service";
 import type {
   ApiPet,
   MyPetsResponse,
