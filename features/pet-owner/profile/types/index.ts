@@ -11,9 +11,8 @@ export type UserProfile = {
 
 export type EditProfilePayload = {
   fullName: string;
-  email: string;
   phone: string;
-  location: string;
+  location?: string;
 };
 
 export type MenuItemTone =

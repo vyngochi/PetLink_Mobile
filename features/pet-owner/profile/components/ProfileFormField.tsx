@@ -7,11 +7,24 @@ import { profileColors } from "@/features/pet-owner/profile/constants/colors";
 type ProfileFormFieldProps = TextInputProps & {
   label: string;
   trailingIcon?: LucideIcon;
+  error?: string;
+  vietnamese?: boolean;
+};
+
+const vietnameseInputProps: TextInputProps = {
+  autoCorrect: false,
+  spellCheck: false,
+  autoComplete: "off",
+  textContentType: "none",
+  keyboardType: "default",
+  importantForAutofill: "no",
 };
 
 export function ProfileFormField({
   label,
   trailingIcon: TrailingIcon,
+  error,
+  vietnamese = false,
   ...inputProps
 }: ProfileFormFieldProps) {
   const [focused, setFocused] = useState(false);
@@ -25,7 +38,11 @@ export function ProfileFormField({
       <View
         className="h-14 flex-row items-center rounded-xl border bg-card px-4"
         style={{
-          borderColor: focused ? profileColors.primary : profileColors.border,
+          borderColor: error
+            ? profileColors.error
+            : focused
+              ? profileColors.primary
+              : profileColors.border,
         }}
       >
         <TextInput
@@ -40,11 +57,18 @@ export function ProfileFormField({
             inputProps.onBlur?.(e);
           }}
           {...inputProps}
+          {...(vietnamese ? vietnameseInputProps : null)}
         />
         {TrailingIcon ? (
           <TrailingIcon size={20} color={profileColors.primary} />
         ) : null}
       </View>
+
+      {error ? (
+        <Text className="ml-1 font-default text-[12px] leading-4 text-destructive">
+          {error}
+        </Text>
+      ) : null}
     </View>
   );
 }
