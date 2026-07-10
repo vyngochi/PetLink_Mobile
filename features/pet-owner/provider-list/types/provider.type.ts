@@ -68,3 +68,17 @@ export interface ProviderItem {
   paymentMethods: ProviderPaymentMethods;
   createdAt: string;
 }
+
+export interface GetProvidersParams {
+  page?: number;
+  pageSize?: number;
+  userLat?: number;
+  userLng?: number;
+}
+
+export interface ProviderListResponse {
+  items: ProviderItem[];
+  page: number;
+  pageSize: number;
+  total: number;
+}
