@@ -29,6 +29,7 @@ export interface ProviderServicePreview {
   price: number;
   durationMinutes: number;
   thumbnailUrl: string;
+  description?: string; //can be tra ve
 }
 
 export interface ProviderServices {
@@ -66,4 +67,18 @@ export interface ProviderItem {
   availability: ProviderAvailability;
   paymentMethods: ProviderPaymentMethods;
   createdAt: string;
+}
+
+export interface GetProvidersParams {
+  page?: number;
+  pageSize?: number;
+  userLat?: number;
+  userLng?: number;
+}
+
+export interface ProviderListResponse {
+  items: ProviderItem[];
+  page: number;
+  pageSize: number;
+  total: number;
 }

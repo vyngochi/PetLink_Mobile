@@ -1,13 +1,28 @@
+import { Colors } from "@/constants/theme";
+import { Href, useRouter } from "expo-router";
 import { Search, SlidersHorizontal } from "lucide-react-native";
 import React from "react";
-import { FlatList, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { ProviderCard } from "../components/ProviderCard";
-import { MOCK_PROVIDERS } from "../constants/provider-mock";
+import { useCurrentCoords } from "../hooks/useCurrentCoords";
+import { useGetProviders } from "../hooks/useGetProviders";
 
 export function ProviderListView() {
+  const router = useRouter();
+  const coords = useCurrentCoords();
+  const { providers, isLoading, isError, refetch, isRefetching } =
+    useGetProviders(coords ?? {});
+
   return (
     <View className="flex-1 bg-background">
-      {/* Header & Search */}
       <View className="px-5 pt-6 pb-4 bg-surface-container-lowest">
         <Text className="mb-4 text-2xl font-mbold text-foreground">
           Tìm kiếm Dịch vụ
@@ -29,14 +44,52 @@ export function ProviderListView() {
         </View>
       </View>
 
-      {/* List */}
-      <FlatList
-        data={MOCK_PROVIDERS}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ProviderCard provider={item} />}
-        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      />
+      {isLoading ? (
+        <View className="items-center justify-center flex-1">
+          <ActivityIndicator size="large" color={Colors.light.tint} />
+        </View>
+      ) : isError ? (
+        <View className="items-center justify-center flex-1 gap-4 px-5">
+          <Text className="text-center text-muted-foreground font-default">
+            Không thể tải danh sách cơ sở. Vui lòng thử lại.
+          </Text>
+          <Pressable
+            onPress={() => refetch()}
+            className="px-6 py-3 rounded-xl bg-primary active:opacity-90"
+          >
+            <Text className="text-white font-mbold">Thử lại</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <FlatList
+          data={providers}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ProviderCard
+              provider={item}
+              onPress={() =>
+                router.push(`/pet-owner/provider/${item.id}` as Href)
+              }
+            />
+          )}
+          contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              tintColor={Colors.light.tint}
+            />
+          }
+          ListEmptyComponent={
+            <View className="items-center justify-center py-20">
+              <Text className="text-center text-muted-foreground font-default">
+                Chưa có cơ sở nào.
+              </Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 }
