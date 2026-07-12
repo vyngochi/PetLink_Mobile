@@ -22,6 +22,7 @@ export function HomeView({ isLoggedIn = false }: HomeViewProps) {
   const onJoinPress = () => {
     router.push({ pathname: "/(auth)/login" });
   };
+
   return (
     <ScrollView
       className="flex-1 bg-background"
@@ -29,7 +30,6 @@ export function HomeView({ isLoggedIn = false }: HomeViewProps) {
     >
       <View className="px-5">
         <SearchBar />
-
         <QuickServicesSection services={QUICK_SERVICES} />
 
         {!isLoggedIn && <JoinBanner onJoinPress={onJoinPress} />}
