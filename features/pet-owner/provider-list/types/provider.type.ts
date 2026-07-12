@@ -70,10 +70,16 @@ export interface ProviderItem {
 }
 
 export interface GetProvidersParams {
+  q?: string;
   page?: number;
   pageSize?: number;
   userLat?: number;
   userLng?: number;
+}
+
+export interface GlobalSearchResponse {
+  providers: string[];
+  services: string[];
 }
 
 export interface ProviderListResponse {
