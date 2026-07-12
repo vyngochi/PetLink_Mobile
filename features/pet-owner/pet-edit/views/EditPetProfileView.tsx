@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -10,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Colors } from "@/constants/theme";
 import { usePetDetail } from "@/features/pet-owner/pet-detail/hooks/usePetDetail";
 import type { PetDetail } from "@/features/pet-owner/pet-detail/types";
 import {
@@ -29,7 +31,15 @@ type EditPetProfileViewProps = {
 
 export function EditPetProfileView({ petId }: EditPetProfileViewProps) {
   const router = useRouter();
-  const { pet } = usePetDetail(petId);
+  const { pet, isLoading } = usePetDetail(petId);
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator color={Colors.light.tint} />
+      </View>
+    );
+  }
 
   if (!pet) {
     return (

@@ -61,7 +61,7 @@ export function PetCard({ pet, onViewProfile, onVaccinePress }: PetCardProps) {
               Vắc-xin tiếp theo
             </Text>
             <Text className="font-mbold text-[14px] leading-5 text-foreground">
-              {pet.nextVaccineDate}
+              {pet.nextVaccineDate ?? "Chưa có lịch"}
             </Text>
           </View>
         </View>
