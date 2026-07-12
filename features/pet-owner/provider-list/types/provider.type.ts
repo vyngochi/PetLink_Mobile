@@ -71,10 +71,15 @@ export interface ProviderItem {
 
 export interface GetProvidersParams {
   q?: string;
+  searchKey?: string;
   page?: number;
   pageSize?: number;
   userLat?: number;
   userLng?: number;
+  minRating?: number;
+  maxRating?: number;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 export interface GlobalSearchResponse {

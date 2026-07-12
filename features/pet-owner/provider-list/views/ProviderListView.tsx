@@ -15,16 +15,22 @@ import { ProviderCard } from "../components/ProviderCard";
 import { useCurrentCoords } from "../hooks/useCurrentCoords";
 import { useGetProviders } from "../hooks/useGetProviders";
 import { useSearchStore } from "../../shared/stores/search.store";
+import { ProviderFilterModal, FilterState } from "../components/ProviderFilterModal";
+import { useState } from "react";
 
 export function ProviderListView() {
   const router = useRouter();
   const coords = useCurrentCoords();
   const { searchQuery, setSearchQuery } = useSearchStore();
+  const [isFilterVisible, setFilterVisible] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({});
   
+  const { isNearMe, ...restFilters } = filters;
   const { providers, isLoading, isError, refetch, isRefetching } =
     useGetProviders({
-      ...coords,
-      q: searchQuery,
+      ...(isNearMe ? coords : {}),
+      searchKey: searchQuery,
+      ...restFilters
     });
 
   return (
@@ -46,9 +52,12 @@ export function ProviderListView() {
               onChangeText={setSearchQuery}
             />
           </View>
-          <View className="items-center justify-center w-12 h-12 border shadow-sm rounded-xl bg-card border-border/50">
+          <Pressable 
+            className="items-center justify-center w-12 h-12 border shadow-sm rounded-xl bg-card border-border/50 active:opacity-80"
+            onPress={() => setFilterVisible(true)}
+          >
             <SlidersHorizontal className="text-foreground" size={20} />
-          </View>
+          </Pressable>
         </View>
       </View>
 
@@ -98,6 +107,16 @@ export function ProviderListView() {
           }
         />
       )}
+
+      <ProviderFilterModal
+        visible={isFilterVisible}
+        onClose={() => setFilterVisible(false)}
+        initialFilters={filters}
+        onApply={(newFilters) => {
+          setFilters(newFilters);
+          setFilterVisible(false);
+        }}
+      />
     </View>
   );
 }
