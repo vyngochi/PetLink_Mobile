@@ -14,12 +14,18 @@ import {
 import { ProviderCard } from "../components/ProviderCard";
 import { useCurrentCoords } from "../hooks/useCurrentCoords";
 import { useGetProviders } from "../hooks/useGetProviders";
+import { useSearchStore } from "../../shared/stores/search.store";
 
 export function ProviderListView() {
   const router = useRouter();
   const coords = useCurrentCoords();
+  const { searchQuery, setSearchQuery } = useSearchStore();
+  
   const { providers, isLoading, isError, refetch, isRefetching } =
-    useGetProviders(coords ?? {});
+    useGetProviders({
+      ...coords,
+      q: searchQuery,
+    });
 
   return (
     <View className="flex-1 bg-background">
@@ -36,6 +42,8 @@ export function ProviderListView() {
               className="w-full py-3 pl-12 pr-4 border shadow-sm bg-card border-border/50 rounded-xl font-default text-foreground"
               placeholder="Tên cơ sở, dịch vụ..."
               placeholderTextColor="#64748B"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
           </View>
           <View className="items-center justify-center w-12 h-12 border shadow-sm rounded-xl bg-card border-border/50">

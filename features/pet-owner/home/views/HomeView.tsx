@@ -27,6 +27,7 @@ export function HomeView({ isLoggedIn = false }: HomeViewProps) {
     <ScrollView
       className="flex-1 bg-background"
       showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
     >
       <View className="px-5">
         <SearchBar />
