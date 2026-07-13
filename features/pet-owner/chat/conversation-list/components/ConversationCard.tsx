@@ -1,3 +1,4 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
@@ -30,7 +31,9 @@ export function ConversationCard({
     >
       <View>
         <Image
-          source={{ uri: conversation.avatarUrl }}
+          source={{
+            uri: getImageUrl(conversation.avatarUrl, { width: 56, height: 56 }),
+          }}
           accessibilityLabel={conversation.name}
           contentFit="cover"
           transition={200}

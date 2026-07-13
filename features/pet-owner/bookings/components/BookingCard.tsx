@@ -1,3 +1,4 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import { CalendarDays, MapPin, Scissors, Stethoscope } from "lucide-react-native";
 import React from "react";
@@ -38,7 +39,9 @@ export function BookingCard({
       className="rounded-[20px] border border-border bg-card p-4 shadow-sm active:opacity-95">
       <View className="flex-row gap-4">
         <Image
-          source={{ uri: booking.petImageUrl }}
+          source={{
+            uri: getImageUrl(booking.petImageUrl, { width: 80, height: 80 }),
+          }}
           accessibilityLabel={booking.petName}
           contentFit="cover"
           transition={200}

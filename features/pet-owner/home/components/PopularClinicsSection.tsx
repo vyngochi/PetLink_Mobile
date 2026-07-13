@@ -1,15 +1,23 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { formatCurrency } from "@/lib/helper/formatCurrency";
 import { Star } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ProviderItem } from "../../shared/types/provider.type";
 
+const AVATAR_SIZE = 96;
+
 export function ClinicCard({ provider }: { provider: ProviderItem }) {
   return (
     <Pressable className="flex-row gap-4 p-4 border shadow-sm bg-card rounded-3xl border-border/50 active:opacity-80">
       <View className="w-24 h-24 overflow-hidden rounded-2xl bg-muted shrink-0">
         <Image
-          source={{ uri: provider.avatarUrl }}
+          source={{
+            uri: getImageUrl(provider.avatarUrl, {
+              width: AVATAR_SIZE,
+              height: AVATAR_SIZE,
+            }),
+          }}
           className="w-full h-full"
           resizeMode="cover"
         />
