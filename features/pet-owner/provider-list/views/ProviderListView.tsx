@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { Href, useRouter } from "expo-router";
 import { Search, SlidersHorizontal } from "lucide-react-native";
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -11,26 +11,25 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { ProviderCard } from "../components/ProviderCard";
-import { useCurrentCoords } from "@/features/pet-owner/shared/hooks/useCurrentCoords";
-import { useGetProviders } from "../hooks/useGetProviders";
 import { useSearchStore } from "../../shared/stores/search.store";
-import { ProviderFilterModal, FilterState } from "../components/ProviderFilterModal";
-import { useState } from "react";
+import { ProviderCard } from "../components/ProviderCard";
+import {
+  FilterState,
+  ProviderFilterModal,
+} from "../components/ProviderFilterModal";
+import { useGetProviders } from "../hooks/useGetProviders";
 
 export function ProviderListView() {
   const router = useRouter();
-  const coords = useCurrentCoords();
   const { searchQuery, setSearchQuery } = useSearchStore();
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState<FilterState>({});
-  
-  const { isNearMe, ...restFilters } = filters;
+
+  const { ...restFilters } = filters;
   const { providers, isLoading, isError, refetch, isRefetching } =
     useGetProviders({
-      ...(isNearMe ? coords : {}),
       searchKey: searchQuery,
-      ...restFilters
+      ...restFilters,
     });
 
   return (
@@ -52,7 +51,7 @@ export function ProviderListView() {
               onChangeText={setSearchQuery}
             />
           </View>
-          <Pressable 
+          <Pressable
             className="items-center justify-center w-12 h-12 border shadow-sm rounded-xl bg-card border-border/50 active:opacity-80"
             onPress={() => setFilterVisible(true)}
           >
