@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/theme";
+import { useDebounce } from "@/features/pet-owner/home/hooks/useDebounce";
 import { Href, useRouter } from "expo-router";
-import { Search, SlidersHorizontal } from "lucide-react-native";
+import { Search, SlidersHorizontal, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -11,6 +12,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useGetCoors } from "../../home/hooks/useGetCoors";
 import { useSearchStore } from "../../shared/stores/search.store";
 import { ProviderCard } from "../components/ProviderCard";
 import {
@@ -24,12 +26,16 @@ export function ProviderListView() {
   const { searchQuery, setSearchQuery } = useSearchStore();
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState<FilterState>({});
+  const debouncedQuery = useDebounce(searchQuery, 300);
+  const { coors } = useGetCoors();
 
   const { ...restFilters } = filters;
   const { providers, isLoading, isError, refetch, isRefetching } =
     useGetProviders({
-      searchKey: searchQuery,
+      searchKey: debouncedQuery,
       ...restFilters,
+      userLat: coors?.userLat,
+      userLng: coors?.userLong,
     });
 
   return (
@@ -44,12 +50,20 @@ export function ProviderListView() {
               <Search className="text-muted-foreground" size={20} />
             </View>
             <TextInput
-              className="w-full py-3 pl-12 pr-4 border shadow-sm bg-card border-border/50 rounded-xl font-default text-foreground"
+              className="w-full py-3 pl-12 pr-12 border shadow-sm bg-card border-border/50 rounded-xl font-default text-foreground"
               placeholder="Tên cơ sở, dịch vụ..."
               placeholderTextColor="#64748B"
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
+            {searchQuery.length > 0 && (
+              <Pressable
+                onPress={() => setSearchQuery("")}
+                className="absolute inset-y-0 z-10 flex items-center justify-center p-2 right-2"
+              >
+                <X className="text-muted-foreground" size={20} />
+              </Pressable>
+            )}
           </View>
           <Pressable
             className="items-center justify-center w-12 h-12 border shadow-sm rounded-xl bg-card border-border/50 active:opacity-80"
