@@ -2,7 +2,7 @@ import { formatCurrency } from "@/lib/helper/formatCurrency";
 import { Star } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { ProviderItem } from "../../provider-list/types/provider.type";
+import { ProviderItem } from "../../shared/types/provider.type";
 
 export function ClinicCard({ provider }: { provider: ProviderItem }) {
   return (
