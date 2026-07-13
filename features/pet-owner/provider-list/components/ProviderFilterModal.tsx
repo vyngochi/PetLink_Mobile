@@ -9,6 +9,7 @@ export interface FilterState {
   maxRating?: number;
   minPrice?: number;
   maxPrice?: number;
+  isNearMe?: boolean;
 }
 
 interface ProviderFilterModalProps {
@@ -148,6 +149,26 @@ export function ProviderFilterModal({
                   borderColor: "#fff",
                 }}
               />
+            </View>
+
+            <View className="flex-row items-center justify-between px-1 mt-2 mb-4">
+              <Text className="text-lg font-mbold text-foreground">
+                Gần bạn nhất
+              </Text>
+              <Pressable
+                onPress={() =>
+                  setFilters({ ...filters, isNearMe: !filters.isNearMe })
+                }
+                className={`w-14 h-8 rounded-full justify-center px-1 transition-colors ${
+                  filters.isNearMe ? "bg-primary" : "bg-surface-container-high"
+                }`}
+              >
+                <View
+                  className={`w-6 h-6 rounded-full bg-white shadow-sm transition-transform ${
+                    filters.isNearMe ? "translate-x-6" : "translate-x-0"
+                  }`}
+                />
+              </Pressable>
             </View>
           </ScrollView>
 

@@ -1,3 +1,4 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import { Plus } from "lucide-react-native";
 import React from "react";
@@ -41,7 +42,9 @@ export function PetSelector({
               )}
             >
               <Image
-                source={{ uri: pet.imageUrl }}
+                source={{
+                  uri: getImageUrl(pet.imageUrl, { width: 80, height: 80 }),
+                }}
                 accessibilityLabel={pet.name}
                 contentFit="cover"
                 transition={200}
