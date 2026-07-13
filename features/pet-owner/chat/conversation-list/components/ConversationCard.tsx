@@ -3,6 +3,7 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 
 import type { Conversation } from "@/features/pet-owner/chat/shared/types";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { cn } from "@/lib/utils";
 
 type ConversationCardProps = {
@@ -15,6 +16,8 @@ export function ConversationCard({
   onPress,
 }: ConversationCardProps) {
   const hasUnread = conversation.unreadCount > 0;
+
+  const imageUrl = getImageUrl(conversation.avatarUrl);
 
   return (
     <Pressable
@@ -30,7 +33,7 @@ export function ConversationCard({
     >
       <View>
         <Image
-          source={{ uri: conversation.avatarUrl }}
+          source={imageUrl}
           accessibilityLabel={conversation.name}
           contentFit="cover"
           transition={200}
