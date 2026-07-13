@@ -20,9 +20,7 @@ export function BookingDetailActions({
   status,
   canReview = false,
   onReview,
-  onReschedule,
   onCancel,
-  onRebook,
 }: BookingDetailActionsProps) {
   if (isInProgressBooking(status)) {
     return null;

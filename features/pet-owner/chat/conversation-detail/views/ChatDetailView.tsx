@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { useRouter } from "expo-router";
 import React, { useRef } from "react";
 import {
@@ -10,7 +11,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors } from "@/constants/theme";
 
 import { toast } from "@/components/toast";
 import {
@@ -18,6 +18,7 @@ import {
   ChatDetailHeader,
   ChatInputBar,
   MessageBubble,
+  BookingInfoWidget,
 } from "@/features/pet-owner/chat/conversation-detail/components";
 import { useConversation } from "@/features/pet-owner/chat/conversation-detail/hooks/useConversation";
 
@@ -76,6 +77,9 @@ export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
               scrollRef.current?.scrollToEnd({ animated: true })
             }
           >
+            {conversation.booking && (
+              <BookingInfoWidget booking={conversation.booking} />
+            )}
             {messages.length > 0 && <ChatDateSeparator label="Hôm nay" />}
             {messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
@@ -83,7 +87,11 @@ export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
           </ScrollView>
         )}
 
-        <ChatInputBar onSend={sendMessage} onAttach={notifyComingSoon} />
+        <ChatInputBar 
+          onSend={sendMessage} 
+          onAttach={notifyComingSoon} 
+          disabled={conversation.booking?.status === "CANCELLED"} 
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
