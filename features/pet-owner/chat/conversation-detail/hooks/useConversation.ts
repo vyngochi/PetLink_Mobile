@@ -17,19 +17,20 @@ export function useConversation(threadId: string) {
     enabled: !!threadId,
   });
 
-  // We don't have a single API for getting thread details by threadId (only by bookingId in the guide),
-  // but usually we can pass the conversation name from the list via router params or global store.
-  // For now, we will return a dummy conversation object just to satisfy the UI,
-  // or you could update ChatDetailView to not rely on a full Conversation object.
+  // Extract conversation info from the list cache if available
+  const threads = queryClient.getQueryData<any[]>(["chat-threads"]) || [];
+  const thread = threads.find((t) => t.id === threadId);
+  const providerName = thread?.provider?.businessName || "Chi tiết cuộc trò chuyện";
+
   const conversation = {
     id: threadId,
-    name: "Chi tiết cuộc trò chuyện",
-    avatarUrl: "https://ui-avatars.com/api/?name=Chat",
+    name: providerName,
+    avatarUrl: thread?.provider?.avatarUrl || "https://ui-avatars.com/api/?name=" + encodeURIComponent(providerName),
     category: "service" as const,
-    lastMessage: "",
+    lastMessage: thread?.lastMessage || "",
     lastMessageAtLabel: "",
-    unreadCount: 0,
-    isOnline: false,
+    unreadCount: thread?.unreadCount || 0,
+    isOnline: true,
     isPinned: false,
   };
 

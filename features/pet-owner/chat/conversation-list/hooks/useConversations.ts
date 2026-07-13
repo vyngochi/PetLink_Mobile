@@ -41,12 +41,10 @@ export function useConversations() {
   // Map backend thread to UI Conversation structure
   const conversations: Conversation[] = rawThreads.map((thread: any) => {
     const name =
-      thread.provider?.user?.fullName ||
-      thread.customer?.user?.fullName ||
-      "Người dùng";
+      thread.provider?.businessName ||
+      "Nhà cung cấp";
     const avatarUrl =
-      thread.provider?.user?.avatar ||
-      thread.customer?.user?.avatar ||
+      thread.provider?.avatarUrl ||
       "https://ui-avatars.com/api/?name=" + encodeURIComponent(name);
 
     const lastMessageAtLabel = thread.lastMessageAt
