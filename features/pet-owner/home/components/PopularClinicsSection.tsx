@@ -1,36 +1,51 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
+import { formatCurrency } from "@/lib/helper/formatCurrency";
+import { Href, useRouter } from "expo-router";
 import { Star } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { ClinicType } from "../types/home.type";
+import { ProviderItem } from "../../shared/types/provider.type";
 
-export function ClinicCard({ clinic }: { clinic: ClinicType }) {
+const AVATAR_SIZE = 96;
+
+export function ClinicCard({
+  provider,
+  onSelect,
+}: {
+  provider: ProviderItem;
+  onSelect: (id: string) => void;
+}) {
+  const avatar = getImageUrl(provider.avatarUrl);
   return (
-    <Pressable className="bg-card rounded-3xl p-4 flex-row gap-4 border border-border/50 shadow-sm active:opacity-80">
-      <View className="w-24 h-24 rounded-2xl overflow-hidden bg-muted shrink-0">
+    <Pressable
+      onPress={() => onSelect(provider.id)}
+      className="flex-row gap-4 p-4 border shadow-sm bg-card rounded-3xl border-border/50 active:opacity-80"
+    >
+      <View className="w-24 h-24 overflow-hidden rounded-2xl bg-muted shrink-0">
         <Image
-          source={{ uri: clinic.imageUrl }}
+          source={{ uri: avatar }}
           className="w-full h-full"
           resizeMode="cover"
         />
       </View>
-      <View className="flex-col justify-between py-1 flex-1">
+      <View className="flex-col justify-between flex-1 py-1">
         <View>
-          <Text className="font-mbold text-base text-foreground line-clamp-1">
-            {clinic.name}
+          <Text className="text-base font-mbold text-foreground line-clamp-1">
+            {provider.businessName}
           </Text>
           <View className="flex-row items-center gap-1 mt-1">
             <Star size={16} className="text-[#df852a]" fill="#df852a" />
-            <Text className="font-mbold text-sm text-foreground">
-              {clinic.rating}
+            <Text className="text-sm font-mbold text-foreground">
+              {provider.rating.average}
             </Text>
-            <Text className="font-default text-sm text-muted-foreground ml-1">
-              {clinic.distance}
+            <Text className="ml-1 text-sm font-default text-muted-foreground">
+              {provider.location.distanceKm} km
             </Text>
           </View>
         </View>
         <View className="flex-row items-center justify-between mt-2">
-          <Text className="font-mbold text-primary text-sm">
-            Từ {clinic.priceStart} VND
+          <Text className="text-sm font-mbold text-primary">
+            Từ {formatCurrency(provider.services.priceRange.min)}
           </Text>
         </View>
       </View>
@@ -38,20 +53,32 @@ export function ClinicCard({ clinic }: { clinic: ClinicType }) {
   );
 }
 
-export function PopularClinicsSection({ clinics }: { clinics: ClinicType[] }) {
+export function PopularClinicsSection({
+  providers,
+}: {
+  providers: ProviderItem[];
+}) {
+  const router = useRouter();
+  const onSelect = (id: string) => {
+    router.push(`/pet-owner/provider/${id}` as Href);
+  };
   return (
     <View className="mt-8">
-      <View className="flex-row justify-between items-center mb-4">
-        <Text className="font-mbold text-xl text-foreground">
-          Phòng khám phổ biến
+      <View className="flex-row items-center justify-between mb-4">
+        <Text className="text-xl font-mbold text-foreground">
+          Nhà cung cấp phổ biến
         </Text>
         <Pressable>
-          <Text className="text-primary font-mbold text-sm">Xem tất cả</Text>
+          <Text className="text-sm text-primary font-mbold">Xem tất cả</Text>
         </Pressable>
       </View>
       <View className="flex-col gap-4">
-        {clinics.map((clinic) => (
-          <ClinicCard key={clinic.id} clinic={clinic} />
+        {providers.map((provider) => (
+          <ClinicCard
+            key={provider.id}
+            provider={provider}
+            onSelect={onSelect}
+          />
         ))}
       </View>
     </View>

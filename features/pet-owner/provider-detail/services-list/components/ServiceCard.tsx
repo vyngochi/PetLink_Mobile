@@ -1,10 +1,14 @@
 import { Clock } from "lucide-react-native";
 import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
-import { ProviderServicePreview } from "../../../provider-list/types/provider.type";
+import { Dimensions, Image, Pressable, Text, View } from "react-native";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
+import { ProviderServicePreview } from "@/features/pet-owner/shared/types/provider.type";
 
 import { useProtectedRoute } from "@/hooks/useProtectedRoute";
 import { useRouter } from "expo-router";
+
+const CARD_WIDTH = Dimensions.get("window").width / 2;
+const THUMBNAIL_HEIGHT = 128;
 
 interface ServiceCardProps {
   service: ProviderServicePreview;
@@ -40,7 +44,12 @@ export function ServiceCard({ service }: ServiceCardProps) {
     >
       <View className="w-full h-32 bg-muted">
         <Image
-          source={{ uri: service.thumbnailUrl }}
+          source={{
+            uri: getImageUrl(service.thumbnailUrl, {
+              width: CARD_WIDTH,
+              height: THUMBNAIL_HEIGHT,
+            }),
+          }}
           className="w-full h-full"
           resizeMode="cover"
         />

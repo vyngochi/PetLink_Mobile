@@ -12,7 +12,22 @@ export type ApiErrorMessageOptions = {
   fallback: string;
   network?: string;
   byStatus?: Record<number, string>;
+  byMessage?: Record<string, string>;
 };
+
+function extractServerMessage(data: unknown): string | undefined {
+  if (typeof data === "string" && data.trim()) return data;
+
+  const envelope = data as { message?: unknown; error?: unknown } | undefined;
+  const candidate = envelope?.message ?? envelope?.error;
+
+  if (typeof candidate === "string" && candidate.trim()) return candidate;
+  if (Array.isArray(candidate)) {
+    const first = candidate.find((m) => typeof m === "string" && m.trim());
+    if (first) return first as string;
+  }
+  return undefined;
+}
 
 export function getApiErrorMessage(
   error: unknown,
@@ -26,24 +41,17 @@ export function getApiErrorMessage(
       return config.network ?? config.fallback;
     }
 
+    const serverMessage = extractServerMessage(error.response.data);
+
+    const byMessage = serverMessage
+      ? config.byMessage?.[serverMessage.trim()]
+      : undefined;
+    if (byMessage) return byMessage;
+
     const byStatus = config.byStatus?.[error.response.status];
     if (byStatus) return byStatus;
 
-    const data = error.response.data;
-    if (typeof data === "string" && data.trim()) return data;
-
-    const envelope = data as
-      | { message?: unknown; error?: unknown }
-      | undefined;
-    const candidate = envelope?.message ?? envelope?.error;
-
-    if (typeof candidate === "string" && candidate.trim()) return candidate;
-    if (Array.isArray(candidate)) {
-      const first = candidate.find(
-        (m) => typeof m === "string" && m.trim(),
-      );
-      if (first) return first as string;
-    }
+    if (serverMessage) return serverMessage;
   }
   return config.fallback;
 }
