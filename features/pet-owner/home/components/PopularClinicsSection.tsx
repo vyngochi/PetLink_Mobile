@@ -15,6 +15,7 @@ export function ClinicCard({
   provider: ProviderItem;
   onSelect: (id: string) => void;
 }) {
+  const avatar = getImageUrl(provider.avatarUrl);
   return (
     <Pressable
       onPress={() => onSelect(provider.id)}
@@ -22,12 +23,7 @@ export function ClinicCard({
     >
       <View className="w-24 h-24 overflow-hidden rounded-2xl bg-muted shrink-0">
         <Image
-          source={{
-            uri: getImageUrl(provider.avatarUrl, {
-              width: AVATAR_SIZE,
-              height: AVATAR_SIZE,
-            }),
-          }}
+          source={{ uri: avatar }}
           className="w-full h-full"
           resizeMode="cover"
         />

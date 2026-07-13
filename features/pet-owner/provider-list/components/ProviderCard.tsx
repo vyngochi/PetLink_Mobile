@@ -1,8 +1,8 @@
+import { ProviderItem } from "@/features/pet-owner/shared/types/provider.type";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { CheckCircle, MapPin, Star } from "lucide-react-native";
 import React from "react";
 import { Dimensions, Image, Pressable, Text, View } from "react-native";
-import { getImageUrl } from "@/lib/helper/cloudinary.helper";
-import { ProviderItem } from "@/features/pet-owner/shared/types/provider.type";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = 160;
@@ -89,8 +89,7 @@ export function ProviderCard({ provider, onPress }: ProviderCardProps) {
 
         <View className="px-3 py-2 mb-4 rounded-xl bg-primary/10">
           <Text className="text-sm text-primary font-mbold">
-            Dịch vụ từ {formatCurrency(provider.services.priceRange.min)} -{" "}
-            {formatCurrency(provider.services.priceRange.max)}
+            Dịch vụ từ {formatCurrency(provider.services.priceRange.min)}
           </Text>
         </View>
 
