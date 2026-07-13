@@ -16,4 +16,8 @@ export const authService = {
       headers: { "Cache-Control": "no-store", Pragma: "no-cache" },
     });
   },
+
+  saveDeviceToken: (token: string) => {
+    return api.post("/mobile/users/device-token", { token });
+  },
 };

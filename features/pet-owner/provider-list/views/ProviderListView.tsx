@@ -2,7 +2,7 @@ import { Colors } from "@/constants/theme";
 import { useDebounce } from "@/features/pet-owner/home/hooks/useDebounce";
 import { Href, useRouter } from "expo-router";
 import { Search, SlidersHorizontal, X } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -29,14 +29,29 @@ export function ProviderListView() {
   const debouncedQuery = useDebounce(searchQuery, 300);
   const { coors } = useGetCoors();
 
-  const { ...restFilters } = filters;
-  const { providers, isLoading, isError, refetch, isRefetching } =
-    useGetProviders({
-      searchKey: debouncedQuery,
-      ...restFilters,
-      userLat: coors?.userLat,
-      userLng: coors?.userLong,
-    });
+  const { isNearMe, ...restFilters } = filters;
+  const {
+    providers,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useGetProviders({
+    searchKey: debouncedQuery.trim() || undefined,
+    ...restFilters,
+    userLat: coors?.userLat,
+    userLng: coors?.userLong,
+  });
+
+  const sortedProviders = useMemo(() => {
+    if (!isNearMe) return providers;
+    return [...providers].sort(
+      (a, b) => a.location.distanceKm - b.location.distanceKm,
+    );
+  }, [providers, isNearMe]);
 
   return (
     <View className="flex-1 bg-background">
@@ -92,7 +107,7 @@ export function ProviderListView() {
         </View>
       ) : (
         <FlatList
-          data={providers}
+          data={sortedProviders}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <ProviderCard
@@ -104,9 +119,22 @@ export function ProviderListView() {
           )}
           contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View className="items-center py-4">
+                <ActivityIndicator size="small" color={Colors.light.tint} />
+              </View>
+            ) : null
+          }
           refreshControl={
             <RefreshControl
-              refreshing={isRefetching}
+              refreshing={isRefetching && !isFetchingNextPage}
               onRefresh={refetch}
               tintColor={Colors.light.tint}
             />

@@ -1,3 +1,4 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
@@ -12,7 +13,9 @@ export function BookingDetailPetCard({ booking }: BookingDetailPetCardProps) {
   return (
     <View className="flex-row items-center gap-4 rounded-[20px] border border-border bg-card p-4 shadow-sm">
       <Image
-        source={{ uri: booking.petImageUrl }}
+        source={{
+          uri: getImageUrl(booking.petImageUrl, { width: 72, height: 72 }),
+        }}
         accessibilityLabel={booking.petName}
         contentFit="cover"
         transition={200}

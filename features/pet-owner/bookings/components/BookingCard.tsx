@@ -1,7 +1,13 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
-import { CalendarDays, MapPin, Scissors, Stethoscope } from "lucide-react-native";
+import {
+  CalendarDays,
+  MapPin,
+  Scissors,
+  Stethoscope,
+} from "lucide-react-native";
 import React from "react";
-import { Pressable, View, Text } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import { BookingActionButton } from "@/features/pet-owner/bookings/components/BookingActionButton";
 import { BookingInfoRow } from "@/features/pet-owner/bookings/components/BookingInfoRow";
@@ -33,17 +39,21 @@ export function BookingCard({
   const isConfirmed = booking.status === "confirmed";
   const canModify = canModifyBooking(booking.status);
   const isInProgress = isInProgressBooking(booking.status);
-  const ServiceIcon = booking.serviceType === "medical" ? Stethoscope : Scissors;
+  const ServiceIcon =
+    booking.serviceType === "medical" ? Stethoscope : Scissors;
 
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`Xem chi tiết lịch hẹn ${booking.serviceName} cho ${booking.petName}`}
-      className="rounded-[20px] border border-border bg-card p-4 shadow-sm active:opacity-95">
+      className="rounded-[20px] border border-border bg-card p-4 shadow-sm active:opacity-95"
+    >
       <View className="flex-row gap-4">
         <Image
-          source={{ uri: booking.petImageUrl }}
+          source={{
+            uri: getImageUrl(booking.petImageUrl, { width: 80, height: 80 }),
+          }}
           accessibilityLabel={booking.petName}
           contentFit="cover"
           transition={200}
@@ -74,7 +84,7 @@ export function BookingCard({
             <Text
               className={cn(
                 "font-mbold text-[13px] leading-5",
-                isConfirmed ? "text-primary" : "text-muted-foreground"
+                isConfirmed ? "text-primary" : "text-muted-foreground",
               )}
             >
               {booking.scheduledAtLabel}
@@ -108,8 +118,8 @@ export function BookingCard({
               className="flex-1"
             />
             <BookingActionButton
-              label={isConfirmed ? "Đổi lịch" : "Xem chi tiết"}
-              onPress={isConfirmed ? onReschedule : onViewDetails}
+              label={"Xem chi tiết"}
+              onPress={onViewDetails}
               className="flex-[2]"
             />
           </>
@@ -119,13 +129,7 @@ export function BookingCard({
             onPress={onViewDetails}
             className="flex-1"
           />
-        ) : (
-          <BookingActionButton
-            label="Đặt lại"
-            onPress={onRebook}
-            className="flex-1"
-          />
-        )}
+        ) : null}
       </View>
     </Pressable>
   );

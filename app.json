@@ -17,7 +17,10 @@
         "foregroundImage": "./assets/images/favicon-for-app/apple-icon.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "static",
@@ -48,6 +51,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c55a46ab-67c0-47a6-a6a9-14d8544d0034"
+      }
+    },
+    "owner": "ngochivy"
   }
 }

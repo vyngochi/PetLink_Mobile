@@ -4,6 +4,7 @@ import type {
   ConfirmedBooking,
   CreateBookingInput,
 } from "@/features/pet-owner/booking-flow/shared/types";
+import { chatService } from "@/features/pet-owner/chat/shared/services/chat.service";
 import { bookingKeys } from "@/features/pet-owner/shared/constants/query-keys";
 import { bookingService } from "@/features/pet-owner/shared/services/booking.service";
 import type { ApiBooking } from "@/features/pet-owner/shared/types/booking.type";
@@ -35,6 +36,11 @@ export const useCreateBooking = () => {
         ...payload,
         paymentMethod: "CASH",
       });
+      try {
+        await chatService.getOrCreateThread(response.data.data.id);
+      } catch (error) {
+        throw error;
+      }
       return toConfirmedBooking(unwrapData<ApiBooking>(response), petName);
     },
     onSuccess: () => {

@@ -1,5 +1,4 @@
 import api from "@/api/client";
-import type { ChatMessage, Conversation } from "../types";
 
 export const chatService = {
   getThreads: async () => {

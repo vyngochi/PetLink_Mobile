@@ -17,8 +17,6 @@ export function ConversationCard({
 }: ConversationCardProps) {
   const hasUnread = conversation.unreadCount > 0;
 
-  const imageUrl = getImageUrl(conversation.avatarUrl);
-
   return (
     <Pressable
       onPress={onPress}
@@ -33,7 +31,9 @@ export function ConversationCard({
     >
       <View>
         <Image
-          source={imageUrl}
+          source={{
+            uri: getImageUrl(conversation.avatarUrl, { width: 56, height: 56 }),
+          }}
           accessibilityLabel={conversation.name}
           contentFit="cover"
           transition={200}
