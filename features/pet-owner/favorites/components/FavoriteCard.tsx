@@ -1,4 +1,3 @@
-import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import { Heart } from "lucide-react-native";
 import React from "react";
@@ -32,7 +31,7 @@ export function FavoriteCard({
       className="flex-row gap-4 rounded-[20px] border border-border bg-card p-4 shadow-sm"
     >
       <Image
-        source={{ uri: getImageUrl(imageUrl, { width: 88, height: 88 }) }}
+        source={{ uri: imageUrl }}
         accessibilityLabel={title}
         contentFit="cover"
         transition={200}

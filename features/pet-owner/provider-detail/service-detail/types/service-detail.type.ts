@@ -1,4 +1,4 @@
-import { ProviderServicePreview } from "@/features/pet-owner/shared/types/provider.type";
+import { ProviderServicePreview } from '../../../provider-list/types/provider.type';
 
 export interface ServiceDetailItem extends ProviderServicePreview {
   providerId: string;

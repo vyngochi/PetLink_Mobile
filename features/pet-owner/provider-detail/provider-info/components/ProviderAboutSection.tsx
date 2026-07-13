@@ -1,7 +1,7 @@
 import { Clock, CreditCard, MapPin } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
-import { ProviderItem } from "@/features/pet-owner/shared/types/provider.type";
+import { ProviderItem } from "../../../provider-list/types/provider.type";
 
 interface ProviderAboutSectionProps {
   provider: ProviderItem;

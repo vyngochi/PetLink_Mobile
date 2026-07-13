@@ -1,8 +1,3 @@
-import type {
-  PetHealthReminder,
-  PetMedicalRecord,
-} from "@/features/pet-owner/shared/types";
-
 export type PetDetailStatus = "active" | "inactive";
 
 export type PetVitalStat = {
@@ -10,9 +5,17 @@ export type PetVitalStat = {
   value: string;
 };
 
-export type HealthReminder = PetHealthReminder;
+export type HealthReminder = {
+  title: string;
+  date: string;
+};
 
-export type MedicalRecord = PetMedicalRecord;
+export type MedicalRecord = {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+};
 
 export type PetDetail = {
   id: string;
@@ -29,15 +32,4 @@ export type PetDetail = {
   healthReminder?: HealthReminder;
   medicalRecords: MedicalRecord[];
   photos: string[];
-};
-
-export type ApiPetDetail = Omit<
-  PetDetail,
-  "status" | "criticalNote" | "healthReminder" | "medicalRecords" | "photos"
-> & {
-  status: string;
-  criticalNote: string | null;
-  healthReminder: HealthReminder | null;
-  medicalRecords: MedicalRecord[] | null;
-  photos: string[] | null;
 };

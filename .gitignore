@@ -49,5 +49,3 @@ app-example
 
 # MCP local config (contains API keys)
 .mcp.json
-
-PetLink_FE_API_Guide.md

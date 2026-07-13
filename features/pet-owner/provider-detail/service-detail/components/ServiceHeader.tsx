@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, Image, Dimensions } from 'react-native';
 import { Clock } from 'lucide-react-native';
-import { getImageUrl } from '@/lib/helper/cloudinary.helper';
 import { ServiceDetailItem } from '../types/service-detail.type';
 
 interface ServiceHeaderProps {
@@ -22,12 +21,7 @@ export function ServiceHeader({ service }: ServiceHeaderProps) {
     <View className="bg-background">
       <View style={{ width, height: width * 0.65 }} className="bg-muted">
         <Image
-          source={{
-            uri: getImageUrl(service.thumbnailUrl, {
-              width,
-              height: width * 0.65,
-            }),
-          }}
+          source={{ uri: service.thumbnailUrl }}
           className="w-full h-full"
           resizeMode="cover"
         />

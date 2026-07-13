@@ -1,25 +1,13 @@
-import { toast } from "@/components/toast";
-import { Colors } from "@/constants/theme";
-import {
-  useFavoritesStore,
-  useIsServiceFavorite,
-} from "@/features/pet-owner/shared/stores/favorites.store";
 import { useRouter } from "expo-router";
-import { ChevronLeft, Heart } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import React, { useRef } from "react";
-import {
-  ActivityIndicator,
-  Animated,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ServiceBenefits } from "../components/ServiceBenefits";
 import { ServiceBottomCTA } from "../components/ServiceBottomCTA";
 import { ServiceHeader } from "../components/ServiceHeader";
 import { ServiceTargetPets } from "../components/ServiceTargetPets";
-import { useServiceDetail } from "../hooks/useServiceDetail";
+import { MOCK_SERVICE_DETAILS } from "../constants/service-detail-mock";
 
 interface ServiceDetailViewProps {
   serviceId: string;
@@ -27,35 +15,10 @@ interface ServiceDetailViewProps {
 
 export function ServiceDetailView({ serviceId }: ServiceDetailViewProps) {
   const router = useRouter();
+  // const insets = useSafeAreaInsets();
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  const { service, isLoading, isError, refetch } = useServiceDetail(serviceId);
-  const toggleService = useFavoritesStore((state) => state.toggleService);
-  const isFavorite = useIsServiceFavorite(serviceId);
-
-  if (isLoading) {
-    return (
-      <View className="items-center justify-center flex-1 bg-background">
-        <ActivityIndicator size="large" color={Colors.light.tint} />
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View className="items-center justify-center flex-1 gap-4 px-5 bg-background">
-        <Text className="text-lg text-center text-muted-foreground font-mbold">
-          Không thể tải dịch vụ. Vui lòng thử lại.
-        </Text>
-        <Pressable
-          onPress={() => refetch()}
-          className="px-6 py-3 rounded-full bg-primary active:opacity-90"
-        >
-          <Text className="text-white font-mbold">Thử lại</Text>
-        </Pressable>
-      </View>
-    );
-  }
+  const service = MOCK_SERVICE_DETAILS.find((s) => s.id === serviceId);
 
   if (!service) {
     return (
@@ -74,24 +37,11 @@ export function ServiceDetailView({ serviceId }: ServiceDetailViewProps) {
   }
 
   const handleBookPress = () => {
-    router.push({
-      pathname: "/pet-owner/booking/create",
-      params: { serviceId: service.id },
-    });
-  };
-
-  const handleToggleFavorite = () => {
-    toggleService({
-      id: service.id,
-      name: service.name,
-      providerName: service.providerName,
-      imageUrl: service.thumbnailUrl,
-      price: service.price,
-      durationMinutes: service.durationMinutes,
-    });
-    toast.success(
-      isFavorite ? "Đã bỏ khỏi mục yêu thích" : "Đã thêm vào mục yêu thích",
-      { position: "bottom", duration: 600 },
+    console.log(
+      "Navigate to booking for service:",
+      service.id,
+      "provider:",
+      service.providerId,
     );
   };
 
@@ -148,24 +98,10 @@ export function ServiceDetailView({ serviceId }: ServiceDetailViewProps) {
           </Pressable>
           <Animated.Text
             style={{ opacity: headerOpacity }}
-            className="flex-1 ml-4 text-lg font-mbold text-foreground"
+            className="ml-4 text-lg font-mbold text-foreground"
           >
             Chi tiết dịch vụ
           </Animated.Text>
-          <Pressable
-            onPress={handleToggleFavorite}
-            accessibilityRole="button"
-            accessibilityLabel={
-              isFavorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"
-            }
-            className="flex items-center justify-center w-10 h-10 rounded-full shadow-sm bg-white/80 active:bg-white"
-          >
-            <Heart
-              size={20}
-              color="#ef4444"
-              fill={isFavorite ? "#ef4444" : "transparent"}
-            />
-          </Pressable>
         </SafeAreaView>
       </View>
 

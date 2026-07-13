@@ -1,6 +1,5 @@
 import { unwrapData } from "@/lib/http";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useEffect } from "react";
 import { authService } from "../services/auth.service";
 import { useAuthStore } from "../stores/auth.store";
@@ -23,11 +22,7 @@ export const useGetMe = () => {
   }, [query.data]);
 
   useEffect(() => {
-    if (!query.error) return;
-    const status = axios.isAxiosError(query.error)
-      ? query.error.response?.status
-      : undefined;
-    if (status === 401) {
+    if (query.error) {
       useAuthStore.getState().logout();
     }
   }, [query.error]);

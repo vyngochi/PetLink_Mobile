@@ -9,6 +9,7 @@ import {
   EmptyFavorites,
   FavoriteCard,
   FavoritesHeader,
+  FavoritesSuggestions,
   FavoritesTabs,
 } from "@/features/pet-owner/favorites/components";
 import { useFavorites } from "@/features/pet-owner/favorites/hooks/useFavorites";
@@ -136,6 +137,8 @@ export function FavoritesView() {
                 ))}
           </View>
         )}
+
+        <FavoritesSuggestions />
       </ScrollView>
     </SafeAreaView>
   );

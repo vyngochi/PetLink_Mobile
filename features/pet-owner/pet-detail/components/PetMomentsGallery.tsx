@@ -2,8 +2,6 @@ import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 
-import { getImageUrl } from "@/lib/helper/cloudinary.helper";
-
 type PetMomentsGalleryProps = {
   petName: string;
   photos: string[];
@@ -30,7 +28,7 @@ export function PetMomentsGallery({ petName, photos }: PetMomentsGalleryProps) {
             className="h-32 w-32 overflow-hidden rounded-2xl shadow-sm"
           >
             <Image
-              source={{ uri: getImageUrl(photo, { width: 128, height: 128 }) }}
+              source={{ uri: photo }}
               accessibilityLabel={`${petName} ${index + 1}`}
               contentFit="cover"
               transition={200}

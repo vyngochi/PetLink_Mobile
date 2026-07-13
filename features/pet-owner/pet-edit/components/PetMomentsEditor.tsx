@@ -4,7 +4,6 @@ import { Image } from "expo-image";
 import { ImagePlus, X } from "lucide-react-native";
 
 import { petEditColors } from "@/features/pet-owner/pet-edit/constants/colors";
-import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 
 type PetMomentsEditorProps = {
   petName: string;
@@ -32,22 +31,18 @@ export function PetMomentsEditor({
         showsHorizontalScrollIndicator={false}
         contentContainerClassName="gap-4 px-5"
       >
-        {onAddPhoto ? (
-          <Pressable
-            onPress={onAddPhoto}
-            accessibilityRole="button"
-            accessibilityLabel="Thêm ảnh"
-            style={({ pressed }) => ({
-              transform: [{ scale: pressed ? 0.95 : 1 }],
-            })}
-            className="h-24 w-24 items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-border bg-muted"
-          >
-            <ImagePlus size={24} color={petEditColors.outline} />
-            <Text className="font-mbold text-[10px] uppercase tracking-wider text-muted-foreground">
-              Thêm
-            </Text>
-          </Pressable>
-        ) : null}
+        <Pressable
+          onPress={onAddPhoto}
+          accessibilityRole="button"
+          accessibilityLabel="Thêm ảnh"
+          style={({ pressed }) => ({ transform: [{ scale: pressed ? 0.95 : 1 }] })}
+          className="h-24 w-24 items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-border bg-muted"
+        >
+          <ImagePlus size={24} color={petEditColors.outline} />
+          <Text className="font-mbold text-[10px] uppercase tracking-wider text-muted-foreground">
+            Thêm
+          </Text>
+        </Pressable>
 
         {photos.map((photo, index) => (
           <View
@@ -55,7 +50,7 @@ export function PetMomentsEditor({
             className="h-24 w-24 overflow-hidden rounded-2xl bg-muted shadow-sm"
           >
             <Image
-              source={{ uri: getImageUrl(photo, { width: 96, height: 96 }) }}
+              source={{ uri: photo }}
               accessibilityLabel={`${petName} ${index + 1}`}
               contentFit="cover"
               transition={200}

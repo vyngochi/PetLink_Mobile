@@ -1,23 +1,9 @@
-import { toast } from "@/components/toast";
-import { Colors } from "@/constants/theme";
-import {
-  useFavoritesStore,
-  useIsProviderFavorite,
-} from "@/features/pet-owner/shared/stores/favorites.store";
-import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { useRouter } from "expo-router";
-import { ChevronLeft, Heart } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import React from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useProviderDetail } from "../../shared/hooks/useProviderDetail";
+import { MOCK_PROVIDERS } from "../../../provider-list/constants/provider-mock";
 import { ProviderAboutSection } from "../components/ProviderAboutSection";
 import { ProviderReviewsSection } from "../components/ProviderReviewsSection";
 
@@ -27,53 +13,24 @@ interface ProviderInfoViewProps {
 
 export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
   const router = useRouter();
-  const { provider, isLoading, isError, isNotFound, refetch } =
-    useProviderDetail(providerId);
-  const toggleProvider = useFavoritesStore((state) => state.toggleProvider);
-  const isFavorite = useIsProviderFavorite(providerId);
 
-  if (isLoading) {
+  const provider = MOCK_PROVIDERS.find((p) => p.id === providerId);
+
+  if (!provider) {
     return (
       <View className="items-center justify-center flex-1 bg-background">
-        <ActivityIndicator size="large" color={Colors.light.tint} />
-      </View>
-    );
-  }
-
-  if (isError || !provider) {
-    return (
-      <View className="items-center justify-center flex-1 gap-4 px-5 bg-background">
-        <Text className="text-lg text-center text-muted-foreground font-mbold">
-          {isNotFound
-            ? "Không tìm thấy thông tin cơ sở"
-            : "Không thể tải thông tin cơ sở. Vui lòng thử lại."}
+        <Text className="text-lg text-muted-foreground font-mbold">
+          Không tìm thấy thông tin cơ sở
         </Text>
         <Pressable
-          onPress={() => (isNotFound ? router.back() : refetch())}
-          className="px-6 py-3 rounded-full bg-primary active:opacity-90"
+          onPress={() => router.back()}
+          className="px-4 py-2 mt-4 rounded-full bg-primary"
         >
-          <Text className="text-white font-mbold">
-            {isNotFound ? "Quay lại" : "Thử lại"}
-          </Text>
+          <Text className="text-white font-mbold">Quay lại</Text>
         </Pressable>
       </View>
     );
   }
-
-  const handleToggleFavorite = () => {
-    toggleProvider({
-      id: provider.id,
-      name: provider.businessName,
-      category: provider.services.categories[0] ?? "Dịch vụ thú cưng",
-      imageUrl: provider.avatarUrl,
-      rating: provider.rating.average,
-      distanceKm: provider.location.distanceKm,
-    });
-    toast.success(
-      isFavorite ? "Đã bỏ khỏi mục yêu thích" : "Đã thêm vào mục yêu thích",
-      { position: "bottom", duration: 600 },
-    );
-  };
 
   return (
     <View className="flex-1 bg-background">
@@ -91,12 +48,7 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
 
           <View className="flex-row items-center flex-1 gap-3">
             <Image
-              source={{
-                uri: getImageUrl(provider.avatarUrl, {
-                  width: 40,
-                  height: 40,
-                }),
-              }}
+              source={{ uri: provider.avatarUrl }}
               className="w-10 h-10 border rounded-full border-border/50"
               resizeMode="cover"
             />
@@ -109,21 +61,6 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
               </Text>
             </View>
           </View>
-
-          <Pressable
-            onPress={handleToggleFavorite}
-            accessibilityRole="button"
-            accessibilityLabel={
-              isFavorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"
-            }
-            className="flex items-center justify-center w-10 h-10 border rounded-full bg-card border-border/50 active:bg-muted"
-          >
-            <Heart
-              size={20}
-              color="#ef4444"
-              fill={isFavorite ? "#ef4444" : "transparent"}
-            />
-          </Pressable>
         </View>
       </SafeAreaView>
 

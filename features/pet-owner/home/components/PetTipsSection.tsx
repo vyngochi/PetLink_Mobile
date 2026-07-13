@@ -1,7 +1,6 @@
-import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { ArrowRight } from "lucide-react-native";
 import React from "react";
-import { Dimensions, Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { PetCareTipType } from "../types/home.type";
 
 export function TipCard({ tip }: { tip: PetCareTipType }) {
@@ -9,12 +8,7 @@ export function TipCard({ tip }: { tip: PetCareTipType }) {
     <Pressable className="bg-card rounded-3xl overflow-hidden border border-border/50 shadow-sm active:opacity-90">
       <View className="h-48 w-full overflow-hidden bg-muted">
         <Image
-          source={{
-            uri: getImageUrl(tip.imageUrl, {
-              width: Dimensions.get("window").width,
-              height: 192,
-            }),
-          }}
+          source={{ uri: tip.imageUrl }}
           className="w-full h-full"
           resizeMode="cover"
         />
