@@ -1,8 +1,11 @@
 import { Colors } from "@/constants/theme";
+import { toast } from "@/components/toast";
+import { useFavoritesStore, useIsProviderFavorite } from "@/features/pet-owner/shared/stores/favorites.store";
 import { Href, useRouter } from "expo-router";
 import {
   CheckCircle,
   ChevronLeft,
+  Heart,
   MapPin,
   Star,
   Store,
@@ -69,6 +72,25 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
     );
   }
 
+  const toggleProvider = useFavoritesStore((state) => state.toggleProvider);
+  const isFavorite = useIsProviderFavorite(providerId);
+
+  const handleToggleFavorite = () => {
+    toggleProvider({
+      id: provider.id,
+      name: provider.businessName,
+      category: provider.services.categories[0] ?? "Dịch vụ thú cưng",
+      imageUrl: provider.avatarUrl,
+      rating: provider.rating.average,
+      distanceKm: provider.location.distanceKm,
+    });
+
+    toast.success(
+      isFavorite ? "Đã bỏ khỏi mục yêu thích" : "Đã thêm vào mục yêu thích",
+      { position: "bottom", duration: 600 },
+    );
+  };
+
   const renderHeader = () => (
     <View className="pb-6 bg-background">
       <View className="relative w-full h-56 bg-muted">
@@ -89,14 +111,28 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
         </SafeAreaView>
 
         <SafeAreaView edges={["top"]} className="absolute z-10 top-4 right-4">
-          <Pressable
-            onPress={() => {
-              router.push(`/pet-owner/provider/${provider.id}/info` as Href);
-            }}
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md active:bg-white"
-          >
-            <Store size={20} className="text-foreground" />
-          </Pressable>
+          <View className="flex-row items-center gap-2">
+            <Pressable
+              onPress={handleToggleFavorite}
+              accessibilityRole="button"
+              accessibilityLabel={isFavorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md active:bg-white"
+            >
+              <Heart
+                size={20}
+                color="#ef4444"
+                fill={isFavorite ? "#ef4444" : "transparent"}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                router.push(`/pet-owner/provider/${provider.id}/info` as Href);
+              }}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md active:bg-white"
+            >
+              <Store size={20} className="text-foreground" />
+            </Pressable>
+          </View>
         </SafeAreaView>
 
         <View className="absolute flex items-center justify-center w-20 h-20 p-1 border-4 rounded-full shadow-sm -bottom-10 left-5 bg-card border-card">
