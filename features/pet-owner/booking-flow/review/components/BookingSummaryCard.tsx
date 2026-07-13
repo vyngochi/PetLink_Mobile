@@ -1,3 +1,4 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import {
   CalendarDays,
@@ -44,7 +45,9 @@ export function BookingSummaryCard({
 
       <View className="flex-row items-center gap-3.5">
         <Image
-          source={{ uri: pet.imageUrl }}
+          source={{
+            uri: getImageUrl(pet.imageUrl, { width: 48, height: 48 }),
+          }}
           accessibilityLabel={pet.name}
           contentFit="cover"
           transition={200}

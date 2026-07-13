@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/theme";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import React from "react";
@@ -68,7 +69,12 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
 
           <View className="flex-row items-center flex-1 gap-3">
             <Image
-              source={{ uri: provider.avatarUrl }}
+              source={{
+                uri: getImageUrl(provider.avatarUrl, {
+                  width: 40,
+                  height: 40,
+                }),
+              }}
               className="w-10 h-10 border rounded-full border-border/50"
               resizeMode="cover"
             />
