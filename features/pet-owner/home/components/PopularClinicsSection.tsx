@@ -1,12 +1,22 @@
 import { formatCurrency } from "@/lib/helper/formatCurrency";
+import { Href, useRouter } from "expo-router";
 import { Star } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ProviderItem } from "../../shared/types/provider.type";
 
-export function ClinicCard({ provider }: { provider: ProviderItem }) {
+export function ClinicCard({
+  provider,
+  onSelect,
+}: {
+  provider: ProviderItem;
+  onSelect: (v: string) => void;
+}) {
   return (
-    <Pressable className="flex-row gap-4 p-4 border shadow-sm bg-card rounded-3xl border-border/50 active:opacity-80">
+    <Pressable
+      onPress={() => onSelect(provider.id)}
+      className="flex-row gap-4 p-4 border shadow-sm bg-card rounded-3xl border-border/50 active:opacity-80"
+    >
       <View className="w-24 h-24 overflow-hidden rounded-2xl bg-muted shrink-0">
         <Image
           source={{ uri: provider.avatarUrl }}
@@ -44,6 +54,10 @@ export function PopularClinicsSection({
 }: {
   providers: ProviderItem[];
 }) {
+  const router = useRouter();
+  const onSelect = (id: string) => {
+    router.push(`/pet-owner/provider/${id}` as Href);
+  };
   return (
     <View className="mt-8">
       <View className="flex-row items-center justify-between mb-4">
@@ -56,7 +70,11 @@ export function PopularClinicsSection({
       </View>
       <View className="flex-col gap-4">
         {providers.map((provider) => (
-          <ClinicCard key={provider.id} provider={provider} />
+          <ClinicCard
+            key={provider.id}
+            provider={provider}
+            onSelect={onSelect}
+          />
         ))}
       </View>
     </View>
