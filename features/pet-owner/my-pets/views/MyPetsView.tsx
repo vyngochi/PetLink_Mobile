@@ -29,6 +29,10 @@ export function MyPetsView() {
     router.push(`/pet-owner/pet/${pet.id}` as Href);
   };
 
+  const handleAddPet = () => {
+    router.push("/pet-owner/pet/create" as Href);
+  };
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -72,7 +76,7 @@ export function MyPetsView() {
             <PetCard key={pet.id} pet={pet} onViewProfile={handleViewProfile} />
           ))
         )}
-        <AddPetButton />
+        <AddPetButton onPress={handleAddPet} />
       </View>
     );
   };

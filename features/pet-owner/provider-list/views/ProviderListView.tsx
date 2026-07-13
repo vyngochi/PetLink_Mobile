@@ -1,7 +1,8 @@
 import { Colors } from "@/constants/theme";
+import { useDebounce } from "@/features/pet-owner/home/hooks/useDebounce";
 import { Href, useRouter } from "expo-router";
-import { Search, SlidersHorizontal } from "lucide-react-native";
-import React from "react";
+import { Search, SlidersHorizontal, X } from "lucide-react-native";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -11,15 +12,31 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useGetCoors } from "../../home/hooks/useGetCoors";
+import { useSearchStore } from "../../shared/stores/search.store";
 import { ProviderCard } from "../components/ProviderCard";
-import { useCurrentCoords } from "../hooks/useCurrentCoords";
+import {
+  FilterState,
+  ProviderFilterModal,
+} from "../components/ProviderFilterModal";
 import { useGetProviders } from "../hooks/useGetProviders";
 
 export function ProviderListView() {
   const router = useRouter();
-  const coords = useCurrentCoords();
+  const { searchQuery, setSearchQuery } = useSearchStore();
+  const [isFilterVisible, setFilterVisible] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({});
+  const debouncedQuery = useDebounce(searchQuery, 300);
+  const { coors } = useGetCoors();
+
+  const { ...restFilters } = filters;
   const { providers, isLoading, isError, refetch, isRefetching } =
-    useGetProviders(coords ?? {});
+    useGetProviders({
+      searchKey: debouncedQuery,
+      ...restFilters,
+      userLat: coors?.userLat,
+      userLng: coors?.userLong,
+    });
 
   return (
     <View className="flex-1 bg-background">
@@ -33,14 +50,27 @@ export function ProviderListView() {
               <Search className="text-muted-foreground" size={20} />
             </View>
             <TextInput
-              className="w-full py-3 pl-12 pr-4 border shadow-sm bg-card border-border/50 rounded-xl font-default text-foreground"
+              className="w-full py-3 pl-12 pr-12 border shadow-sm bg-card border-border/50 rounded-xl font-default text-foreground"
               placeholder="Tên cơ sở, dịch vụ..."
               placeholderTextColor="#64748B"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
+            {searchQuery.length > 0 && (
+              <Pressable
+                onPress={() => setSearchQuery("")}
+                className="absolute inset-y-0 z-10 flex items-center justify-center p-2 right-2"
+              >
+                <X className="text-muted-foreground" size={20} />
+              </Pressable>
+            )}
           </View>
-          <View className="items-center justify-center w-12 h-12 border shadow-sm rounded-xl bg-card border-border/50">
+          <Pressable
+            className="items-center justify-center w-12 h-12 border shadow-sm rounded-xl bg-card border-border/50 active:opacity-80"
+            onPress={() => setFilterVisible(true)}
+          >
             <SlidersHorizontal className="text-foreground" size={20} />
-          </View>
+          </Pressable>
         </View>
       </View>
 
@@ -90,6 +120,16 @@ export function ProviderListView() {
           }
         />
       )}
+
+      <ProviderFilterModal
+        visible={isFilterVisible}
+        onClose={() => setFilterVisible(false)}
+        initialFilters={filters}
+        onApply={(newFilters) => {
+          setFilters(newFilters);
+          setFilterVisible(false);
+        }}
+      />
     </View>
   );
 }

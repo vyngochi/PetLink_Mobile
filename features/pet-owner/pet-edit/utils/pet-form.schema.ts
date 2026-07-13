@@ -2,11 +2,12 @@ import { z } from "zod";
 
 const NUMBER_REGEX = /^\d+(\.\d+)?$/;
 
-export const petEditSchema = z.object({
+export const petFormSchema = z.object({
   name: z.string().trim().min(1, "Vui lòng nhập tên thú cưng."),
   breed: z.string().trim().min(1, "Vui lòng nhập giống loài."),
   gender: z.enum(["female", "male"]),
   ageLabel: z.string().trim().min(1, "Vui lòng nhập độ tuổi."),
+  imageUrl: z.string().trim().min(1, "Vui lòng chọn ảnh thú cưng."),
   weight: z
     .string()
     .trim()
@@ -21,4 +22,4 @@ export const petEditSchema = z.object({
   medicalNotes: z.string().trim().max(500, "Ghi chú y tế tối đa 500 ký tự."),
 });
 
-export type PetEditFormValues = z.infer<typeof petEditSchema>;
+export type PetFormValues = z.infer<typeof petFormSchema>;

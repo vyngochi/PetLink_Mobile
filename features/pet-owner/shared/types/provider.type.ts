@@ -29,7 +29,7 @@ export interface ProviderServicePreview {
   price: number;
   durationMinutes: number;
   thumbnailUrl: string;
-  description?: string; //can be tra ve
+  description?: string;
 }
 
 export interface ProviderServices {
@@ -41,6 +41,7 @@ export interface ProviderServices {
 
 export interface ProviderAvailability {
   isOpenNow: boolean;
+  canBookFuture: boolean;
   todayOpeningHours: {
     open: string;
     close: string;
@@ -70,15 +71,33 @@ export interface ProviderItem {
 }
 
 export interface GetProvidersParams {
+  q?: string;
+  searchKey?: string;
   page?: number;
   pageSize?: number;
   userLat?: number;
   userLng?: number;
+  minRating?: number;
+  maxRating?: number;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+export interface GlobalSearchResponse {
+  providers: string[];
+  services: string[];
+}
+
+export interface ProviderPagination {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 export interface ProviderListResponse {
   items: ProviderItem[];
-  page: number;
-  pageSize: number;
-  total: number;
+  pagination: ProviderPagination;
 }

@@ -1,9 +1,17 @@
+import { Colors } from "@/constants/theme";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import React from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MOCK_PROVIDERS } from "../../../provider-list/constants/provider-mock";
+import { useProviderDetail } from "../../shared/hooks/useProviderDetail";
 import { ProviderAboutSection } from "../components/ProviderAboutSection";
 import { ProviderReviewsSection } from "../components/ProviderReviewsSection";
 
@@ -13,20 +21,32 @@ interface ProviderInfoViewProps {
 
 export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
   const router = useRouter();
+  const { provider, isLoading, isError, isNotFound, refetch } =
+    useProviderDetail(providerId);
 
-  const provider = MOCK_PROVIDERS.find((p) => p.id === providerId);
-
-  if (!provider) {
+  if (isLoading) {
     return (
       <View className="items-center justify-center flex-1 bg-background">
-        <Text className="text-lg text-muted-foreground font-mbold">
-          Không tìm thấy thông tin cơ sở
+        <ActivityIndicator size="large" color={Colors.light.tint} />
+      </View>
+    );
+  }
+
+  if (isError || !provider) {
+    return (
+      <View className="items-center justify-center flex-1 gap-4 px-5 bg-background">
+        <Text className="text-lg text-center text-muted-foreground font-mbold">
+          {isNotFound
+            ? "Không tìm thấy thông tin cơ sở"
+            : "Không thể tải thông tin cơ sở. Vui lòng thử lại."}
         </Text>
         <Pressable
-          onPress={() => router.back()}
-          className="px-4 py-2 mt-4 rounded-full bg-primary"
+          onPress={() => (isNotFound ? router.back() : refetch())}
+          className="px-6 py-3 rounded-full bg-primary active:opacity-90"
         >
-          <Text className="text-white font-mbold">Quay lại</Text>
+          <Text className="text-white font-mbold">
+            {isNotFound ? "Quay lại" : "Thử lại"}
+          </Text>
         </Pressable>
       </View>
     );

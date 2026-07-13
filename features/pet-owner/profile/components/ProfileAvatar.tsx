@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import { CircleUserRound } from "lucide-react-native";
 
 import { profileColors } from "@/features/pet-owner/profile/constants/colors";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 
 type ProfileAvatarProps = {
   uri?: string;
@@ -11,14 +12,16 @@ type ProfileAvatarProps = {
 };
 
 export function ProfileAvatar({ uri, size }: ProfileAvatarProps) {
+  const source = getImageUrl(uri, { width: size, height: size, crop: "thumb" });
+
   return (
     <View
       className="items-center justify-center overflow-hidden rounded-full bg-muted"
       style={{ width: size, height: size }}
     >
-      {uri ? (
+      {source ? (
         <Image
-          source={{ uri }}
+          source={{ uri: source }}
           style={{ width: size, height: size }}
           contentFit="cover"
           transition={200}
