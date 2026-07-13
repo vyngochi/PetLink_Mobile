@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/theme";
-import { useRouter, type Href } from "expo-router";
+import { useFocusEffect, useRouter, type Href } from "expo-router";
 import React from "react";
 import {
   ActivityIndicator,
@@ -31,6 +31,12 @@ export function ChatListView() {
     isRefetching,
   } = useConversations();
 
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <View className="px-5 pt-2">
@@ -47,7 +53,7 @@ export function ChatListView() {
         <ChatFilterChips value={filter} onChange={setFilter} />
       </View>
 
-      {isLoading ? (
+      {isRefetching ? (
         <View className="items-center justify-center flex-1">
           <ActivityIndicator size="large" color={Colors.light.tint} />
         </View>
