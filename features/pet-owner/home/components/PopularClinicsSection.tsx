@@ -8,7 +8,13 @@ import { ProviderItem } from "../../shared/types/provider.type";
 
 const AVATAR_SIZE = 96;
 
-export function ClinicCard({ provider }: { provider: ProviderItem }) {
+export function ClinicCard({
+  provider,
+  onSelect,
+}: {
+  provider: ProviderItem;
+  onSelect: (id: string) => void;
+}) {
   return (
     <Pressable
       onPress={() => onSelect(provider.id)}

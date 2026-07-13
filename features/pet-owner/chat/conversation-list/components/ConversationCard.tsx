@@ -1,4 +1,3 @@
-import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
@@ -17,8 +16,6 @@ export function ConversationCard({
   onPress,
 }: ConversationCardProps) {
   const hasUnread = conversation.unreadCount > 0;
-
-  const imageUrl = getImageUrl(conversation.avatarUrl);
 
   return (
     <Pressable
