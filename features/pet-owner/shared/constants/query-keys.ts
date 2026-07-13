@@ -1,3 +1,15 @@
+export const bookingKeys = {
+  all: ["bookings"] as const,
+  lists: () => [...bookingKeys.all, "list"] as const,
+  myBookings: () => [...bookingKeys.lists(), "my-bookings"] as const,
+  details: () => [...bookingKeys.all, "detail"] as const,
+  detail: (bookingId: string) => [...bookingKeys.details(), bookingId] as const,
+  qr: (bookingId: string, action: string) =>
+    [...bookingKeys.all, "qr", bookingId, action] as const,
+  availableSlots: (providerId: string, serviceId: string, date: string) =>
+    [...bookingKeys.all, "available-slots", providerId, serviceId, date] as const,
+};
+
 export const petKeys = {
   all: ["pets"] as const,
   lists: () => [...petKeys.all, "list"] as const,

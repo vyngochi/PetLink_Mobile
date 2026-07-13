@@ -1,20 +1,31 @@
 import { useRouter, type Href } from "expo-router";
 import React, { useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { toast } from "@/components/toast";
+import { Colors } from "@/constants/theme";
 import {
   BookingCard,
   BookingsTabs,
   EmptyBookings,
 } from "@/features/pet-owner/bookings/components";
 import { useBookings } from "@/features/pet-owner/bookings/hooks/useBookings";
+import { useCancelBooking } from "@/features/pet-owner/bookings/hooks/useCancelBooking";
 import type { Booking, BookingTab } from "@/features/pet-owner/bookings/types";
+import { getApiErrorMessage } from "@/lib/http";
 
 export function BookingsView() {
   const router = useRouter();
-  const { upcoming, past, cancelBooking } = useBookings();
+  const { upcoming, past, isLoading, isError, error, refetch } = useBookings();
+  const cancelBooking = useCancelBooking();
   const [tab, setTab] = useState<BookingTab>("upcoming");
 
   const bookings = tab === "upcoming" ? upcoming : past;
@@ -29,8 +40,20 @@ export function BookingsView() {
           text: "Hủy lịch",
           style: "destructive",
           onPress: () => {
-            cancelBooking(booking.id);
-            toast.success("Đã hủy lịch hẹn", { position: "bottom" });
+            cancelBooking.mutate(booking.id, {
+              onSuccess: () => {
+                toast.success("Đã hủy lịch hẹn", { position: "bottom" });
+              },
+              onError: (cancelError) => {
+                toast.error(
+                  getApiErrorMessage(cancelError, {
+                    fallback: "Không thể hủy lịch hẹn, vui lòng thử lại",
+                    network: "Không có kết nối mạng, vui lòng thử lại",
+                  }),
+                  { position: "bottom" },
+                );
+              },
+            });
           },
         },
       ],
@@ -77,31 +100,52 @@ export function BookingsView() {
         />
       </View>
 
-      <ScrollView
-        contentContainerClassName="px-5 pb-10 pt-5"
-        showsVerticalScrollIndicator={false}
-      >
-        {bookings.length === 0 ? (
-          <EmptyBookings
-            tab={tab}
-            onExplore={() => router.push("/(tabs)/providers")}
-          />
-        ) : (
-          <View className="gap-4">
-            {bookings.map((booking) => (
-              <BookingCard
-                key={booking.id}
-                booking={booking}
-                onPress={() => openDetail(booking)}
-                onCancel={() => handleCancel(booking)}
-                onReschedule={notifyComingSoon}
-                onViewDetails={notifyComingSoon}
-                onRebook={() => handleRebook(booking)}
-              />
-            ))}
-          </View>
-        )}
-      </ScrollView>
+      {isLoading ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={Colors.light.tint} />
+        </View>
+      ) : isError ? (
+        <View className="flex-1 items-center justify-center gap-4 px-5">
+          <Text className="text-center font-mbold text-[16px] text-muted-foreground">
+            {getApiErrorMessage(error, {
+              fallback: "Không thể tải lịch hẹn, vui lòng thử lại",
+              network: "Không có kết nối mạng, vui lòng thử lại",
+            })}
+          </Text>
+          <Pressable
+            onPress={() => refetch()}
+            className="rounded-full bg-primary px-6 py-3 active:opacity-90"
+          >
+            <Text className="font-mbold text-primary-foreground">Thử lại</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <ScrollView
+          contentContainerClassName="px-5 pb-10 pt-5"
+          showsVerticalScrollIndicator={false}
+        >
+          {bookings.length === 0 ? (
+            <EmptyBookings
+              tab={tab}
+              onExplore={() => router.push("/(tabs)/providers")}
+            />
+          ) : (
+            <View className="gap-4">
+              {bookings.map((booking) => (
+                <BookingCard
+                  key={booking.id}
+                  booking={booking}
+                  onPress={() => openDetail(booking)}
+                  onCancel={() => handleCancel(booking)}
+                  onReschedule={notifyComingSoon}
+                  onViewDetails={() => openDetail(booking)}
+                  onRebook={() => handleRebook(booking)}
+                />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
