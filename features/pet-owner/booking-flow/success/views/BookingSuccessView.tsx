@@ -2,7 +2,10 @@ import { Redirect, useRouter } from "expo-router";
 import { Check, PawPrint, X } from "lucide-react-native";
 import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { useBookingFlowStore } from "@/features/pet-owner/booking-flow/shared/stores/booking-flow.store";
 import { ConfirmedBookingCard } from "@/features/pet-owner/booking-flow/success/components";

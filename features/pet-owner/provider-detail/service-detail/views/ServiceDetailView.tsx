@@ -1,13 +1,20 @@
+import { Colors } from "@/constants/theme";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import React, { useRef } from "react";
-import { Animated, Pressable, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Animated,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ServiceBenefits } from "../components/ServiceBenefits";
 import { ServiceBottomCTA } from "../components/ServiceBottomCTA";
 import { ServiceHeader } from "../components/ServiceHeader";
 import { ServiceTargetPets } from "../components/ServiceTargetPets";
-import { MOCK_SERVICE_DETAILS } from "../constants/service-detail-mock";
+import { useServiceDetail } from "../hooks/useServiceDetail";
 
 interface ServiceDetailViewProps {
   serviceId: string;
@@ -15,10 +22,33 @@ interface ServiceDetailViewProps {
 
 export function ServiceDetailView({ serviceId }: ServiceDetailViewProps) {
   const router = useRouter();
-  // const insets = useSafeAreaInsets();
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  const service = MOCK_SERVICE_DETAILS.find((s) => s.id === serviceId);
+  const { service, isLoading, isError, refetch } = useServiceDetail(serviceId);
+
+  if (isLoading) {
+    return (
+      <View className="items-center justify-center flex-1 bg-background">
+        <ActivityIndicator size="large" color={Colors.light.tint} />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View className="items-center justify-center flex-1 gap-4 px-5 bg-background">
+        <Text className="text-lg text-center text-muted-foreground font-mbold">
+          Không thể tải dịch vụ. Vui lòng thử lại.
+        </Text>
+        <Pressable
+          onPress={() => refetch()}
+          className="px-6 py-3 rounded-full bg-primary active:opacity-90"
+        >
+          <Text className="text-white font-mbold">Thử lại</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   if (!service) {
     return (

@@ -1,25 +1,35 @@
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { BOOKINGS_MOCK } from "@/features/pet-owner/bookings/constants/bookings-mock";
-import type { Booking } from "@/features/pet-owner/bookings/types";
+import {
+  isUpcomingBooking,
+  toBooking,
+} from "@/features/pet-owner/bookings/utils/booking-mapper";
+import { useGetMyPets } from "@/features/pet-owner/my-pets/hooks/useGetMyPets";
+import { bookingKeys } from "@/features/pet-owner/shared/constants/query-keys";
+import { useBookingRealtime } from "@/features/pet-owner/shared/hooks/useBookingRealtime";
+import { useRefreshOnFocus } from "@/features/pet-owner/shared/hooks/useRefreshOnFocus";
+import { bookingService } from "@/features/pet-owner/shared/services/booking.service";
+import type { BookingListResponse } from "@/features/pet-owner/shared/types/booking.type";
+import { unwrapData } from "@/lib/http";
+
+const BOOKINGS_PAGE_SIZE = 50;
 
 export function useBookings() {
-  const [bookings, setBookings] = useState<Booking[]>(BOOKINGS_MOCK);
+  const { pets } = useGetMyPets();
+  const { data, isLoading, isError, error, refetch, isRefetching } = useQuery({
+    queryKey: bookingKeys.myBookings(),
+    queryFn: () =>
+      bookingService.getMyBookings({ pageSize: BOOKINGS_PAGE_SIZE }),
+    select: (res) => unwrapData<BookingListResponse>(res),
+  });
 
-  const upcoming = bookings.filter(
-    (item) => item.status === "confirmed" || item.status === "pending"
-  );
-  const past = bookings.filter(
-    (item) => item.status === "completed" || item.status === "cancelled"
-  );
+  useRefreshOnFocus(refetch);
+  useBookingRealtime();
 
-  const cancelBooking = (id: string) => {
-    setBookings((current) =>
-      current.map((item) =>
-        item.id === id ? { ...item, status: "cancelled" } : item
-      )
-    );
-  };
+  const bookings = (data?.items ?? []).map((item) => toBooking(item, pets));
 
-  return { upcoming, past, cancelBooking };
+  const upcoming = bookings.filter((item) => isUpcomingBooking(item.status));
+  const past = bookings.filter((item) => !isUpcomingBooking(item.status));
+
+  return { upcoming, past, isLoading, isError, error, refetch, isRefetching };
 }

@@ -1,7 +1,16 @@
 import { useRouter, type Href } from "expo-router";
 import React from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
+import { toast } from "@/components/toast";
+import { Colors } from "@/constants/theme";
 import {
   HealthRemindersSection,
   MedicalHistorySection,
@@ -12,7 +21,9 @@ import {
   PetMomentsGallery,
   PetStatsGrid,
 } from "@/features/pet-owner/pet-detail/components";
+import { useDeletePet } from "@/features/pet-owner/pet-detail/hooks/useDeletePet";
 import { usePetDetail } from "@/features/pet-owner/pet-detail/hooks/usePetDetail";
+import { getApiErrorMessage } from "@/lib/http";
 
 type PetDetailViewProps = {
   petId: string;
@@ -20,7 +31,80 @@ type PetDetailViewProps = {
 
 export function PetDetailView({ petId }: PetDetailViewProps) {
   const router = useRouter();
-  const { pet } = usePetDetail(petId);
+  const { pet, isLoading, isError, error, refetch } = usePetDetail(petId);
+  const deletePet = useDeletePet();
+
+  const handleDelete = (petName: string) => {
+    Alert.alert(
+      "Xoá thú cưng",
+      `Bạn có chắc muốn xoá hồ sơ của ${petName}? Hành động này không thể hoàn tác.`,
+      [
+        { text: "Giữ lại", style: "cancel" },
+        {
+          text: "Xoá",
+          style: "destructive",
+          onPress: () => {
+            deletePet.mutate(petId, {
+              onSuccess: () => {
+                toast.success("Đã xoá thú cưng", { position: "bottom" });
+                router.back();
+              },
+              onError: (deleteError) => {
+                toast.error(
+                  getApiErrorMessage(deleteError, {
+                    fallback: "Không xoá được thú cưng",
+                    network: "Không có kết nối mạng. Vui lòng thử lại.",
+                  }),
+                  { position: "bottom" },
+                );
+              },
+            });
+          },
+        },
+      ],
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator color={Colors.light.tint} />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View className="flex-1 items-center justify-center gap-4 bg-background px-5">
+        <Text className="text-center font-default text-[14px] leading-[21px] text-muted-foreground">
+          {getApiErrorMessage(error, {
+            fallback: "Không tải được thông tin thú cưng",
+            network: "Không có kết nối mạng. Vui lòng thử lại.",
+          })}
+        </Text>
+        <Pressable
+          onPress={() => refetch()}
+          accessibilityRole="button"
+          accessibilityLabel="Thử lại"
+          className="h-12 items-center justify-center rounded-full bg-primary px-8"
+        >
+          <Text className="font-mbold text-[14px] leading-5 text-primary-foreground">
+            Thử lại
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel="Quay lại"
+          className="h-12 items-center justify-center px-8"
+        >
+          <Text className="font-mbold text-[14px] leading-5 text-muted-foreground">
+            Quay lại
+          </Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   if (!pet) {
     return (
@@ -65,7 +149,11 @@ export function PetDetailView({ petId }: PetDetailViewProps) {
         </View>
       </ScrollView>
 
-      <PetDetailTopNav onBack={() => router.back()} />
+      <PetDetailTopNav
+        onBack={() => router.back()}
+        onDelete={() => handleDelete(pet.name)}
+        deleting={deletePet.isPending}
+      />
 
       <PetDetailFooter
         onEditProfile={() =>

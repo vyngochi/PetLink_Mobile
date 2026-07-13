@@ -26,13 +26,13 @@ export function ChatFilterChips({ value, onChange }: ChatFilterChipsProps) {
               "rounded-full px-6 py-2",
               isActive
                 ? "bg-primary shadow-sm"
-                : "border border-border bg-card shadow-none"
+                : "border border-border bg-card shadow-none",
             )}
           >
             <Text
               className={cn(
                 "font-mbold text-[13px] leading-5",
-                isActive ? "text-primary-foreground" : "text-muted-foreground"
+                isActive ? "text-primary-foreground" : "text-muted-foreground",
               )}
             >
               {item.label}
