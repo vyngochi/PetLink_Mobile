@@ -1,6 +1,13 @@
+import { Colors } from "@/constants/theme";
 import { useRouter, type Href } from "expo-router";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -13,8 +20,16 @@ import { useConversations } from "@/features/pet-owner/chat/conversation-list/ho
 
 export function ChatListView() {
   const router = useRouter();
-  const { conversations, filter, setFilter, search, setSearch } =
-    useConversations();
+  const {
+    conversations,
+    filter,
+    setFilter,
+    search,
+    setSearch,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useConversations();
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -23,7 +38,7 @@ export function ChatListView() {
           Tin nhắn
         </Text>
         <Text className="mt-1 font-default text-[13px] leading-5 text-muted-foreground">
-          Trò chuyện với bác sĩ và dịch vụ chăm sóc thú cưng
+          Trò chuyện với nhà cung cấp
         </Text>
       </View>
 
@@ -32,27 +47,41 @@ export function ChatListView() {
         <ChatFilterChips value={filter} onChange={setFilter} />
       </View>
 
-      <ScrollView
-        contentContainerClassName="px-5 pb-10 pt-5"
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {conversations.length === 0 ? (
-          <EmptyConversations hasSearch={search.trim().length > 0} />
-        ) : (
-          <View className="gap-3">
-            {conversations.map((conversation) => (
-              <ConversationCard
-                key={conversation.id}
-                conversation={conversation}
-                onPress={() =>
-                  router.push(`/pet-owner/chat/${conversation.id}` as Href)
-                }
-              />
-            ))}
-          </View>
-        )}
-      </ScrollView>
+      {isLoading ? (
+        <View className="items-center justify-center flex-1">
+          <ActivityIndicator size="large" color={Colors.light.tint} />
+        </View>
+      ) : (
+        <ScrollView
+          contentContainerClassName="px-5 pb-10 pt-5 flex-grow"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              colors={[Colors.light.tint]}
+              tintColor={Colors.light.tint}
+            />
+          }
+        >
+          {conversations.length === 0 ? (
+            <EmptyConversations hasSearch={search.trim().length > 0} />
+          ) : (
+            <View className="gap-3">
+              {conversations.map((conversation) => (
+                <ConversationCard
+                  key={conversation.id}
+                  conversation={conversation}
+                  onPress={() =>
+                    router.push(`/pet-owner/chat/${conversation.id}` as Href)
+                  }
+                />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
