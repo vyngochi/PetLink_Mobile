@@ -1,13 +1,14 @@
-import { HomeView } from "@/features/pet-owner/main/home/views/HomeView";
+import { HomeView } from "@/features/pet-owner/home/views/HomeView";
+import { useAuth } from "@/lib/auth";
 import React from "react";
 import { View } from "react-native";
 
 export default function Home() {
-  // const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   return (
     <View className="flex-1 bg-background">
-      <HomeView />
+      <HomeView isLoggedIn={isAuthenticated} />
     </View>
   );
 }

@@ -1,29 +1,61 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
-import type { LoginCredentials } from "@/features/authentication/login/types";
+import { useFieldErrors } from "@/features/authentication/shared/hooks/useFieldErrors";
+import { LOGIN_ERROR_MESSAGES } from "@/features/authentication/login/constants/login-error-messages";
+import { useLogin } from "@/features/authentication/login/hooks/useLogin";
+import {
+  loginSchema,
+  type LoginFormValues,
+} from "@/features/authentication/login/utils/login.schema";
+import type { User } from "@/features/authentication/shared/types";
+import { getApiErrorMessage } from "@/lib/http";
+import { validate } from "@/lib/validation";
 
 type UseLoginFormOptions = {
-  onSubmit?: (credentials: LoginCredentials) => void;
+  onSuccess?: (user: User) => void;
 };
 
-export function useLoginForm({ onSubmit }: UseLoginFormOptions = {}) {
-  const [email, setEmail] = useState("");
+export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const {
+    errors,
+    setErrors,
+    errorMessage,
+    setErrorMessage,
+    bindField,
+    resetErrors,
+  } = useFieldErrors<LoginFormValues>();
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
+  const { login, isLoggingIn } = useLogin({
+    onSuccess: (data) => {
+      setErrorMessage(null);
+      onSuccess?.(data);
+    },
+    onError: (error) => {
+      setErrorMessage(getApiErrorMessage(error, LOGIN_ERROR_MESSAGES));
+    },
+  });
 
   const submit = () => {
-    if (loading) return;
-    setLoading(true);
-    onSubmit?.({ email, password });
-    timeoutRef.current = setTimeout(() => setLoading(false), 1500);
+    if (isLoggingIn) return;
+    const result = validate(loginSchema, { userName, password });
+    if (!result.success) {
+      setErrors(result.errors);
+      return;
+    }
+    resetErrors();
+    login(result.data);
   };
 
-  return { email, setEmail, password, setPassword, loading, submit };
+  return {
+    userName,
+    setUserName: bindField("userName", setUserName),
+    password,
+    setPassword: bindField("password", setPassword),
+    loading: isLoggingIn,
+    errors,
+    errorMessage,
+    submit,
+  };
 }

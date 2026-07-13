@@ -1,8 +1,10 @@
 import { HapticTab } from "@/components/haptic-tab";
 import CommonHeader from "@/components/header-view";
 import { Colors } from "@/constants/theme";
-import HomeLeftHeader from "@/features/pet-owner/main/home/components/HomeLeftHeader";
+import { useGetMe } from "@/features/authentication/shared/hooks/useGetMe";
+import HomeLeftHeader from "@/features/pet-owner/home/components/HomeLeftHeader";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAuth } from "@/lib/auth";
 import { Tabs } from "expo-router";
 import {
   CalendarHeart,
@@ -15,7 +17,9 @@ import React from "react";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const isLogged = false;
+  const { isAuthenticated: isLogged } = useAuth();
+  useGetMe();
+
   return (
     <Tabs
       screenOptions={{
@@ -37,41 +41,49 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Trang chủ",
           headerShown: true,
           tabBarIcon: ({ color }) => <House size={28} color={color} />,
           header: () => <CommonHeader RightContent={<HomeLeftHeader />} />,
         }}
       />
       <Tabs.Screen
-        name="services"
+        name="providers"
         options={{
-          title: "Services",
+          title: "Dịch vụ",
           tabBarIcon: ({ color }) => <SearchCheck size={28} color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="booking"
-        options={{
-          title: "Booking",
-          tabBarIcon: ({ color }) => <CalendarHeart size={28} color={color} />,
-          href: isLogged ? "/(tabs)/booking" : null,
-        }}
-      />
-      <Tabs.Screen
-        name="chat"
-        options={{
-          title: "Chat",
-          tabBarIcon: ({ color }) => (
-            <MessageCircleHeart size={28} color={color} />
-          ),
-          href: isLogged ? "/(tabs)/chat" : null,
-        }}
-      />
+      <Tabs.Protected guard={isLogged}>
+        <Tabs.Screen
+          name="booking"
+          options={{
+            title: "Đặt lịch",
+            tabBarIcon: ({ color }) => (
+              <CalendarHeart size={28} color={color} />
+            ),
+            href: isLogged ? "/(tabs)/booking" : null,
+          }}
+        />
+      </Tabs.Protected>
+
+      <Tabs.Protected guard={isLogged}>
+        <Tabs.Screen
+          name="chat"
+          options={{
+            title: "Tin nhắn",
+            tabBarIcon: ({ color }) => (
+              <MessageCircleHeart size={28} color={color} />
+            ),
+            href: isLogged ? "/(tabs)/chat" : null,
+          }}
+        />
+      </Tabs.Protected>
+
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "Tôi",
           tabBarIcon: ({ color }) => (
             <CircleUserRound size={28} color={color} />
           ),
