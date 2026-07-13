@@ -58,6 +58,7 @@ export function ProviderFilterModal({
 
   const RATING_OPTIONS = [
     { label: "Tất cả", value: undefined },
+    { label: "Từ 5 sao", value: 5 },
     { label: "Từ 4 sao", value: 4 },
     { label: "Từ 3 sao", value: 3 },
   ];
@@ -101,7 +102,7 @@ export function ProviderFilterModal({
                         maxRating: undefined,
                       })
                     }
-                    className={`px-4 py-2 rounded-xl border ${
+                    className={`px-2 py-2 rounded-xl border ${
                       isActive
                         ? "bg-primary border-primary"
                         : "bg-card border-border/50"
