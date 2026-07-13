@@ -25,7 +25,7 @@ export function ConversationCard({
         "flex-row items-center gap-4 p-4 active:opacity-80",
         conversation.isPinned
           ? "rounded-[24px] border border-border bg-card shadow-sm"
-          : "rounded-[20px] border-b border-border/50 shadow-none"
+          : "rounded-[20px] border-b border-border/50 shadow-none",
       )}
     >
       <View>
@@ -37,7 +37,7 @@ export function ConversationCard({
           style={{ width: 56, height: 56, borderRadius: 28 }}
         />
         {conversation.isOnline && (
-          <View className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-card bg-primary" />
+          <View className="absolute bottom-0 right-0 w-4 h-4 border-2 rounded-full border-card bg-primary" />
         )}
       </View>
 
@@ -54,7 +54,7 @@ export function ConversationCard({
               "text-[11px] leading-4",
               hasUnread
                 ? "font-mbold text-primary"
-                : "font-default text-muted-foreground"
+                : "font-default text-muted-foreground",
             )}
           >
             {conversation.lastMessageAtLabel}
@@ -65,7 +65,7 @@ export function ConversationCard({
             "mt-1 text-[13px] leading-5",
             hasUnread
               ? "font-mbold text-foreground"
-              : "font-default text-muted-foreground"
+              : "font-default text-muted-foreground",
           )}
           numberOfLines={1}
         >

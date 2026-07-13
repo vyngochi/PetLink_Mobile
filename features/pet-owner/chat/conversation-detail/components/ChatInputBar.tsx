@@ -17,12 +17,12 @@ export function ChatInputBar({ onSend, onAttach }: ChatInputBarProps) {
   };
 
   return (
-    <View className="flex-row items-center gap-3 border-t border-border/50 bg-card px-4 py-3">
+    <View className="flex-row items-center gap-3 px-4 py-3 border-t border-border/50 bg-card">
       <Pressable
         onPress={onAttach}
         accessibilityRole="button"
         accessibilityLabel="Đính kèm"
-        className="h-11 w-11 items-center justify-center rounded-full active:bg-muted"
+        className="items-center justify-center rounded-full h-11 w-11 active:bg-muted"
       >
         <Plus size={24} className="text-muted-foreground" />
       </Pressable>
@@ -39,9 +39,9 @@ export function ChatInputBar({ onSend, onAttach }: ChatInputBarProps) {
         onPress={handleSend}
         accessibilityRole="button"
         accessibilityLabel="Gửi tin nhắn"
-        className="h-12 w-12 items-center justify-center rounded-full bg-primary shadow-sm active:opacity-90"
+        className="items-center justify-center w-12 h-12 rounded-full shadow-sm bg-primary active:opacity-90"
       >
-        <SendHorizontal size={20} className="text-primary-foreground" />
+        <SendHorizontal size={20} color={"white"} />
       </Pressable>
     </View>
   );
