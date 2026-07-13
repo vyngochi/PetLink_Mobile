@@ -1,6 +1,10 @@
-export type RegisterCredentials = {
-  fullName: string;
-  email: string;
+import type { AuthTokens } from "@/features/authentication/shared/types";
+
+export type RegisterPayload = {
+  userName: string;
   password: string;
-  confirmPassword: string;
+  email: string;
+  phone: string;
 };
+
+export type RegisterResponse = AuthTokens;
