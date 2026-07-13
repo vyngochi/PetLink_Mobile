@@ -38,7 +38,7 @@ export function ChatListView() {
           Tin nhắn
         </Text>
         <Text className="mt-1 font-default text-[13px] leading-5 text-muted-foreground">
-          Trò chuyện với nhà cung cấp
+          Trò chuyện với nhà cung cấp dịch vụ
         </Text>
       </View>
 
