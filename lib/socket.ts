@@ -24,14 +24,6 @@ class SocketService {
       transports: ["websocket"],
     });
 
-    this.socket.on("connect", () => {
-      console.log("[Socket] Connected:", this.socket?.id);
-    });
-
-    this.socket.on("disconnect", (reason) => {
-      console.log("[Socket] Disconnected:", reason);
-    });
-
     this.socket.on("connect_error", (error) => {
       console.error("[Socket] Connection Error:", error);
     });

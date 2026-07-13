@@ -52,9 +52,9 @@ export const useBookingFlowStore = create<BookingFlowState>((set) => ({
       const prevIndex = Math.max(index - 1, 0);
       return { step: BOOKING_STEP_FLOW[prevIndex] };
     }),
-  selectService: (serviceId) => set({ serviceId }),
+  selectService: (serviceId) => set({ serviceId, timeSlotId: null }),
   selectPet: (petId) => set({ petId }),
-  selectDay: (dayId) => set({ dayId }),
+  selectDay: (dayId) => set({ dayId, timeSlotId: null }),
   selectTimeSlot: (timeSlotId) => set({ timeSlotId }),
   selectPaymentCard: (paymentCardId) => set({ paymentCardId }),
   setConfirmedBooking: (confirmedBooking) => set({ confirmedBooking }),

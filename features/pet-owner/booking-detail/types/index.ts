@@ -1,4 +1,5 @@
 import type { Booking } from "@/features/pet-owner/bookings/types";
+import type { BookingQrAction } from "@/features/pet-owner/shared/types/booking.type";
 
 export interface BookingDetail extends Booking {
   reference: string;
@@ -7,16 +8,5 @@ export interface BookingDetail extends Booking {
   timeLabel: string;
   providerAddress: string;
   providerImageUrl: string;
-  checkInCode: string;
+  qrAction: BookingQrAction | null;
 }
-
-export type BookingDetailExtra = Pick<
-  BookingDetail,
-  | "reference"
-  | "price"
-  | "dateLabel"
-  | "timeLabel"
-  | "providerAddress"
-  | "providerImageUrl"
-  | "checkInCode"
->;

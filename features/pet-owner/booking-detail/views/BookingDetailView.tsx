@@ -1,9 +1,17 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { toast } from "@/components/toast";
+import { Colors } from "@/constants/theme";
 import {
   BookingAppointmentCard,
   BookingDetailActions,
@@ -12,7 +20,10 @@ import {
   CheckInPassCard,
 } from "@/features/pet-owner/booking-detail/components";
 import { useBookingDetail } from "@/features/pet-owner/booking-detail/hooks/useBookingDetail";
+import { useBookingQr } from "@/features/pet-owner/booking-detail/hooks/useBookingQr";
 import { BookingStatusBadge } from "@/features/pet-owner/bookings/components";
+import { useCancelBooking } from "@/features/pet-owner/bookings/hooks/useCancelBooking";
+import { getApiErrorMessage } from "@/lib/http";
 
 type BookingDetailViewProps = {
   bookingId: string;
@@ -21,7 +32,20 @@ type BookingDetailViewProps = {
 export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { detail } = useBookingDetail(bookingId);
+  const { detail, isLoading } = useBookingDetail(bookingId);
+  const cancelBooking = useCancelBooking();
+  const { qr, isLoading: isQrLoading } = useBookingQr(
+    bookingId,
+    detail?.qrAction ?? null,
+  );
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator size="large" color={Colors.light.tint} />
+      </View>
+    );
+  }
 
   if (!detail) {
     return (
@@ -39,7 +63,7 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
     );
   }
 
-  const showCheckIn = detail.status === "confirmed";
+  const qrAction = detail.qrAction;
 
   const handleCancel = () => {
     Alert.alert(
@@ -51,8 +75,21 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
           text: "Hủy lịch",
           style: "destructive",
           onPress: () => {
-            toast.success("Đã hủy lịch hẹn", { position: "bottom" });
-            router.back();
+            cancelBooking.mutate(detail.id, {
+              onSuccess: () => {
+                toast.success("Đã hủy lịch hẹn", { position: "bottom" });
+                router.back();
+              },
+              onError: (cancelError) => {
+                toast.error(
+                  getApiErrorMessage(cancelError, {
+                    fallback: "Không thể hủy lịch hẹn, vui lòng thử lại",
+                    network: "Không có kết nối mạng, vui lòng thử lại",
+                  }),
+                  { position: "bottom" },
+                );
+              },
+            });
           },
         },
       ]
@@ -83,7 +120,14 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
 
         <BookingAppointmentCard booking={detail} />
 
-        {showCheckIn ? <CheckInPassCard booking={detail} /> : null}
+        {qrAction ? (
+          <CheckInPassCard
+            action={qrAction}
+            qrToken={qr?.qrToken ?? null}
+            isLoading={isQrLoading}
+            reference={detail.reference}
+          />
+        ) : null}
 
         <View className="gap-3">
           <BookingDetailActions

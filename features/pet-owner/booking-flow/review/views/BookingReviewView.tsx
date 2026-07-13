@@ -14,6 +14,9 @@ import { useCreateBooking } from "@/features/pet-owner/booking-flow/shared/hooks
 import { usePaymentCards } from "@/features/pet-owner/booking-flow/shared/hooks/usePaymentCards";
 import { useBookingFlowStore } from "@/features/pet-owner/booking-flow/shared/stores/booking-flow.store";
 import { formatCurrency } from "@/features/pet-owner/booking-flow/shared/utils/currency";
+import { useGetMyPets } from "@/features/pet-owner/my-pets/hooks/useGetMyPets";
+import { formatAppointmentTime } from "@/features/pet-owner/shared/utils/booking-format";
+import { getApiErrorMessage } from "@/lib/http";
 
 export function BookingReviewView() {
   const router = useRouter();
@@ -30,6 +33,7 @@ export function BookingReviewView() {
 
   const { data: options } = useBookingOptions(serviceId ?? "");
   const { data: cards } = usePaymentCards();
+  const { pets } = useGetMyPets();
   const createBooking = useCreateBooking();
 
   useEffect(() => {
@@ -42,14 +46,13 @@ export function BookingReviewView() {
     }
   }, [cards]);
 
-  const pet = options?.pets.find((item) => item.id === petId);
+  const pet = pets.find((item) => item.id === petId);
   const service = options?.services.find((item) => item.id === serviceId);
   const day = options?.days.find((item) => item.id === dayId);
-  const slot = options?.timeSlots.find((item) => item.id === timeSlotId);
-  const isReady = Boolean(options && cards && pet && service && day && slot);
+  const isReady = Boolean(options && cards && pet && service && day && timeSlotId);
 
   const handleConfirm = () => {
-    if (!serviceId || !petId || !dayId || !timeSlotId || !paymentCardId) {
+    if (!options || !serviceId || !petId || !dayId || !timeSlotId || !paymentCardId) {
       toast.info("Vui lòng chọn phương thức thanh toán", {
         position: "bottom",
       });
@@ -57,16 +60,26 @@ export function BookingReviewView() {
     }
 
     createBooking.mutate(
-      { serviceId, petId, dayId, timeSlotId, paymentCardId },
+      {
+        providerId: options.providerId,
+        serviceId,
+        petId,
+        petName: pet?.name ?? "",
+        appointmentStart: timeSlotId,
+      },
       {
         onSuccess: (booking) => {
           setConfirmedBooking(booking);
           nextStep();
         },
-        onError: () => {
-          toast.error("Đặt lịch thất bại, vui lòng thử lại", {
-            position: "bottom",
-          });
+        onError: (error) => {
+          toast.error(
+            getApiErrorMessage(error, {
+              fallback: "Đặt lịch thất bại, vui lòng thử lại",
+              network: "Không có kết nối mạng, vui lòng thử lại",
+            }),
+            { position: "bottom" },
+          );
         },
       },
     );
@@ -87,7 +100,7 @@ export function BookingReviewView() {
             pet={pet!}
             service={service!}
             providerName={options!.providerName}
-            scheduleLabel={`${day!.fullLabel}, ${slot!.label}`}
+            scheduleLabel={`${day!.fullLabel}, ${formatAppointmentTime(timeSlotId!)}`}
           />
 
           <View className="gap-4">

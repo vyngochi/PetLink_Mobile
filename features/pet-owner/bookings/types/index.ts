@@ -1,6 +1,15 @@
 export type BookingTab = "upcoming" | "past";
 
-export type BookingStatus = "confirmed" | "pending" | "completed" | "cancelled";
+export type BookingStatus =
+  | "pending"
+  | "confirmed"
+  | "checked_in"
+  | "checked_out"
+  | "completed"
+  | "cancelled"
+  | "rejected"
+  | "dispute"
+  | "no_arrival";
 
 export type BookingServiceType = "medical" | "grooming";
 

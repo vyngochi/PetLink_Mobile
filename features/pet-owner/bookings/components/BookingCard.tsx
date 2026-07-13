@@ -7,6 +7,10 @@ import { BookingActionButton } from "@/features/pet-owner/bookings/components/Bo
 import { BookingInfoRow } from "@/features/pet-owner/bookings/components/BookingInfoRow";
 import { BookingStatusBadge } from "@/features/pet-owner/bookings/components/BookingStatusBadge";
 import type { Booking } from "@/features/pet-owner/bookings/types";
+import {
+  canModifyBooking,
+  isInProgressBooking,
+} from "@/features/pet-owner/bookings/utils/booking-mapper";
 import { cn } from "@/lib/utils";
 
 type BookingCardProps = {
@@ -27,7 +31,8 @@ export function BookingCard({
   onRebook,
 }: BookingCardProps) {
   const isConfirmed = booking.status === "confirmed";
-  const isUpcoming = isConfirmed || booking.status === "pending";
+  const canModify = canModifyBooking(booking.status);
+  const isInProgress = isInProgressBooking(booking.status);
   const ServiceIcon = booking.serviceType === "medical" ? Stethoscope : Scissors;
 
   return (
@@ -94,7 +99,7 @@ export function BookingCard({
       </View>
 
       <View className="mt-4 flex-row gap-3">
-        {isUpcoming ? (
+        {canModify ? (
           <>
             <BookingActionButton
               label="Hủy lịch"
@@ -108,6 +113,12 @@ export function BookingCard({
               className="flex-[2]"
             />
           </>
+        ) : isInProgress ? (
+          <BookingActionButton
+            label="Xem chi tiết"
+            onPress={onViewDetails}
+            className="flex-1"
+          />
         ) : (
           <BookingActionButton
             label="Đặt lại"

@@ -2,6 +2,10 @@ import React from "react";
 import { Pressable, Text } from "react-native";
 
 import type { BookingStatus } from "@/features/pet-owner/bookings/types";
+import {
+  canModifyBooking,
+  isInProgressBooking,
+} from "@/features/pet-owner/bookings/utils/booking-mapper";
 
 type BookingDetailActionsProps = {
   status: BookingStatus;
@@ -16,9 +20,11 @@ export function BookingDetailActions({
   onCancel,
   onRebook,
 }: BookingDetailActionsProps) {
-  const isUpcoming = status === "confirmed" || status === "pending";
+  if (isInProgressBooking(status)) {
+    return null;
+  }
 
-  if (!isUpcoming) {
+  if (!canModifyBooking(status)) {
     return (
       <Pressable
         onPress={onRebook}
