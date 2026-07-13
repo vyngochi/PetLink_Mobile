@@ -1,7 +1,12 @@
 import { CheckCircle, MapPin, Star } from "lucide-react-native";
 import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Dimensions, Image, Pressable, Text, View } from "react-native";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { ProviderItem } from "@/features/pet-owner/shared/types/provider.type";
+
+const { width } = Dimensions.get("window");
+const COVER_HEIGHT = 160;
+const AVATAR_SIZE = 64;
 
 interface ProviderCardProps {
   provider: ProviderItem;
@@ -23,13 +28,23 @@ export function ProviderCard({ provider, onPress }: ProviderCardProps) {
     >
       <View className="relative w-full h-40 bg-muted">
         <Image
-          source={{ uri: provider.coverImageUrl }}
+          source={{
+            uri: getImageUrl(provider.coverImageUrl, {
+              width,
+              height: COVER_HEIGHT,
+            }),
+          }}
           className="w-full h-full"
           resizeMode="cover"
         />
         <View className="absolute flex items-center justify-center w-16 h-16 p-1 border-2 rounded-full shadow-sm -bottom-8 left-4 bg-card border-card">
           <Image
-            source={{ uri: provider.avatarUrl }}
+            source={{
+              uri: getImageUrl(provider.avatarUrl, {
+                width: AVATAR_SIZE,
+                height: AVATAR_SIZE,
+              }),
+            }}
             className="w-full h-full rounded-full"
             resizeMode="cover"
           />

@@ -5,6 +5,7 @@ import { CalendarDays, ChevronRight, Syringe } from "lucide-react-native";
 
 import { Colors } from "@/constants/theme";
 import type { Pet } from "@/features/pet-owner/my-pets/types";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 
 type PetCardProps = {
   pet: Pet;
@@ -17,7 +18,7 @@ export function PetCard({ pet, onViewProfile, onVaccinePress }: PetCardProps) {
     <View className="rounded-[24px] border border-border bg-card p-5 shadow-sm">
       <View className="mb-4 flex-row items-start gap-4">
         <Image
-          source={{ uri: pet.imageUrl }}
+          source={{ uri: getImageUrl(pet.imageUrl, { width: 96, height: 96 }) }}
           accessibilityLabel={pet.name}
           contentFit="cover"
           transition={200}

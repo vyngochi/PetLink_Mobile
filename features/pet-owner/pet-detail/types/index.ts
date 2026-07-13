@@ -1,3 +1,8 @@
+import type {
+  PetHealthReminder,
+  PetMedicalRecord,
+} from "@/features/pet-owner/shared/types";
+
 export type PetDetailStatus = "active" | "inactive";
 
 export type PetVitalStat = {
@@ -5,17 +10,9 @@ export type PetVitalStat = {
   value: string;
 };
 
-export type HealthReminder = {
-  title: string;
-  date: string;
-};
+export type HealthReminder = PetHealthReminder;
 
-export type MedicalRecord = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-};
+export type MedicalRecord = PetMedicalRecord;
 
 export type PetDetail = {
   id: string;

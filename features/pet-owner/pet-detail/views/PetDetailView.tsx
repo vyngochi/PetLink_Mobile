@@ -2,12 +2,14 @@ import { useRouter, type Href } from "expo-router";
 import React from "react";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   Text,
   View,
 } from "react-native";
 
+import { toast } from "@/components/toast";
 import { Colors } from "@/constants/theme";
 import {
   HealthRemindersSection,
@@ -19,6 +21,7 @@ import {
   PetMomentsGallery,
   PetStatsGrid,
 } from "@/features/pet-owner/pet-detail/components";
+import { useDeletePet } from "@/features/pet-owner/pet-detail/hooks/useDeletePet";
 import { usePetDetail } from "@/features/pet-owner/pet-detail/hooks/usePetDetail";
 import { getApiErrorMessage } from "@/lib/http";
 
@@ -29,6 +32,38 @@ type PetDetailViewProps = {
 export function PetDetailView({ petId }: PetDetailViewProps) {
   const router = useRouter();
   const { pet, isLoading, isError, error, refetch } = usePetDetail(petId);
+  const deletePet = useDeletePet();
+
+  const handleDelete = (petName: string) => {
+    Alert.alert(
+      "Xoá thú cưng",
+      `Bạn có chắc muốn xoá hồ sơ của ${petName}? Hành động này không thể hoàn tác.`,
+      [
+        { text: "Giữ lại", style: "cancel" },
+        {
+          text: "Xoá",
+          style: "destructive",
+          onPress: () => {
+            deletePet.mutate(petId, {
+              onSuccess: () => {
+                toast.success("Đã xoá thú cưng", { position: "bottom" });
+                router.back();
+              },
+              onError: (deleteError) => {
+                toast.error(
+                  getApiErrorMessage(deleteError, {
+                    fallback: "Không xoá được thú cưng",
+                    network: "Không có kết nối mạng. Vui lòng thử lại.",
+                  }),
+                  { position: "bottom" },
+                );
+              },
+            });
+          },
+        },
+      ],
+    );
+  };
 
   if (isLoading) {
     return (
@@ -114,7 +149,11 @@ export function PetDetailView({ petId }: PetDetailViewProps) {
         </View>
       </ScrollView>
 
-      <PetDetailTopNav onBack={() => router.back()} />
+      <PetDetailTopNav
+        onBack={() => router.back()}
+        onDelete={() => handleDelete(pet.name)}
+        deleting={deletePet.isPending}
+      />
 
       <PetDetailFooter
         onEditProfile={() =>
