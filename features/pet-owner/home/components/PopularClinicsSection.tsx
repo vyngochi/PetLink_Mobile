@@ -1,3 +1,4 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { formatCurrency } from "@/lib/helper/formatCurrency";
 import { Href, useRouter } from "expo-router";
 import { Star } from "lucide-react-native";
@@ -12,6 +13,7 @@ export function ClinicCard({
   provider: ProviderItem;
   onSelect: (v: string) => void;
 }) {
+  const avatar = getImageUrl(provider.avatarUrl);
   return (
     <Pressable
       onPress={() => onSelect(provider.id)}
@@ -19,7 +21,7 @@ export function ClinicCard({
     >
       <View className="w-24 h-24 overflow-hidden rounded-2xl bg-muted shrink-0">
         <Image
-          source={{ uri: provider.avatarUrl }}
+          source={{ uri: avatar }}
           className="w-full h-full"
           resizeMode="cover"
         />
