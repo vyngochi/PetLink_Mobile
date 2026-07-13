@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,6 +17,8 @@ import {
   BookingDetailActions,
   BookingDetailPetCard,
   BookingDetailTopBar,
+  BookingReviewModal,
+  BookingReviewSummary,
   CheckInPassCard,
 } from "@/features/pet-owner/booking-detail/components";
 import { useBookingDetail } from "@/features/pet-owner/booking-detail/hooks/useBookingDetail";
@@ -32,6 +34,7 @@ type BookingDetailViewProps = {
 export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const [isReviewVisible, setReviewVisible] = useState(false);
   const { detail, isLoading } = useBookingDetail(bookingId);
   const cancelBooking = useCancelBooking();
   const { qr, isLoading: isQrLoading } = useBookingQr(
@@ -129,15 +132,31 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
           />
         ) : null}
 
+        {detail.review ? <BookingReviewSummary review={detail.review} /> : null}
+
         <View className="gap-3">
           <BookingDetailActions
             status={detail.status}
+            canReview={detail.status === "completed" && !detail.review}
+            onReview={() => setReviewVisible(true)}
             onReschedule={notifyComingSoon}
             onCancel={handleCancel}
             onRebook={notifyComingSoon}
           />
         </View>
       </ScrollView>
+
+      <BookingReviewModal
+        visible={isReviewVisible}
+        bookingId={detail.id}
+        providerId={detail.providerId}
+        serviceName={detail.serviceName}
+        onClose={() => setReviewVisible(false)}
+        onSuccess={() => {
+          setReviewVisible(false);
+          toast.success("Cảm ơn bạn đã đánh giá!", { position: "bottom" });
+        }}
+      />
     </SafeAreaView>
   );
 }

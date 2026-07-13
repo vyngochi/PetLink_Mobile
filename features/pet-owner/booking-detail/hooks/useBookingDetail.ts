@@ -50,9 +50,11 @@ export function useBookingDetail(bookingId: string) {
           data.appointmentStart,
           data.appointmentEnd,
         ),
+        providerId: data.providerId,
         providerAddress: formatProviderAddress(data.provider),
         providerImageUrl: data.provider.avatarUrl ?? "",
         qrAction: toQrAction(data.status),
+        review: data.review ?? null,
       }
     : null;
 

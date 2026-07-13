@@ -2,6 +2,7 @@ import api from "@/api/client";
 import type {
   BookingQrAction,
   CreateBookingApiPayload,
+  CreateBookingReviewPayload,
   GetMyBookingsParams,
 } from "@/features/pet-owner/shared/types/booking.type";
 
@@ -17,6 +18,9 @@ export const bookingService = {
   },
   cancelMyBooking: (bookingId: string, reason?: string) => {
     return api.patch(`/mobile/bookings/${bookingId}/cancel`, { reason });
+  },
+  createBookingReview: (bookingId: string, payload: CreateBookingReviewPayload) => {
+    return api.post(`/mobile/bookings/${bookingId}/reviews`, payload);
   },
   getMyBookingQr: (bookingId: string, action: BookingQrAction) => {
     return api.get(`/mobile/me/bookings/${bookingId}/qr`, {

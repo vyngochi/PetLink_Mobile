@@ -9,6 +9,8 @@ import {
 
 type BookingDetailActionsProps = {
   status: BookingStatus;
+  canReview?: boolean;
+  onReview?: () => void;
   onReschedule?: () => void;
   onCancel?: () => void;
   onRebook?: () => void;
@@ -16,6 +18,8 @@ type BookingDetailActionsProps = {
 
 export function BookingDetailActions({
   status,
+  canReview = false,
+  onReview,
   onReschedule,
   onCancel,
   onRebook,
@@ -26,17 +30,46 @@ export function BookingDetailActions({
 
   if (!canModifyBooking(status)) {
     return (
-      <Pressable
-        onPress={onRebook}
-        accessibilityRole="button"
-        accessibilityLabel="Đặt lại"
-        style={({ pressed }) => ({ transform: [{ scale: pressed ? 0.98 : 1 }] })}
-        className="w-full items-center justify-center rounded-full bg-primary py-4 shadow-sm"
-      >
-        <Text className="font-mbold text-[15px] leading-5 text-white">
-          Đặt lại
-        </Text>
-      </Pressable>
+      <>
+        {canReview ? (
+          <Pressable
+            onPress={onReview}
+            accessibilityRole="button"
+            accessibilityLabel="Đánh giá dịch vụ"
+            style={({ pressed }) => ({
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+            })}
+            className="w-full items-center justify-center rounded-full bg-primary py-4 shadow-sm"
+          >
+            <Text className="font-mbold text-[15px] leading-5 text-white">
+              Đánh giá dịch vụ
+            </Text>
+          </Pressable>
+        ) : null}
+        <Pressable
+          onPress={onRebook}
+          accessibilityRole="button"
+          accessibilityLabel="Đặt lại"
+          style={({ pressed }) => ({
+            transform: [{ scale: pressed ? 0.98 : 1 }],
+          })}
+          className={
+            canReview
+              ? "w-full items-center justify-center rounded-full border-2 border-primary py-4 shadow-none active:bg-primary/5"
+              : "w-full items-center justify-center rounded-full bg-primary py-4 shadow-sm"
+          }
+        >
+          <Text
+            className={
+              canReview
+                ? "font-mbold text-[15px] leading-5 text-primary"
+                : "font-mbold text-[15px] leading-5 text-white"
+            }
+          >
+            Đặt lại
+          </Text>
+        </Pressable>
+      </>
     );
   }
 

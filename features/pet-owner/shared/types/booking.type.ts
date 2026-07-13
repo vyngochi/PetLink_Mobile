@@ -33,6 +33,14 @@ export interface ApiBookingProvider {
   phone: string | null;
 }
 
+export interface ApiBookingReview {
+  id: string;
+  rating: number;
+  comment: string | null;
+  images: string[];
+  createAt: string;
+}
+
 export interface ApiBooking {
   id: string;
   customerId: string;
@@ -49,6 +57,7 @@ export interface ApiBooking {
   note: string | null;
   service: ApiBookingService;
   provider: ApiBookingProvider;
+  review?: ApiBookingReview | null;
 }
 
 export interface BookingPagination {
@@ -95,6 +104,12 @@ export interface BookingQrResponse {
   action: BookingQrAction;
   qrToken: string;
   expiresInSeconds: number;
+}
+
+export interface CreateBookingReviewPayload {
+  rating: number;
+  comment?: string;
+  images?: string[];
 }
 
 export interface CreateBookingApiPayload {
