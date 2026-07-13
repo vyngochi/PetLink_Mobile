@@ -14,8 +14,7 @@ export const useCurrentCoords = () => {
 
     (async () => {
       try {
-        const { status } =
-          await Location.requestForegroundPermissionsAsync();
+        const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") return;
 
         const location = await Location.getCurrentPositionAsync({});
