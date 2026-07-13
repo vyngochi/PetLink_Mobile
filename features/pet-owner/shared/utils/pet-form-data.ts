@@ -1,13 +1,9 @@
 import type { UpdatePetPayload } from "@/features/pet-owner/shared/types";
+import {
+  appendImageFile,
+  isLocalImageUri,
+} from "@/features/pet-owner/shared/utils/image-form-data";
 
-const MIME_TYPES: Record<string, string> = {
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  png: "image/png",
-  webp: "image/webp",
-  heic: "image/heic",
-  heif: "image/heif",
-};
 
 const TEXT_FIELDS = [
   "name",
@@ -27,32 +23,12 @@ const HANDLED_FIELDS = new Set<string>([
   "photos",
 ]);
 
-export const isLocalImageUri = (value?: string | null) =>
-  Boolean(value?.startsWith("file://"));
-
 export const hasLocalImages = (payload: UpdatePetPayload) =>
   isLocalImageUri(payload.imageUrl) ||
   (payload.photos?.some(isLocalImageUri) ?? false);
 
-const getFileName = (uri: string) => {
-  const lastSegment = uri.split("/").pop() ?? "";
-  const fileName = lastSegment.split("?")[0];
-  return fileName.length > 0 ? fileName : "pet-photo.jpg";
-};
-
-const getMimeType = (fileName: string) => {
-  const extension = fileName.split(".").pop()?.toLowerCase() ?? "";
-  return MIME_TYPES[extension] ?? "image/jpeg";
-};
-
-const appendFile = (formData: FormData, field: string, uri: string) => {
-  const name = getFileName(uri);
-  formData.append(field, {
-    uri,
-    name,
-    type: getMimeType(name),
-  } as unknown as Blob);
-};
+const appendFile = (formData: FormData, field: string, uri: string) =>
+  appendImageFile(formData, field, uri, "pet-photo.jpg");
 
 export const buildPetFormData = (payload: UpdatePetPayload) => {
   if (__DEV__) {

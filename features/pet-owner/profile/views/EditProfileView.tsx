@@ -30,6 +30,8 @@ export function EditProfileView() {
     setPhone,
     location,
     setLocation,
+    avatarUrl,
+    pickAvatar,
     saving,
     errors,
     errorMessage,
@@ -52,7 +54,7 @@ export function EditProfileView() {
           showsVerticalScrollIndicator={false}
         >
           <View className="mb-8">
-            <AvatarPicker uri={profile.avatarUrl} />
+            <AvatarPicker uri={avatarUrl} onChangePhoto={pickAvatar} />
           </View>
 
           <View className="gap-6">
@@ -74,6 +76,7 @@ export function EditProfileView() {
               autoCapitalize="none"
               autoComplete="email"
               textContentType="emailAddress"
+              helperText="Bạn không thể thay đổi địa chỉ email."
             />
             <ProfileFormField
               label="Số điện thoại"

@@ -8,6 +8,7 @@ type ProfileFormFieldProps = TextInputProps & {
   label: string;
   trailingIcon?: LucideIcon;
   error?: string;
+  helperText?: string;
   vietnamese?: boolean;
 };
 
@@ -24,10 +25,12 @@ export function ProfileFormField({
   label,
   trailingIcon: TrailingIcon,
   error,
+  helperText,
   vietnamese = false,
   ...inputProps
 }: ProfileFormFieldProps) {
   const [focused, setFocused] = useState(false);
+  const disabled = inputProps.editable === false;
 
   return (
     <View className="gap-2">
@@ -36,7 +39,9 @@ export function ProfileFormField({
       </Text>
 
       <View
-        className="h-14 flex-row items-center rounded-xl border bg-card px-4"
+        className={`h-14 flex-row items-center rounded-xl border px-4 ${
+          disabled ? "bg-muted opacity-70" : "bg-card"
+        }`}
         style={{
           borderColor: error
             ? profileColors.error
@@ -46,7 +51,9 @@ export function ProfileFormField({
         }}
       >
         <TextInput
-          className="h-full flex-1 font-default text-[16px] text-card-foreground"
+          className={`h-full flex-1 font-default text-[16px] ${
+            disabled ? "text-muted-foreground" : "text-card-foreground"
+          }`}
           placeholderTextColor={profileColors.outline}
           onFocus={(e) => {
             setFocused(true);
@@ -67,6 +74,10 @@ export function ProfileFormField({
       {error ? (
         <Text className="ml-1 font-default text-[12px] leading-4 text-destructive">
           {error}
+        </Text>
+      ) : helperText ? (
+        <Text className="ml-1 font-default text-[12px] leading-4 text-muted-foreground">
+          {helperText}
         </Text>
       ) : null}
     </View>

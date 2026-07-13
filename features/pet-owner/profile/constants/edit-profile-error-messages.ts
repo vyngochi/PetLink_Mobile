@@ -7,4 +7,8 @@ export const EDIT_PROFILE_ERROR_MESSAGES: ApiErrorMessageOptions = {
     401: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
     403: "Bạn không có quyền thực hiện thao tác này.",
   },
+  byMessage: {
+    "Phone number already exists":
+      "Số điện thoại đã được sử dụng. Vui lòng dùng số khác.",
+  },
 };

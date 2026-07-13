@@ -8,7 +8,7 @@ import {
   petFormSchema,
   type PetFormValues,
 } from "@/features/pet-owner/pet-edit/utils/pet-form.schema";
-import { isLocalImageUri } from "@/features/pet-owner/shared/utils/pet-form-data";
+import { isLocalImageUri } from "@/features/pet-owner/shared/utils/image-form-data";
 import { validate, type FieldErrors } from "@/lib/validation";
 
 type UsePetFormOptions = {

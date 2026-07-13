@@ -8,7 +8,7 @@ export function useProfile(): { profile: UserProfile } {
     fullName: user?.fullName ?? "",
     email: user?.email ?? "",
     phone: user?.phone ?? "",
-    location: "",
+    location: user?.customers?.location ?? "",
     avatarUrl: user?.avatar ?? undefined,
   };
 

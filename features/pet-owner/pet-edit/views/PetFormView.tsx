@@ -186,7 +186,7 @@ function PetForm({ pet }: { pet?: PetDetail }) {
                   label="Độ tuổi"
                   value={form.ageLabel}
                   onChangeText={form.setAgeLabel}
-                  placeholder="VD: 3 tuổi"
+                  placeholder="VD: 3"
                   error={form.errors.ageLabel}
                 />
               </View>

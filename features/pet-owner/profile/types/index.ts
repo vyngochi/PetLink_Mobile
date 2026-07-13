@@ -13,6 +13,7 @@ export type EditProfilePayload = {
   fullName: string;
   phone: string;
   location?: string;
+  avatarUri?: string;
 };
 
 export type MenuItemTone =
