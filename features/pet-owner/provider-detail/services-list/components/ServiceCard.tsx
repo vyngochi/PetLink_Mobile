@@ -1,7 +1,7 @@
 import { Clock } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { ProviderServicePreview } from "../../../provider-list/types/provider.type";
+import { ProviderServicePreview } from "@/features/pet-owner/shared/types/provider.type";
 
 import { useProtectedRoute } from "@/hooks/useProtectedRoute";
 import { useRouter } from "expo-router";

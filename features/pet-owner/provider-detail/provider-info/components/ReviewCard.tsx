@@ -48,17 +48,11 @@ export function ReviewCard({ review }: ReviewCardProps) {
         </View>
       </View>
 
-      <Text className="mb-3 text-sm leading-5 text-foreground font-default">
-        {review.comment}
-      </Text>
-
-      <View className="flex-row">
-        <View className="px-3 py-1.5 rounded-lg bg-surface-container-highest">
-          <Text className="text-xs text-muted-foreground font-mbold">
-            {review.serviceName}
-          </Text>
-        </View>
-      </View>
+      {review.comment ? (
+        <Text className="text-sm leading-5 text-foreground font-default">
+          {review.comment}
+        </Text>
+      ) : null}
     </View>
   );
 }

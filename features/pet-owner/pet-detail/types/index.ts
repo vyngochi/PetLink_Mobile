@@ -33,3 +33,14 @@ export type PetDetail = {
   medicalRecords: MedicalRecord[];
   photos: string[];
 };
+
+export type ApiPetDetail = Omit<
+  PetDetail,
+  "status" | "criticalNote" | "healthReminder" | "medicalRecords" | "photos"
+> & {
+  status: string;
+  criticalNote: string | null;
+  healthReminder: HealthReminder | null;
+  medicalRecords: MedicalRecord[] | null;
+  photos: string[] | null;
+};

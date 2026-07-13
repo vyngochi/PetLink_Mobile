@@ -7,5 +7,15 @@ export type Pet = {
   ageLabel: string;
   imageUrl: string;
   status: PetStatus;
-  nextVaccineDate: string;
+  nextVaccineDate: string | null;
+};
+
+export type ApiPet = Omit<Pet, "status" | "nextVaccineDate"> & {
+  status: string;
+  nextVaccineDate: string | null;
+};
+
+export type MyPetsResponse = {
+  pets: ApiPet[];
+  total: number;
 };
