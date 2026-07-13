@@ -1,3 +1,4 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import { ArrowLeft } from "lucide-react-native";
 import React from "react";
@@ -43,7 +44,9 @@ export function ChatDetailHeader({
         </View>
       </View>
       <Image
-        source={{ uri: conversation.avatarUrl }}
+        source={{
+          uri: getImageUrl(conversation.avatarUrl, { width: 40, height: 40 }),
+        }}
         accessibilityLabel={conversation.name}
         contentFit="cover"
         transition={200}

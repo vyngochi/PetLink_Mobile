@@ -21,8 +21,6 @@ export function ProviderCard({ provider, onPress }: ProviderCardProps) {
     }).format(amount);
   };
 
-  console.log(provider.avatarUrl);
-
   return (
     <Pressable
       onPress={onPress}

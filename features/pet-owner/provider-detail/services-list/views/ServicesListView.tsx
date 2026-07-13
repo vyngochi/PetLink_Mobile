@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/theme";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Href, useRouter } from "expo-router";
 import {
   CheckCircle,
@@ -10,6 +11,7 @@ import {
 import React from "react";
 import {
   ActivityIndicator,
+  Dimensions,
   FlatList,
   Image,
   Pressable,
@@ -20,6 +22,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useProviderDetail } from "../../shared/hooks/useProviderDetail";
 import { ServiceCard } from "../components/ServiceCard";
 import { useProviderServices } from "../hooks/useProviderServices";
+
+const { width } = Dimensions.get("window");
+const COVER_HEIGHT = 224;
+const AVATAR_SIZE = 80;
 
 interface ServicesListViewProps {
   providerId: string;
@@ -73,7 +79,12 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
     <View className="pb-6 bg-background">
       <View className="relative w-full h-56 bg-muted">
         <Image
-          source={{ uri: provider.coverImageUrl }}
+          source={{
+            uri: getImageUrl(provider.coverImageUrl, {
+              width,
+              height: COVER_HEIGHT,
+            }),
+          }}
           className="w-full h-full"
           resizeMode="cover"
         />
@@ -101,7 +112,12 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
 
         <View className="absolute flex items-center justify-center w-20 h-20 p-1 border-4 rounded-full shadow-sm -bottom-10 left-5 bg-card border-card">
           <Image
-            source={{ uri: provider.avatarUrl }}
+            source={{
+              uri: getImageUrl(provider.avatarUrl, {
+                width: AVATAR_SIZE,
+                height: AVATAR_SIZE,
+              }),
+            }}
             className="w-full h-full rounded-full"
             resizeMode="cover"
           />
