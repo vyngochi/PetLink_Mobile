@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, type Href } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
+import { ArrowDownUp } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,6 +27,8 @@ export function BookingsView() {
   const [tab, setTab] = useState<BookingTab>("all");
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
   const [isPaying, setIsPaying] = useState(false);
+
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 
   const counts = useMemo(() => {
     const c: Record<BookingTab, number> = {
@@ -58,17 +61,25 @@ export function BookingsView() {
   }, [bookings]);
 
   const filteredBookings = useMemo(() => {
-    if (tab === "all") return bookings;
-    return bookings.filter((b) => {
-      if (tab === "pending_payment") {
-        return b.status === "pending" && b.paymentMethod === "ONLINE" && b.paymentStatus !== "SUCCESS";
-      }
-      if (tab === "pending_confirmation") {
-        return b.status === "pending" && !(b.paymentMethod === "ONLINE" && b.paymentStatus !== "SUCCESS");
-      }
-      return b.status === tab;
+    let filtered = bookings;
+    if (tab !== "all") {
+      filtered = bookings.filter((b) => {
+        if (tab === "pending_payment") {
+          return b.status === "pending" && b.paymentMethod === "ONLINE" && b.paymentStatus !== "SUCCESS";
+        }
+        if (tab === "pending_confirmation") {
+          return b.status === "pending" && !(b.paymentMethod === "ONLINE" && b.paymentStatus !== "SUCCESS");
+        }
+        return b.status === tab;
+      });
+    }
+
+    return filtered.sort((a, b) => {
+      const dateA = a.createAt ? new Date(a.createAt).getTime() : 0;
+      const dateB = b.createAt ? new Date(b.createAt).getTime() : 0;
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
     });
-  }, [bookings, tab]);
+  }, [bookings, tab, sortOrder]);
 
   const handleRebook = (booking: Booking) => {
     router.push({
@@ -126,13 +137,24 @@ export function BookingsView() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="px-5 pt-2">
-        <Text className="font-mbold text-[24px] leading-8 text-foreground">
-          Đặt lịch của tôi
-        </Text>
-        <Text className="mt-1 font-default text-[13px] leading-5 text-muted-foreground">
-          {subtitle}
-        </Text>
+      <View className="px-5 pt-2 flex-row justify-between items-center">
+        <View className="flex-1">
+          <Text className="font-mbold text-[24px] leading-8 text-foreground">
+            Đặt lịch của tôi
+          </Text>
+          <Text className="mt-1 font-default text-[13px] leading-5 text-muted-foreground">
+            {subtitle}
+          </Text>
+        </View>
+        <Pressable 
+          onPress={() => setSortOrder(prev => prev === "desc" ? "asc" : "desc")}
+          className="flex-row items-center gap-1 bg-muted px-3 py-2 rounded-full active:opacity-80"
+        >
+          <ArrowDownUp size={14} className="text-foreground" />
+          <Text className="font-mbold text-[12px] text-foreground">
+            {sortOrder === "desc" ? "Mới nhất" : "Cũ nhất"}
+          </Text>
+        </Pressable>
       </View>
 
       <View className="pt-4">

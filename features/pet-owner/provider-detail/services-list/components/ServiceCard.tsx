@@ -1,11 +1,9 @@
+import { ProviderServicePreview } from "@/features/pet-owner/shared/types/provider.type";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
+import { useRouter } from "expo-router";
 import { Clock } from "lucide-react-native";
 import React from "react";
 import { Dimensions, Image, Pressable, Text, View } from "react-native";
-import { getImageUrl } from "@/lib/helper/cloudinary.helper";
-import { ProviderServicePreview } from "@/features/pet-owner/shared/types/provider.type";
-
-import { useProtectedRoute } from "@/hooks/useProtectedRoute";
-import { useRouter } from "expo-router";
 
 const CARD_WIDTH = Dimensions.get("window").width / 2;
 const THUMBNAIL_HEIGHT = 128;
@@ -16,19 +14,13 @@ interface ServiceCardProps {
 
 export function ServiceCard({ service }: ServiceCardProps) {
   const router = useRouter();
-  const { protectedRoute } = useProtectedRoute();
 
-  const handlePress = () =>
-    protectedRoute({
-      callback: () => {
-        router.push({
-          pathname: "/pet-owner/service/[id]",
-          params: { id: service.id },
-        });
-      },
-      redirect: () => router.push("/(auth)/login"),
-      intendedRoute: `/pet-owner/service/${service.id}`,
+  const handlePress = () => {
+    router.push({
+      pathname: "/pet-owner/service/[id]",
+      params: { id: service.id },
     });
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {

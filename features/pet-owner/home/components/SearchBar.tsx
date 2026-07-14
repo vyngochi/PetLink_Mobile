@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { Href, useRouter } from "expo-router";
 import { Search, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -26,7 +26,20 @@ export function SearchBar() {
     setSearchQuery(query);
     setInputText(query);
     setIsFocused(false);
-    router.push("/(tabs)/providers");
+  };
+
+  const handleSelectProvider = (id: string, name: string) => {
+    setSearchQuery(name);
+    setInputText(name);
+    setIsFocused(false);
+    router.push(`/pet-owner/provider/${id}` as Href);
+  };
+
+  const handleSelectService = (id: string, name: string) => {
+    setSearchQuery(name);
+    setInputText(name);
+    setIsFocused(false);
+    router.push(`/pet-owner/services/${id}` as Href);
   };
 
   const showSuggestions = isFocused && inputText.length > 0;
@@ -78,9 +91,13 @@ export function SearchBar() {
                 <Pressable
                   key={`provider-${index}`}
                   className="px-4 py-3 border-b border-border/30 active:bg-muted/50"
-                  onPress={() => handleSelect(provider)}
+                  onPress={() =>
+                    handleSelectProvider(provider.id, provider.name)
+                  }
                 >
-                  <Text className="font-mbold text-foreground">{provider}</Text>
+                  <Text className="font-mbold text-foreground">
+                    {provider.name}
+                  </Text>
                   <Text className="mt-1 text-xs text-muted-foreground">
                     Cơ sở
                   </Text>
@@ -90,9 +107,11 @@ export function SearchBar() {
                 <Pressable
                   key={`service-${index}`}
                   className="px-4 py-3 border-b border-border/30 active:bg-muted/50"
-                  onPress={() => handleSelect(service)}
+                  onPress={() => handleSelectService(service.id, service.name)}
                 >
-                  <Text className="font-mbold text-foreground">{service}</Text>
+                  <Text className="font-mbold text-foreground">
+                    {service.name}
+                  </Text>
                   <Text className="mt-1 text-xs text-muted-foreground">
                     Dịch vụ
                   </Text>

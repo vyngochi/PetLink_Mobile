@@ -14,6 +14,10 @@ interface FavoritesState {
   toggleService: (service: FavoriteService) => void;
   removeProvider: (id: string) => void;
   removeService: (id: string) => void;
+  removeMultipleProviders: (ids: string[]) => void;
+  removeMultipleServices: (ids: string[]) => void;
+  clearAllProviders: () => void;
+  clearAllServices: () => void;
 }
 
 export const useFavoritesStore = create<FavoritesState>()(
@@ -40,6 +44,22 @@ export const useFavoritesStore = create<FavoritesState>()(
       removeService: (id) =>
         set((state) => ({
           services: state.services.filter((item) => item.id !== id),
+        })),
+      removeMultipleProviders: (ids) =>
+        set((state) => ({
+          providers: state.providers.filter((item) => !ids.includes(item.id)),
+        })),
+      removeMultipleServices: (ids) =>
+        set((state) => ({
+          services: state.services.filter((item) => !ids.includes(item.id)),
+        })),
+      clearAllProviders: () =>
+        set(() => ({
+          providers: [],
+        })),
+      clearAllServices: () =>
+        set(() => ({
+          services: [],
         })),
     }),
     {

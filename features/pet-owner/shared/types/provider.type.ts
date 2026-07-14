@@ -84,8 +84,8 @@ export interface GetProvidersParams {
 }
 
 export interface GlobalSearchResponse {
-  providers: string[];
-  services: string[];
+  providers: { id: string; name: string }[];
+  services: { id: string; name: string }[];
 }
 
 export interface ProviderPagination {

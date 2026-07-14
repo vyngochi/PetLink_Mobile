@@ -16,6 +16,9 @@ export function ConversationCard({
   onPress,
 }: ConversationCardProps) {
   const hasUnread = conversation.unreadCount > 0;
+  const isNew = conversation.createAt
+    ? Date.now() - new Date(conversation.createAt).getTime() < 10 * 60 * 1000
+    : false;
 
   return (
     <Pressable
@@ -40,18 +43,27 @@ export function ConversationCard({
           style={{ width: 56, height: 56, borderRadius: 28 }}
         />
         {conversation.isOnline && (
-          <View className="absolute bottom-0 right-0 w-4 h-4 border-2 rounded-full border-card bg-primary" />
+          <View className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-card bg-primary" />
         )}
       </View>
 
       <View className="flex-1">
-        <View className="flex-row items-baseline justify-between gap-2">
-          <Text
-            className="flex-1 font-mbold text-[15px] leading-6 text-foreground"
-            numberOfLines={1}
-          >
-            {conversation.name}
-          </Text>
+        <View className="flex-row items-center justify-between gap-2">
+          <View className="flex-row items-center flex-1 gap-2">
+            <Text
+              className="font-mbold text-[15px] leading-6 text-foreground flex-shrink"
+              numberOfLines={1}
+            >
+              {conversation.name}
+            </Text>
+            {isNew && (
+              <View className="rounded bg-destructive/10 px-1.5 py-0.5">
+                <Text className="font-mbold text-[9px] uppercase leading-3 tracking-wider text-destructive">
+                  New
+                </Text>
+              </View>
+            )}
+          </View>
           <Text
             className={cn(
               "text-[11px] leading-4",

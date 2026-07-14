@@ -3,17 +3,17 @@ import React, { useEffect } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 
 import { Colors } from "@/constants/theme";
-import { BookingBottomBar } from "@/features/pet-owner/booking-flow/shared/components";
-import { useAvailableSlots } from "@/features/pet-owner/booking-flow/shared/hooks/useAvailableSlots";
-import { useBookingOptions } from "@/features/pet-owner/booking-flow/shared/hooks/useBookingOptions";
-import { useBookingFlowStore } from "@/features/pet-owner/booking-flow/shared/stores/booking-flow.store";
-import { formatCurrency } from "@/features/pet-owner/booking-flow/shared/utils/currency";
 import {
   DayStrip,
   PetSelector,
   ServiceOptionList,
   TimeSlotGrid,
 } from "@/features/pet-owner/booking-flow/select-schedule/components";
+import { BookingBottomBar } from "@/features/pet-owner/booking-flow/shared/components";
+import { useAvailableSlots } from "@/features/pet-owner/booking-flow/shared/hooks/useAvailableSlots";
+import { useBookingOptions } from "@/features/pet-owner/booking-flow/shared/hooks/useBookingOptions";
+import { useBookingFlowStore } from "@/features/pet-owner/booking-flow/shared/stores/booking-flow.store";
+import { formatCurrency } from "@/features/pet-owner/booking-flow/shared/utils/currency";
 import { useGetMyPets } from "@/features/pet-owner/my-pets/hooks/useGetMyPets";
 
 interface BookingScheduleViewProps {
@@ -78,7 +78,7 @@ export function BookingScheduleView({ serviceId }: BookingScheduleViewProps) {
   );
 
   const handleAddPet = () => {
-    router.push("/pet-owner/pet/create" as Href);
+    router.push(`/pet-owner/pet/create` as Href);
   };
 
   return (
@@ -144,7 +144,9 @@ export function BookingScheduleView({ serviceId }: BookingScheduleViewProps) {
       )}
 
       <BookingBottomBar
-        totalLabel={selectedService ? formatCurrency(selectedService.price) : "—"}
+        totalLabel={
+          selectedService ? formatCurrency(selectedService.price) : "—"
+        }
         ctaLabel="Tiếp tục"
         onPress={nextStep}
         disabled={!canContinue}

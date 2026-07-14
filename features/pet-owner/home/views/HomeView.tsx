@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
-import React from "react";
-import { ScrollView, View } from "react-native";
+import React, { useState } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { useGetProviders } from "../../provider-list/hooks/useGetProviders";
 import { JoinBanner } from "../components/JoinBanner";
 import { PetTipsSection } from "../components/PetTipsSection";
@@ -17,15 +17,22 @@ export interface HomeViewProps {
 export function HomeView({ isLoggedIn = false }: HomeViewProps) {
   const router = useRouter();
   const { coors } = useGetCoors();
+  const [refreshing, setRefreshing] = useState(false);
 
   const onJoinPress = () => {
     router.push({ pathname: "/(auth)/login" });
   };
 
-  const { providers } = useGetProviders({
+  const { providers, refetch } = useGetProviders({
     userLat: coors?.userLat,
     userLng: coors?.userLong,
   });
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   const populars = providers.filter(
     (provider) =>
@@ -39,11 +46,15 @@ export function HomeView({ isLoggedIn = false }: HomeViewProps) {
         .map((service) => [service, service]),
     ).values(),
   );
+
   return (
     <ScrollView
       className="flex-1 bg-background"
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       <View className="px-5">
         <SearchBar />

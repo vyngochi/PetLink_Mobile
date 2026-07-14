@@ -68,7 +68,7 @@ export function PopularClinicsSection({
         <Text className="text-xl font-mbold text-foreground">
           Nhà cung cấp phổ biến
         </Text>
-        <Pressable>
+        <Pressable onPress={() => router.push("/providers")}>
           <Text className="text-sm text-primary font-mbold">Xem tất cả</Text>
         </Pressable>
       </View>

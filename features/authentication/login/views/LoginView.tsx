@@ -11,15 +11,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useLoginForm } from "@/features/authentication/login/hooks/useLoginForm";
 import {
   AuthBackground,
-  AuthDivider,
   AuthHeader,
   AuthInput,
-  GoogleButton,
   PrimaryButton,
 } from "@/features/authentication/shared/components";
-import { useLoginForm } from "@/features/authentication/login/hooks/useLoginForm";
 
 export function LoginView() {
   const router = useRouter();
@@ -111,13 +109,7 @@ export function LoginView() {
             </View>
           </View>
 
-          <View className="my-8">
-            <AuthDivider />
-          </View>
-
-          <GoogleButton />
-
-          <View className="flex-row items-center justify-center pt-8 pb-4 mt-auto">
+          <View className="flex-row items-center justify-center pt-6 pb-2">
             <Text className="font-default text-[14px] leading-[21px] text-muted-foreground">
               Chưa có tài khoản?{" "}
             </Text>

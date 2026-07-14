@@ -57,13 +57,15 @@ export function useConversations() {
       id: thread.id,
       name,
       avatarUrl,
-      category: "service", // Assume service by default or map properly if backend returns it
+      category: "service",
       lastMessage: thread.lastMessage || "",
       lastMessageAtLabel,
       unreadCount: thread.unreadCount || 0,
-      isOnline: false, // Could integrate with presence later
+      isOnline: false,
       isPinned: false,
       booking: thread.booking,
+      createAt: thread.createAt,
+      lastMessageAt: thread.lastMessageAt,
     };
   });
 
@@ -84,8 +86,14 @@ export function useConversations() {
     return matchesFilter && matchesSearch;
   });
 
+  const sorted = [...filtered].sort((a, b) => {
+    const dateA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
+    const dateB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+    return dateB - dateA;
+  });
+
   return {
-    conversations: filtered,
+    conversations: sorted,
     filter,
     setFilter,
     search,

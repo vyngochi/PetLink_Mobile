@@ -6,5 +6,19 @@ export function useFavorites() {
   const removeProvider = useFavoritesStore((state) => state.removeProvider);
   const removeService = useFavoritesStore((state) => state.removeService);
 
-  return { providers, services, removeProvider, removeService };
+  const removeMultipleProviders = useFavoritesStore((state) => state.removeMultipleProviders);
+  const removeMultipleServices = useFavoritesStore((state) => state.removeMultipleServices);
+  const clearAllProviders = useFavoritesStore((state) => state.clearAllProviders);
+  const clearAllServices = useFavoritesStore((state) => state.clearAllServices);
+
+  return { 
+    providers, 
+    services, 
+    removeProvider, 
+    removeService,
+    removeMultipleProviders,
+    removeMultipleServices,
+    clearAllProviders,
+    clearAllServices
+  };
 }
