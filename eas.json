@@ -4,17 +4,6 @@
     "appVersionSource": "remote"
   },
   "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "ios": {
-        "resourceClass": "m-medium"
-      },
-      "env": {
-        "EXPO_PUBLIC_BASE_URL": "http://192.168.0.7:5500/api",
-        "EXPO_PUBLIC_CLOUDINARY_URL": "https://res.cloudinary.com/dd3i7nbiz/image/upload"
-      }
-    },
     "preview": {
       "distribution": "internal",
       "ios": {
@@ -41,8 +30,8 @@
     "production": {
       "ios": {
         "appleId": "trinhan2014@icloud.com",
-        "ascAppId": "REPLACE-WITH-APP-STORE-CONNECT-APP-ID",
-        "appleTeamId": "REPLACE-WITH-TEAM-ID"
+        "ascAppId": "6790819972",
+        "appleTeamId": "445T78T533"
       }
     }
   }
