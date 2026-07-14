@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { AuthTokens, User } from "@/features/authentication/shared/types";
+import { authService } from "@/features/authentication/shared/services/auth.service";
 import { secureStorage } from "@/lib/secure-storage";
 
 type AuthState = {
@@ -12,12 +13,12 @@ type AuthState = {
   hydrating: boolean;
   setTokens: (tokens: AuthTokens) => void;
   setUser: (user: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       accessToken: null,
       refreshToken: null,
       user: null,
@@ -26,13 +27,21 @@ export const useAuthStore = create<AuthState>()(
       setTokens: ({ accessToken, refreshToken }) =>
         set({ accessToken, refreshToken }),
       setUser: (user) => set({ user, isAuthenticated: true }),
-      logout: () =>
+      logout: async () => {
+        try {
+          if (get().isAuthenticated) {
+            await authService.removeDeviceToken();
+          }
+        } catch (error) {
+          console.error("Failed to remove device token:", error);
+        }
         set({
           accessToken: null,
           refreshToken: null,
           user: null,
           isAuthenticated: false,
-        }),
+        });
+      },
     }),
     {
       name: "petlink-auth",

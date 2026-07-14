@@ -125,6 +125,12 @@ export type BookingDisputeStatus =
 export interface CreateBookingDisputePayload {
   reason: string;
   description?: string;
+  evidenceFiles?: string[];
+}
+
+export interface ApiDisputeEvidence {
+  url: string;
+  type: string;
 }
 
 export interface ApiBookingDispute {
@@ -132,8 +138,20 @@ export interface ApiBookingDispute {
   bookingId: string;
   reason: string;
   description: string | null;
+  evidence: ApiDisputeEvidence[];
+  providerResponse: string | null;
+  providerEvidence: ApiDisputeEvidence[];
+  adminNote: string | null;
+  adminEvidence: ApiDisputeEvidence[];
   status: BookingDisputeStatus;
-  createdAt: string;
+  createAt: string;
+  booking?: {
+    status: ApiBookingStatus;
+    totalAmount: number;
+    provider: {
+      businessName: string;
+    };
+  };
 }
 
 export interface CreateBookingApiPayload {

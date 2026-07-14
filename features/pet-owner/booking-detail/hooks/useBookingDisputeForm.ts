@@ -1,5 +1,8 @@
+import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
+import { toast } from "@/components/toast";
+import { isLocalImageUri } from "@/features/pet-owner/shared/utils/image-form-data";
 import {
   getDisputeReasonLabel,
   OTHER_DISPUTE_REASON,
@@ -38,6 +41,7 @@ export function useBookingDisputeForm({
   const [reason, setReasonValue] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [description, setDescription] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
   const {
     errors,
     setErrors,
@@ -60,7 +64,38 @@ export function useBookingDisputeForm({
     setReasonValue("");
     setOtherReason("");
     setDescription("");
+    setPhotos([]);
     resetErrors();
+  };
+
+  const MAX_NEW_PHOTOS = 10;
+  const remainingPhotoSlots = MAX_NEW_PHOTOS - photos.filter(isLocalImageUri).length;
+
+  const removePhoto = (photo: string) => {
+    setPhotos((prev) => prev.filter((item) => item !== photo));
+  };
+
+  const addPhotos = async () => {
+    if (remainingPhotoSlots <= 0) return;
+
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      toast.error("Cần cấp quyền truy cập thư viện ảnh để chọn ảnh.", {
+        position: "bottom",
+      });
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsMultipleSelection: true,
+      selectionLimit: remainingPhotoSlots,
+      quality: 0.8,
+    });
+
+    if (result.canceled) return;
+
+    setPhotos((prev) => [...prev, ...result.assets.map((asset) => asset.uri)]);
   };
 
   const submit = () => {
@@ -86,6 +121,7 @@ export function useBookingDisputeForm({
               ? (result.data.otherReason ?? "")
               : getDisputeReasonLabel(result.data.reason),
           description: result.data.description,
+          evidenceFiles: photos,
         },
       },
       {
@@ -108,6 +144,10 @@ export function useBookingDisputeForm({
     description,
     setDescription: bindField("description", setDescription),
     isOtherReason: reason === OTHER_DISPUTE_REASON,
+    photos,
+    addPhotos,
+    removePhoto,
+    canAddPhoto: remainingPhotoSlots > 0,
     errors,
     errorMessage,
     submitting: createDispute.isPending,

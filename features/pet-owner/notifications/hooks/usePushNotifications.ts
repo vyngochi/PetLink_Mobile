@@ -1,4 +1,5 @@
 import { authService } from "@/features/authentication/shared/services/auth.service";
+import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
@@ -21,6 +22,8 @@ Notifications.setNotificationHandler({
 });
 
 export const usePushNotifications = (): PushNotificationState => {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
   const [expoPushToken, setExpoPushToken] = useState<
     Notifications.ExpoPushToken | undefined
   >();
@@ -67,17 +70,6 @@ export const usePushNotifications = (): PushNotificationState => {
         console.log("\n--- EXPO PUSH TOKEN ---");
         console.log(token.data);
         console.log("-----------------------\n");
-
-        // Gửi token lên Backend (Cần auth token trong header)
-        try {
-          await authService.saveDeviceToken(token.data);
-          console.log("Đã lưu Device Token lên BE thành công!");
-        } catch (apiError) {
-          console.warn(
-            "Không thể lưu token lên BE, hãy kiểm tra API backend:",
-            apiError,
-          );
-        }
       } catch (e) {
         console.warn("Lỗi khi lấy Expo Push Token:", e);
       }
@@ -122,6 +114,21 @@ export const usePushNotifications = (): PushNotificationState => {
       }
     };
   }, []);
+
+  // Gửi token lên Backend khi có token và đã đăng nhập
+  useEffect(() => {
+    if (isAuthenticated && expoPushToken?.data) {
+      authService
+        .saveDeviceToken(expoPushToken.data)
+        .then(() => console.log("Đã lưu Device Token lên BE thành công!"))
+        .catch((apiError) =>
+          console.warn(
+            "Không thể lưu token lên BE, hãy kiểm tra API backend:",
+            apiError,
+          ),
+        );
+    }
+  }, [isAuthenticated, expoPushToken?.data]);
 
   return {
     expoPushToken,

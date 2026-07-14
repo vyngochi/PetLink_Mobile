@@ -39,7 +39,7 @@ function PaymentTimer({
 }) {
   const [timeLeft, setTimeLeft] = React.useState(() => {
     const createdTime = new Date(createdAt).getTime();
-    const expiryTime = createdTime + 10 * 1000; // 100 mins
+    const expiryTime = createdTime + 130 * 60 * 1000; // 100 mins
     return Math.max(0, expiryTime - Date.now());
   });
 
