@@ -5,6 +5,7 @@ import type {
   LoginPayload,
   LoginResponse,
 } from "@/features/authentication/login/types";
+import { isMobileBlockedRole } from "@/features/authentication/shared/constants/roles";
 import { authService } from "@/features/authentication/shared/services/auth.service";
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
 import type { User } from "@/features/authentication/shared/types";
@@ -14,9 +15,14 @@ import { unwrapData } from "@/lib/http";
 type UseLoginOptions = {
   onSuccess?: (user: User) => void;
   onError?: (error: unknown) => void;
+  onBlocked?: () => void;
 };
 
-export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
+export const useLogin = ({
+  onSuccess,
+  onError,
+  onBlocked,
+}: UseLoginOptions = {}) => {
   const queryClient = useQueryClient();
   const { mutate, isPending, error } = useMutation({
     mutationFn: async (payload: LoginPayload) => {
@@ -29,8 +35,16 @@ export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
       try {
         const userRes = await authService.getMe();
         const user = unwrapData<User>(userRes);
+
+        if (isMobileBlockedRole(user.role)) {
+          useAuthStore.getState().logout();
+          queryClient.removeQueries({ queryKey: ["me"] });
+          onBlocked?.();
+          return;
+        }
+
         useAuthStore.getState().setUser(user);
-        
+
         await queryClient.invalidateQueries({
           queryKey: ["me"],
         });

@@ -2,6 +2,7 @@ import { unwrapData } from "@/lib/http";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect } from "react";
+import { isMobileBlockedRole } from "../constants/roles";
 import { authService } from "../services/auth.service";
 import { useAuthStore } from "../stores/auth.store";
 import { User } from "../types";
@@ -17,9 +18,12 @@ export const useGetMe = () => {
   });
 
   useEffect(() => {
-    if (query.data) {
-      useAuthStore.getState().setUser(query.data);
+    if (!query.data) return;
+    if (isMobileBlockedRole(query.data.role)) {
+      useAuthStore.getState().logout();
+      return;
     }
+    useAuthStore.getState().setUser(query.data);
   }, [query.data]);
 
   useEffect(() => {
