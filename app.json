@@ -46,7 +46,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Cho phép PetLink truy cập thư viện ảnh để chọn ảnh thú cưng."
+          "photosPermission": "Cho phép PetLink truy cập thư viện ảnh của bạn"
         }
       ],
       [
