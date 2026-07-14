@@ -5,6 +5,11 @@ const expoConfig = require('eslint-config-expo/flat');
 module.exports = defineConfig([
   expoConfig,
   {
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+    },
+  },
+  {
     ignores: ['dist/*'],
   },
 ]);

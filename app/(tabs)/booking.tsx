@@ -1,6 +1,7 @@
 import React from "react";
-import { View } from "react-native";
 
-export default function booking() {
-  return <View></View>;
+import { BookingsView } from "@/features/pet-owner/bookings/views/BookingsView";
+
+export default function Booking() {
+  return <BookingsView />;
 }

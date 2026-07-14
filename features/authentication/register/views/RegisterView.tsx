@@ -11,16 +11,14 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useRegisterForm } from "@/features/authentication/register/hooks/useRegisterForm";
 import {
   AuthBackground,
-  AuthDivider,
   AuthHeader,
   AuthInput,
-  GoogleButton,
   PrimaryButton,
 } from "@/features/authentication/shared/components";
 import { authColors } from "@/features/authentication/shared/constants/colors";
-import { useRegisterForm } from "@/features/authentication/register/hooks/useRegisterForm";
 
 export function RegisterView() {
   const router = useRouter();
@@ -151,12 +149,6 @@ export function RegisterView() {
                 />
               </View>
             </View>
-
-            <View className="my-6">
-              <AuthDivider />
-            </View>
-
-            <GoogleButton label="Đăng ký với Google" />
           </View>
 
           <View className="flex-row items-center justify-center mt-8">

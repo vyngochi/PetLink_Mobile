@@ -5,8 +5,11 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 const baseURL = process.env.EXPO_PUBLIC_BASE_URL;
 
-export const api = axios.create({ baseURL, timeout: 10000 });
-export const refreshApi = axios.create({ baseURL, timeout: 10000 });
+const validateStatus = (status: number) =>
+  (status >= 200 && status < 300) || status === 304;
+
+export const api = axios.create({ baseURL, timeout: 10000, validateStatus });
+export const refreshApi = axios.create({ baseURL, timeout: 10000, validateStatus });
 
 const injectTokenInterceptor = (config: InternalAxiosRequestConfig) => {
   const token = useAuthStore.getState().accessToken;

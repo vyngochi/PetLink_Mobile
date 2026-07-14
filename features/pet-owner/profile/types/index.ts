@@ -11,12 +11,17 @@ export type UserProfile = {
 
 export type EditProfilePayload = {
   fullName: string;
-  email: string;
   phone: string;
-  location: string;
+  location?: string;
+  avatarUri?: string;
 };
 
-export type MenuItemTone = "primary" | "secondary" | "tertiary" | "neutral";
+export type MenuItemTone =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "neutral"
+  | "favorite";
 
 export type ProfileMenuItem = {
   key: string;

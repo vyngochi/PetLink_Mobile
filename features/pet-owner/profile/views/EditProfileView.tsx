@@ -1,5 +1,11 @@
 import React from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { MapPin } from "lucide-react-native";
@@ -20,15 +26,17 @@ export function EditProfileView() {
     fullName,
     setFullName,
     email,
-    setEmail,
     phone,
     setPhone,
     location,
     setLocation,
+    avatarUrl,
+    pickAvatar,
     saving,
-    saved,
+    errors,
+    errorMessage,
     submit,
-  } = useEditProfileForm({ initial: profile });
+  } = useEditProfileForm({ initial: profile, onSuccess: () => router.back() });
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -46,7 +54,7 @@ export function EditProfileView() {
           showsVerticalScrollIndicator={false}
         >
           <View className="mb-8">
-            <AvatarPicker uri={profile.avatarUrl} />
+            <AvatarPicker uri={avatarUrl} onChangePhoto={pickAvatar} />
           </View>
 
           <View className="gap-6">
@@ -56,40 +64,50 @@ export function EditProfileView() {
               onChangeText={setFullName}
               placeholder="Nhập họ và tên của bạn"
               autoCapitalize="words"
-              textContentType="name"
+              vietnamese
+              error={errors.fullName}
             />
             <ProfileFormField
               label="Địa chỉ email"
               value={email}
-              onChangeText={setEmail}
+              editable={false}
               placeholder="ten@email.com"
               keyboardType="email-address"
               autoCapitalize="none"
               autoComplete="email"
               textContentType="emailAddress"
+              helperText="Bạn không thể thay đổi địa chỉ email."
             />
             <ProfileFormField
               label="Số điện thoại"
               value={phone}
               onChangeText={setPhone}
-              placeholder="+84 xxx xxx xxx"
+              placeholder="0xxxxxxxxx"
               keyboardType="phone-pad"
               textContentType="telephoneNumber"
+              error={errors.phone}
             />
             <ProfileFormField
-              label="Địa điểm"
+              label="Địa chỉ liên lạc"
               value={location}
               onChangeText={setLocation}
               placeholder="Thành phố, Quốc gia"
               trailingIcon={MapPin}
+              vietnamese
+              error={errors.location}
             />
+
+            {errorMessage ? (
+              <Text className="px-1 font-default text-[13px] leading-5 text-destructive">
+                {errorMessage}
+              </Text>
+            ) : null}
 
             <View className="pt-2">
               <SaveButton
                 label="Lưu thay đổi"
                 onPress={submit}
                 saving={saving}
-                saved={saved}
               />
             </View>
           </View>
