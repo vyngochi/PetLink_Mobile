@@ -5,26 +5,27 @@ import {
   type GetNotificationsParams,
 } from "../services/notification.service";
 
-// Need to define response type.
-export interface NotificationApiResponse {
+export interface NotificationApiItem {
   id: string;
   userId: string;
   type: string;
   title: string;
-  body: string;
-  data: any;
-  isRead: boolean;
-  createdAt: string;
+  message: string;
+  data: Record<string, unknown> | null;
+  readAt: string | null;
+  createAt: string;
 }
 
 export interface NotificationListResponse {
-  items: NotificationApiResponse[];
+  items: NotificationApiItem[];
+  unreadCount: number;
   pagination: {
     page: number;
     pageSize: number;
     totalItems: number;
     totalPages: number;
     hasNextPage: boolean;
+    hasPrevPage: boolean;
   };
 }
 
@@ -37,7 +38,7 @@ export const notificationKeys = {
 export const useGetNotifications = (params: GetNotificationsParams = {}) => {
   return useInfiniteQuery({
     queryKey: notificationKeys.list(params),
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam }) => {
       const res = await notificationService.getNotifications({
         ...params,
         page: pageParam,
@@ -45,12 +46,10 @@ export const useGetNotifications = (params: GetNotificationsParams = {}) => {
       return unwrapData<NotificationListResponse>(res);
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.pagination.hasNextPage) {
-        return lastPage.pagination.page + 1;
-      }
-      return undefined;
-    },
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.hasNextPage
+        ? lastPage.pagination.page + 1
+        : undefined,
     refetchOnWindowFocus: true,
   });
 };
