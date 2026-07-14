@@ -11,6 +11,7 @@ import {
   BookingDetailPetCard,
   BookingDetailTopBar,
   BookingDisputeSheet,
+  BookingPaymentDetailCard,
   BookingReviewModal,
   BookingReviewSummary,
   CheckInPassCard,
@@ -87,6 +88,8 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
         <BookingDetailPetCard booking={detail} />
 
         <BookingAppointmentCard booking={detail} />
+
+        <BookingPaymentDetailCard booking={detail} />
 
         {qrAction ? (
           <CheckInPassCard

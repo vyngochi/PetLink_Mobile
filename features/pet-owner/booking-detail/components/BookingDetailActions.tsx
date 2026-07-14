@@ -22,6 +22,7 @@ export function BookingDetailActions({
   canReview = false,
   onReview,
   onCancel,
+  onDispute,
 }: BookingDetailActionsProps) {
   if (status === "checked_out") {
     return (

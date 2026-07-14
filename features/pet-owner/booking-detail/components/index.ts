@@ -3,6 +3,7 @@ export { BookingDetailActions } from "./BookingDetailActions";
 export { BookingDetailPetCard } from "./BookingDetailPetCard";
 export { BookingDetailTopBar } from "./BookingDetailTopBar";
 export { BookingDisputeSheet } from "./BookingDisputeSheet";
+export { BookingPaymentDetailCard } from "./BookingPaymentDetailCard";
 export { BookingReviewModal } from "./BookingReviewModal";
 export { BookingReviewSummary } from "./BookingReviewSummary";
 export { CheckInPassCard } from "./CheckInPassCard";

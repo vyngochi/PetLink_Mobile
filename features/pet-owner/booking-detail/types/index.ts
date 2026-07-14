@@ -14,4 +14,7 @@ export interface BookingDetail extends Booking {
   providerImageUrl: string;
   qrAction: BookingQrAction | null;
   review: ApiBookingReview | null;
+  note: string | null;
+  cancelReason: string | null;
+  refundReason: string | null;
 }

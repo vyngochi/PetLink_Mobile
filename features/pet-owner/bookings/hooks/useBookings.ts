@@ -28,8 +28,5 @@ export function useBookings() {
 
   const bookings = (data?.items ?? []).map((item) => toBooking(item, pets));
 
-  const upcoming = bookings.filter((item) => isUpcomingBooking(item.status));
-  const past = bookings.filter((item) => !isUpcomingBooking(item.status));
-
-  return { upcoming, past, isLoading, isError, error, refetch, isRefetching };
+  return { bookings, isLoading, isError, error, refetch, isRefetching };
 }

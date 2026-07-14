@@ -65,5 +65,8 @@ export const toBooking = (booking: ApiBooking, pets: Pet[]): Booking => {
     serviceName: booking.service.name,
     serviceType: getServiceKind(booking.service.name),
     providerName: booking.provider.businessName,
+    paymentMethod: booking.paymentMethod,
+    paymentStatus: booking.paymentStatus,
+    createAt: booking.createAt,
   };
 };

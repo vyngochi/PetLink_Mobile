@@ -55,6 +55,9 @@ export function useBookingDetail(bookingId: string) {
         providerImageUrl: data.provider.avatarUrl ?? "",
         qrAction: toQrAction(data.status),
         review: data.review ?? null,
+        note: data.note ?? null,
+        cancelReason: data.cancelReason ?? null,
+        refundReason: data.refundReason ?? null,
       }
     : null;
 

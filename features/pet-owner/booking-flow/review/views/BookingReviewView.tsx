@@ -85,6 +85,7 @@ export function BookingReviewView() {
       },
       {
         onSuccess: async (booking) => {
+          setConfirmedBooking(booking); // Save early so we have the ID for checking
           if (paymentCardId === "momo") {
             setIsProcessingMomo(true);
             try {
@@ -95,21 +96,31 @@ export function BookingReviewView() {
                 queryClient.invalidateQueries({
                   queryKey: bookingKeys.myBookings(),
                 });
-                setConfirmedBooking(booking);
-                nextStep();
+                
+                // Check status after browser is closed
+                const statusRes = await bookingService.getMyBookingDetail(booking.id);
+                if (statusRes.data?.data?.paymentStatus === "SUCCESS") {
+                  useBookingFlowStore.getState().setStep("success");
+                } else {
+                  useBookingFlowStore.getState().reset();
+                  router.push("/(tabs)/booking");
+                }
               } else {
                 toast.error("Không thể tạo thanh toán MoMo", {
                   position: "bottom",
                 });
+                useBookingFlowStore.getState().reset();
+                router.push("/(tabs)/booking");
               }
             } catch (error) {
               toast.error("Lỗi khi kết nối MoMo", { position: "bottom" });
+              useBookingFlowStore.getState().reset();
+              router.push("/(tabs)/booking");
             } finally {
               setIsProcessingMomo(false);
             }
           } else {
-            setConfirmedBooking(booking);
-            nextStep();
+            useBookingFlowStore.getState().setStep("success");
           }
         },
         onError: (error) => {

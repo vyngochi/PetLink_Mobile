@@ -16,11 +16,11 @@ interface BookingFlowViewProps {
   petId?: string;
 }
 
-const STEP_TITLES = {
+const STEP_TITLES: Record<string, string> = {
   schedule: "Đặt lịch hẹn",
   review: "Xác nhận đặt lịch",
   success: "Hoàn tất",
-} as const;
+};
 
 export function BookingFlowView({ serviceId, petId }: BookingFlowViewProps) {
   const router = useRouter();
@@ -57,9 +57,9 @@ export function BookingFlowView({ serviceId, petId }: BookingFlowViewProps) {
 
       {step === "schedule" ? (
         <BookingScheduleView serviceId={serviceId} />
-      ) : (
+      ) : step === "review" ? (
         <BookingReviewView />
-      )}
+      ) : null}
     </SafeAreaView>
   );
 }

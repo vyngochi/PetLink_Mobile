@@ -57,9 +57,11 @@ export interface ApiBooking {
   note: string | null;
   checkedOutAt?: string | null;
   cancelReason?: string | null;
+  refundReason?: string | null;
   service: ApiBookingService;
   provider: ApiBookingProvider;
   review?: ApiBookingReview | null;
+  createAt: string;
 }
 
 export interface BookingPagination {

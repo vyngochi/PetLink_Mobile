@@ -17,6 +17,7 @@ interface BookingFlowState {
   startFlow: (serviceId: string, petId?: string | null) => void;
   nextStep: () => void;
   prevStep: () => void;
+  setStep: (step: BookingStep) => void;
   selectService: (serviceId: string) => void;
   selectPet: (petId: string) => void;
   selectDay: (dayId: string) => void;
@@ -52,6 +53,7 @@ export const useBookingFlowStore = create<BookingFlowState>((set) => ({
       const prevIndex = Math.max(index - 1, 0);
       return { step: BOOKING_STEP_FLOW[prevIndex] };
     }),
+  setStep: (step) => set({ step }),
   selectService: (serviceId) => set({ serviceId, timeSlotId: null }),
   selectPet: (petId) => set({ petId }),
   selectDay: (dayId) => set({ dayId, timeSlotId: null }),

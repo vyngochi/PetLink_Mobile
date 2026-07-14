@@ -33,7 +33,7 @@ function DetailRow({ icon: Icon, label, value }: DetailRowProps) {
         </Text>
         <Text
           className="mt-0.5 font-default text-[14px] leading-5 text-foreground"
-          numberOfLines={1}
+          numberOfLines={3}
         >
           {value}
         </Text>
@@ -42,7 +42,9 @@ function DetailRow({ icon: Icon, label, value }: DetailRowProps) {
   );
 }
 
-export function BookingAppointmentCard({ booking }: BookingAppointmentCardProps) {
+export function BookingAppointmentCard({
+  booking,
+}: BookingAppointmentCardProps) {
   const ServiceIcon =
     booking.serviceType === "medical" ? Stethoscope : Scissors;
 

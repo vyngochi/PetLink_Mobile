@@ -1,5 +1,7 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, type Href } from "expo-router";
-import React, { useState } from "react";
+import * as WebBrowser from "expo-web-browser";
+import React, { useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -13,15 +15,60 @@ import {
 } from "@/features/pet-owner/bookings/components";
 import { useBookings } from "@/features/pet-owner/bookings/hooks/useBookings";
 import type { Booking, BookingTab } from "@/features/pet-owner/bookings/types";
+import { bookingKeys } from "@/features/pet-owner/shared/constants/query-keys";
+import { bookingService } from "@/features/pet-owner/shared/services/booking.service";
 import { getApiErrorMessage } from "@/lib/http";
 
 export function BookingsView() {
   const router = useRouter();
-  const { upcoming, past, isLoading, isError, error, refetch } = useBookings();
-  const [tab, setTab] = useState<BookingTab>("upcoming");
+  const queryClient = useQueryClient();
+  const { bookings, isLoading, isError, error, refetch } = useBookings();
+  const [tab, setTab] = useState<BookingTab>("all");
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
+  const [isPaying, setIsPaying] = useState(false);
 
-  const bookings = tab === "upcoming" ? upcoming : past;
+  const counts = useMemo(() => {
+    const c: Record<BookingTab, number> = {
+      all: bookings.length,
+      pending_payment: 0,
+      pending_confirmation: 0,
+      confirmed: 0,
+      checked_in: 0,
+      checked_out: 0,
+      completed: 0,
+      cancelled: 0,
+      rejected: 0,
+      dispute: 0,
+      no_arrival: 0,
+    };
+    bookings.forEach((b) => {
+      if (b.status === "pending") {
+        if (b.paymentMethod === "ONLINE" && b.paymentStatus !== "SUCCESS") {
+          c.pending_payment++;
+        } else {
+          c.pending_confirmation++;
+        }
+      } else {
+        if (c[b.status as keyof typeof c] !== undefined) {
+          c[b.status as keyof typeof c]++;
+        }
+      }
+    });
+    return c;
+  }, [bookings]);
+
+  const filteredBookings = useMemo(() => {
+    if (tab === "all") return bookings;
+    return bookings.filter((b) => {
+      if (tab === "pending_payment") {
+        return b.status === "pending" && b.paymentMethod === "ONLINE" && b.paymentStatus !== "SUCCESS";
+      }
+      if (tab === "pending_confirmation") {
+        return b.status === "pending" && !(b.paymentMethod === "ONLINE" && b.paymentStatus !== "SUCCESS");
+      }
+      return b.status === tab;
+    });
+  }, [bookings, tab]);
 
   const handleRebook = (booking: Booking) => {
     router.push({
@@ -38,9 +85,43 @@ export function BookingsView() {
     toast.info("Tính năng đang được phát triển", { position: "bottom" });
   };
 
+  const handlePayMomo = async (booking: Booking) => {
+    if (isPaying) return;
+    setIsPaying(true);
+    try {
+      const res = await bookingService.createMomoPayment(booking.id);
+      const payUrl = res.data?.data?.payUrl;
+      if (payUrl) {
+        await WebBrowser.openBrowserAsync(payUrl);
+        // Sau khi đóng browser thì refetch lại để cập nhật trạng thái
+        queryClient.invalidateQueries({
+          queryKey: bookingKeys.myBookings(),
+        });
+      } else {
+        toast.error("Không thể tạo thanh toán MoMo", { position: "bottom" });
+      }
+    } catch (error) {
+      toast.error("Lỗi khi kết nối MoMo", { position: "bottom" });
+    } finally {
+      setIsPaying(false);
+    }
+  };
+
+  const handlePaymentExpire = async (booking: Booking) => {
+    try {
+      await bookingService.cancelMyBooking(booking.id, "Quá thời gian thanh toán");
+      queryClient.invalidateQueries({
+        queryKey: bookingKeys.myBookings(),
+      });
+      toast.success("Lịch hẹn đã tự động hủy do quá hạn thanh toán", { position: "bottom" });
+    } catch (error) {
+      console.error("Lỗi khi tự động hủy lịch:", error);
+    }
+  };
+
   const subtitle =
-    upcoming.length > 0
-      ? `Bạn có ${upcoming.length} lịch hẹn sắp tới`
+    filteredBookings.length > 0
+      ? `Bạn có ${filteredBookings.length} lịch hẹn trong danh sách`
       : "Quản lý lịch hẹn chăm sóc thú cưng của bạn";
 
   return (
@@ -54,12 +135,11 @@ export function BookingsView() {
         </Text>
       </View>
 
-      <View className="px-5 pt-4">
+      <View className="pt-4">
         <BookingsTabs
           value={tab}
           onChange={setTab}
-          upcomingCount={upcoming.length}
-          pastCount={past.length}
+          counts={counts}
         />
       </View>
 
@@ -87,14 +167,14 @@ export function BookingsView() {
           contentContainerClassName="px-5 pb-10 pt-5"
           showsVerticalScrollIndicator={false}
         >
-          {bookings.length === 0 ? (
+          {filteredBookings.length === 0 ? (
             <EmptyBookings
-              tab={tab}
+              tab={"upcoming" as any}
               onExplore={() => router.push("/(tabs)/providers")}
             />
           ) : (
             <View className="gap-4">
-              {bookings.map((booking) => (
+              {filteredBookings.map((booking) => (
                 <BookingCard
                   key={booking.id}
                   booking={booking}
@@ -103,6 +183,8 @@ export function BookingsView() {
                   onReschedule={notifyComingSoon}
                   onViewDetails={() => openDetail(booking)}
                   onRebook={() => handleRebook(booking)}
+                  onPay={() => handlePayMomo(booking)}
+                  onPaymentExpire={() => handlePaymentExpire(booking)}
                 />
               ))}
             </View>

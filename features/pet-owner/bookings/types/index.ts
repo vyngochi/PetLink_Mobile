@@ -1,4 +1,15 @@
-export type BookingTab = "upcoming" | "past";
+export type BookingTab =
+  | "all"
+  | "pending_payment"
+  | "pending_confirmation"
+  | "confirmed"
+  | "checked_in"
+  | "checked_out"
+  | "completed"
+  | "cancelled"
+  | "rejected"
+  | "dispute"
+  | "no_arrival";
 
 export type BookingStatus =
   | "pending"
@@ -25,4 +36,7 @@ export interface Booking {
   serviceName: string;
   serviceType: BookingServiceType;
   providerName: string;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  createAt: string;
 }
