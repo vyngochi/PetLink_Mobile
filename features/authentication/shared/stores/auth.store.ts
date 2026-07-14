@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import type { AuthTokens, User } from "@/features/authentication/shared/types";
 import { authService } from "@/features/authentication/shared/services/auth.service";
+import type { AuthTokens, User } from "@/features/authentication/shared/types";
 import { secureStorage } from "@/lib/secure-storage";
 
 type AuthState = {
