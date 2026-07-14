@@ -21,6 +21,7 @@ export function useConversations() {
   } = useQuery({
     queryKey: ["chat-threads"],
     queryFn: chatService.getThreads,
+    staleTime: 5 * 60 * 1000,
   });
 
   useEffect(() => {
@@ -40,9 +41,7 @@ export function useConversations() {
 
   // Map backend thread to UI Conversation structure
   const conversations: Conversation[] = rawThreads.map((thread: any) => {
-    const name =
-      thread.provider?.businessName ||
-      "Nhà cung cấp";
+    const name = thread.provider?.businessName || "Nhà cung cấp";
     const avatarUrl =
       thread.provider?.avatarUrl ||
       "https://ui-avatars.com/api/?name=" + encodeURIComponent(name);
@@ -64,13 +63,22 @@ export function useConversations() {
       unreadCount: thread.unreadCount || 0,
       isOnline: false, // Could integrate with presence later
       isPinned: false,
+      booking: thread.booking,
     };
   });
 
   const keyword = search.trim().toLowerCase();
 
   const filtered = conversations.filter((item) => {
-    const matchesFilter = filter === "all" || item.category === filter;
+    let matchesFilter = true;
+    if (filter === "doctor" || filter === "service") {
+      matchesFilter = item.category === filter;
+    } else if (filter === "active") {
+      matchesFilter = !item.booking || item.booking.status !== "CANCELLED";
+    } else if (filter === "cancelled") {
+      matchesFilter = item.booking?.status === "CANCELLED";
+    }
+
     const matchesSearch =
       keyword.length === 0 || item.name.toLowerCase().includes(keyword);
     return matchesFilter && matchesSearch;
