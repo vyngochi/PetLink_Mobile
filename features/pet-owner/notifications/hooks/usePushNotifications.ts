@@ -1,134 +1,190 @@
 import { authService } from "@/features/authentication/shared/services/auth.service";
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
+import { useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import { useEffect, useRef, useState } from "react";
-import { Platform } from "react-native";
+import { useRootNavigationState, useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, Platform } from "react-native";
+import { notificationKeys } from "./useGetNotifications";
 
 export interface PushNotificationState {
-  expoPushToken?: Notifications.ExpoPushToken;
+  expoPushToken?: string;
   notification?: Notifications.Notification;
 }
+
+type NotificationPayload = {
+  bookingId?: string;
+};
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: true,
-    shouldShowAlert: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
     shouldShowList: true,
   }),
 });
 
-export const usePushNotifications = (): PushNotificationState => {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+async function ensureAndroidChannel() {
+  if (Platform.OS !== "android") return;
 
-  const [expoPushToken, setExpoPushToken] = useState<
-    Notifications.ExpoPushToken | undefined
-  >();
+  await Notifications.setNotificationChannelAsync("default", {
+    name: "Thông báo",
+    importance: Notifications.AndroidImportance.MAX,
+    vibrationPattern: [0, 250, 250, 250],
+    lightColor: "#006E1C",
+  });
+}
 
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >();
+async function getExpoPushToken(): Promise<string | undefined> {
+  await ensureAndroidChannel();
 
-  const notificationListener = useRef<Notifications.EventSubscription | null>(
-    null,
-  );
-  const responseListener = useRef<Notifications.EventSubscription | null>(null);
-
-  async function registerForPushNotificationsAsync() {
-    let token;
-    if (Device.isDevice) {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== "granted") {
-        console.warn("Failed to get push token for push notification");
-        return;
-      }
-
-      const projectId =
-        Constants.expoConfig?.extra?.eas?.projectId ??
-        Constants.easConfig?.projectId;
-
-      if (!projectId) {
-        console.warn(
-          "Project ID not found. Vui lòng chạy lệnh `npx eas-cli init` hoặc thêm projectId vào app.json.",
-        );
-        return;
-      }
-      try {
-        token = await Notifications.getExpoPushTokenAsync({
-          projectId,
-        });
-        console.log("\n--- EXPO PUSH TOKEN ---");
-        console.log(token.data);
-        console.log("-----------------------\n");
-      } catch (e) {
-        console.warn("Lỗi khi lấy Expo Push Token:", e);
-      }
-    } else {
-      console.warn("Must be using a physical device for Push Notifications");
-    }
-
-    if (Platform.OS === "android") {
-      Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
-      });
-    }
-
-    return token;
+  if (!Device.isDevice) {
+    console.warn("[push] Cần thiết bị thật để nhận push notification");
+    return undefined;
   }
 
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => {
-      setExpoPushToken(token);
-    });
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  const finalStatus =
+    existingStatus === "granted"
+      ? existingStatus
+      : (await Notifications.requestPermissionsAsync()).status;
 
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-        console.log("Notification Received in foreground:", notification);
-      });
+  if (finalStatus !== "granted") {
+    console.warn("[push] Người dùng từ chối quyền nhận thông báo");
+    return undefined;
+  }
 
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("Notification Response Received (user tapped):", response);
-      });
+  const projectId =
+    Constants.expoConfig?.extra?.eas?.projectId ??
+    Constants.easConfig?.projectId;
 
-    return () => {
-      if (notificationListener.current) {
-        notificationListener.current.remove();
-      }
-      if (responseListener.current) {
-        responseListener.current.remove();
-      }
-    };
+  if (!projectId) {
+    console.warn("[push] Thiếu EAS projectId trong app.json");
+    return undefined;
+  }
+
+  const token = await Notifications.getExpoPushTokenAsync({ projectId });
+  return token.data;
+}
+
+export const usePushNotifications = (): PushNotificationState => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hydrating = useAuthStore((state) => state.hydrating);
+
+  const [expoPushToken, setExpoPushToken] = useState<string>();
+  const [notification, setNotification] =
+    useState<Notifications.Notification>();
+
+  const isNavigationReady = Boolean(useRootNavigationState()?.key);
+  const lastResponse = Notifications.useLastNotificationResponse();
+
+  const syncedToken = useRef<string | null>(null);
+  const handledResponseId = useRef<string | null>(null);
+
+  const syncToken = useCallback(async (token?: string) => {
+    const value = token ?? (await getExpoPushToken());
+    if (!value || value === syncedToken.current) return;
+
+    await authService.saveDeviceToken(value);
+    syncedToken.current = value;
+    setExpoPushToken(value);
   }, []);
 
-  // Gửi token lên Backend khi có token và đã đăng nhập
+  const navigateFromPayload = useCallback(
+    (payload: NotificationPayload) => {
+      if (payload.bookingId) {
+        router.push({
+          pathname: "/pet-owner/booking/[id]",
+          params: { id: payload.bookingId },
+        });
+        return;
+      }
+
+      router.push("/pet-owner/notifications");
+    },
+    [router],
+  );
+
   useEffect(() => {
-    if (isAuthenticated && expoPushToken?.data) {
-      authService
-        .saveDeviceToken(expoPushToken.data)
-        .then(() => console.log("Đã lưu Device Token lên BE thành công!"))
-        .catch((apiError) =>
-          console.warn(
-            "Không thể lưu token lên BE, hãy kiểm tra API backend:",
-            apiError,
-          ),
-        );
+    if (hydrating) return;
+
+    if (!isAuthenticated) {
+      syncedToken.current = null;
+      setExpoPushToken(undefined);
+      return;
     }
-  }, [isAuthenticated, expoPushToken?.data]);
+
+    syncToken().catch((error) => {
+      console.warn("[push] Đăng ký push notification thất bại:", error);
+    });
+  }, [hydrating, isAuthenticated, syncToken]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state !== "active" || syncedToken.current) return;
+
+      syncToken().catch((error) => {
+        console.warn(
+          "[push] Thử đăng ký lại push notification thất bại:",
+          error,
+        );
+      });
+    });
+
+    return () => subscription.remove();
+  }, [isAuthenticated, syncToken]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const subscription = Notifications.addPushTokenListener((token) => {
+      syncToken(token.data).catch((error) => {
+        console.warn("[push] Cập nhật device token mới thất bại:", error);
+      });
+    });
+
+    return () => subscription.remove();
+  }, [isAuthenticated, syncToken]);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(
+      (incoming) => {
+        setNotification(incoming);
+        queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+      },
+    );
+
+    return () => subscription.remove();
+  }, [queryClient]);
+
+  useEffect(() => {
+    if (!lastResponse || !isNavigationReady || !isAuthenticated) return;
+
+    const responseId = lastResponse.notification.request.identifier;
+    if (handledResponseId.current === responseId) return;
+    handledResponseId.current = responseId;
+
+    queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+
+    const payload = (lastResponse.notification.request.content.data ??
+      {}) as NotificationPayload;
+
+    navigateFromPayload(payload);
+  }, [
+    lastResponse,
+    isNavigationReady,
+    isAuthenticated,
+    navigateFromPayload,
+    queryClient,
+  ]);
 
   return {
     expoPushToken,

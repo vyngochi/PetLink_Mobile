@@ -19,6 +19,7 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
+import { useNotificationRealtime } from "@/features/pet-owner/notifications/hooks/useNotificationRealtime";
 import { usePushNotifications } from "@/features/pet-owner/notifications/hooks/usePushNotifications";
 
 export const unstable_settings = {
@@ -35,9 +36,9 @@ export default function RootLayout() {
   const { loaded, error } = useLoadFonts();
 
   const { isAuthenticated } = useAuthStore();
-  
-  // Initialize push notifications
+
   usePushNotifications();
+  useNotificationRealtime();
 
   useEffect(() => {
     if (loaded || error) {
