@@ -18,6 +18,7 @@ import {
 } from "@/features/pet-owner/booking-detail/components";
 import { useBookingDetail } from "@/features/pet-owner/booking-detail/hooks/useBookingDetail";
 import { useBookingQr } from "@/features/pet-owner/booking-detail/hooks/useBookingQr";
+import { useDisputeByBookingId } from "@/features/pet-owner/disputes/hooks/useDisputeDetail";
 import {
   BookingStatusBadge,
   CancelBookingSheet,
@@ -38,6 +39,8 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
     bookingId,
     detail?.qrAction ?? null,
   );
+  
+  const { data: disputeInfo, isLoading: isDisputeLoading } = useDisputeByBookingId(detail?.status === "dispute" ? bookingId : "");
 
   if (isLoading) {
     return (
@@ -110,6 +113,11 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
             onReschedule={notifyComingSoon}
             onCancel={() => setCancelVisible(true)}
             onDispute={() => setDisputeVisible(true)}
+            onViewDispute={() => {
+              if (disputeInfo?.id) {
+                router.push(`/pet-owner/dispute/${disputeInfo.id}`);
+              }
+            }}
             onRebook={notifyComingSoon}
           />
         </View>

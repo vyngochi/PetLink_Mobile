@@ -1,5 +1,6 @@
+import { X, Plus } from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
 import { Colors } from "@/constants/theme";
 import { DISPUTE_REASON_OPTIONS } from "@/features/pet-owner/booking-detail/constants/dispute-reasons";
@@ -31,6 +32,10 @@ export function BookingDisputeSheet({
     description,
     setDescription,
     isOtherReason,
+    photos,
+    addPhotos,
+    removePhoto,
+    canAddPhoto,
     errors,
     errorMessage,
     submitting,
@@ -119,6 +124,51 @@ export function BookingDisputeSheet({
           <Text className="ml-1 font-default text-[12px] leading-4 text-destructive">
             {errors.description}
           </Text>
+        ) : null}
+      </View>
+
+      <View className="mt-5 gap-2">
+        <View className="flex-row items-center justify-between">
+          <Text className="ml-1 font-mbold text-[14px] leading-5 text-foreground">
+            Hình ảnh minh chứng ({photos.length}/10)
+          </Text>
+          {canAddPhoto && (
+            <Pressable
+              onPress={addPhotos}
+              disabled={submitting}
+              className="flex-row items-center gap-1 rounded-full bg-primary/10 px-3 py-1.5"
+            >
+              <Plus size={16} color={Colors.light.tint} />
+              <Text className="font-msemibold text-[13px] text-primary">
+                Thêm ảnh
+              </Text>
+            </Pressable>
+          )}
+        </View>
+
+        {photos.length > 0 ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 8, paddingHorizontal: 4, paddingVertical: 4 }}
+          >
+            {photos.map((uri) => (
+              <View key={uri} className="relative">
+                <Image
+                  source={{ uri }}
+                  className="h-24 w-24 rounded-xl"
+                  resizeMode="cover"
+                />
+                <Pressable
+                  onPress={() => removePhoto(uri)}
+                  disabled={submitting}
+                  className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 shadow-sm"
+                >
+                  <X size={14} color="#fff" />
+                </Pressable>
+              </View>
+            ))}
+          </ScrollView>
         ) : null}
       </View>
 

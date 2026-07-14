@@ -20,4 +20,8 @@ export const authService = {
   saveDeviceToken: (token: string) => {
     return api.post("/mobile/users/device-token", { token });
   },
+
+  removeDeviceToken: () => {
+    return api.delete("/mobile/users/device-token");
+  },
 };

@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { toast } from "@/components/toast";
@@ -11,6 +11,7 @@ import {
 } from "@/features/pet-owner/profile/components";
 import { useProfile } from "@/features/pet-owner/profile/hooks/useProfile";
 import type { ProfileMenuItem } from "@/features/pet-owner/profile/types";
+import { authService } from "@/features/authentication/shared/services/auth.service";
 import { useAuth } from "@/lib/auth";
 
 export function ProfileView() {
@@ -18,8 +19,14 @@ export function ProfileView() {
   const { profile } = useProfile();
   const { logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    try {
+      await authService.removeDeviceToken();
+    } catch (e) {
+      console.log("Failed to remove device token", e);
+    }
+
+    await logout();
     toast.success("Đăng xuất thành công", {
       position: "bottom",
       duration: 600,

@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { isMobileBlockedRole } from "@/features/authentication/shared/constants/roles";
 import type { AuthTokens, User } from "@/features/authentication/shared/types";
+import { authService } from "@/features/authentication/shared/services/auth.service";
 import { secureStorage } from "@/lib/secure-storage";
 
 type AuthState = {
@@ -13,7 +14,7 @@ type AuthState = {
   hydrating: boolean;
   setTokens: (tokens: AuthTokens) => void;
   setUser: (user: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -33,13 +34,21 @@ export const useAuthStore = create<AuthState>()(
         }
         set({ user, isAuthenticated: true });
       },
-      logout: () =>
-        set({
+      logout: async () => {
+        try {
+          if (get().isAuthenticated) {
+            await authService.removeDeviceToken();
+          }
+                  set({
           accessToken: null,
           refreshToken: null,
           user: null,
           isAuthenticated: false,
-        }),
+        });
+        } catch (error) {
+          console.error("Failed to remove device token:", error);
+        }
+      },
     }),
     {
       name: "petlink-auth",

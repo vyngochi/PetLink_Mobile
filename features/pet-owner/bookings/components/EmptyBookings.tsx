@@ -10,7 +10,7 @@ type EmptyBookingsProps = {
 };
 
 export function EmptyBookings({ tab, onExplore }: EmptyBookingsProps) {
-  const isUpcoming = tab === "upcoming";
+  const isUpcoming = tab === "confirmed";
   const Icon = isUpcoming ? CalendarX : History;
   const message = isUpcoming
     ? "Bạn chưa có lịch hẹn nào sắp tới. Khám phá dịch vụ và đặt lịch chăm sóc cho thú cưng ngay."
