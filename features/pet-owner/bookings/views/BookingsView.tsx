@@ -1,13 +1,6 @@
 import { useRouter, type Href } from "expo-router";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { toast } from "@/components/toast";
@@ -15,50 +8,20 @@ import { Colors } from "@/constants/theme";
 import {
   BookingCard,
   BookingsTabs,
+  CancelBookingSheet,
   EmptyBookings,
 } from "@/features/pet-owner/bookings/components";
 import { useBookings } from "@/features/pet-owner/bookings/hooks/useBookings";
-import { useCancelBooking } from "@/features/pet-owner/bookings/hooks/useCancelBooking";
 import type { Booking, BookingTab } from "@/features/pet-owner/bookings/types";
 import { getApiErrorMessage } from "@/lib/http";
 
 export function BookingsView() {
   const router = useRouter();
   const { upcoming, past, isLoading, isError, error, refetch } = useBookings();
-  const cancelBooking = useCancelBooking();
   const [tab, setTab] = useState<BookingTab>("upcoming");
+  const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
 
   const bookings = tab === "upcoming" ? upcoming : past;
-
-  const handleCancel = (booking: Booking) => {
-    Alert.alert(
-      "Hủy lịch hẹn",
-      `Bạn có chắc muốn hủy lịch hẹn "${booking.serviceName}" cho ${booking.petName}?`,
-      [
-        { text: "Giữ lịch", style: "cancel" },
-        {
-          text: "Hủy lịch",
-          style: "destructive",
-          onPress: () => {
-            cancelBooking.mutate(booking.id, {
-              onSuccess: () => {
-                toast.success("Đã hủy lịch hẹn", { position: "bottom" });
-              },
-              onError: (cancelError) => {
-                toast.error(
-                  getApiErrorMessage(cancelError, {
-                    fallback: "Không thể hủy lịch hẹn, vui lòng thử lại",
-                    network: "Không có kết nối mạng, vui lòng thử lại",
-                  }),
-                  { position: "bottom" },
-                );
-              },
-            });
-          },
-        },
-      ],
-    );
-  };
 
   const handleRebook = (booking: Booking) => {
     router.push({
@@ -136,7 +99,7 @@ export function BookingsView() {
                   key={booking.id}
                   booking={booking}
                   onPress={() => openDetail(booking)}
-                  onCancel={() => handleCancel(booking)}
+                  onCancel={() => setCancelTarget(booking)}
                   onReschedule={notifyComingSoon}
                   onViewDetails={() => openDetail(booking)}
                   onRebook={() => handleRebook(booking)}
@@ -146,6 +109,21 @@ export function BookingsView() {
           )}
         </ScrollView>
       )}
+
+      {cancelTarget ? (
+        <CancelBookingSheet
+          key={cancelTarget.id}
+          visible
+          bookingId={cancelTarget.id}
+          serviceName={cancelTarget.serviceName}
+          petName={cancelTarget.petName}
+          onClose={() => setCancelTarget(null)}
+          onSuccess={() => {
+            setCancelTarget(null);
+            toast.success("Đã hủy lịch hẹn", { position: "bottom" });
+          }}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
