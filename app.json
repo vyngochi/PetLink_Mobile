@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "PetLink",
-    "slug": "PetLink_Mobile",
+    "slug": "petlink",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon-for-app/apple-icon.png",
@@ -9,8 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.petlink.mobile"
+      "supportsTablet": false,
+      "bundleIdentifier": "vn.io.petlink.mobile",
+      "icon": "./assets/images/app-icon-ios.png",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false
+        },
+        "NSFaceIDUsageDescription": "Cho phép PetLink dùng Face ID để bảo vệ phiên đăng nhập của bạn"
+      }
     },
     "android": {
       "package": "com.petlink.mobile",
@@ -55,7 +63,9 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Cho phép PetLink truy cập thư viện ảnh của bạn"
+          "photosPermission": "Cho phép PetLink truy cập thư viện ảnh của bạn",
+          "cameraPermission": "Cho phép PetLink sử dụng máy ảnh để chụp ảnh thú cưng",
+          "microphonePermission": "Cho phép PetLink sử dụng micro khi quay video"
         }
       ],
       [
@@ -73,9 +83,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "c55a46ab-67c0-47a6-a6a9-14d8544d0034"
+        "projectId": "84e8d420-6e34-4148-b2ef-243b16502026"
       }
     },
-    "owner": "ngochivy"
+    "owner": "nhanle6"
   }
 }
