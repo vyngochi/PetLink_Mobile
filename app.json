@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "PetLink_Mobile",
+    "name": "PetLink",
     "slug": "PetLink_Mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,19 +9,21 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.petlink.mobile"
     },
     "android": {
+      "package": "com.petlink.mobile",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/images/favicon-for-app/apple-icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "googleServicesFile": "./google-services.json"
     },
+
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon-for-app/apple-icon.png"
@@ -45,6 +47,13 @@
         "expo-image-picker",
         {
           "photosPermission": "Cho phép PetLink truy cập thư viện ảnh để chọn ảnh thú cưng."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/favicon-for-app/apple-icon.png",
+          "color": "#ffffff"
         }
       ]
     ],

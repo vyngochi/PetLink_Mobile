@@ -2,7 +2,7 @@ import { Colors } from "@/constants/theme";
 import { Slider } from "@miblanchard/react-native-slider";
 import { X } from "lucide-react-native";
 import React, { useState } from "react";
-import { Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, Switch, Text, View } from "react-native";
 
 export interface FilterState {
   minRating?: number;
@@ -155,20 +155,14 @@ export function ProviderFilterModal({
               <Text className="text-lg font-mbold text-foreground">
                 Gần bạn nhất
               </Text>
-              <Pressable
-                onPress={() =>
-                  setFilters({ ...filters, isNearMe: !filters.isNearMe })
+              <Switch
+                value={!!filters.isNearMe}
+                onValueChange={(val) =>
+                  setFilters({ ...filters, isNearMe: val })
                 }
-                className={`w-14 h-8 rounded-full justify-center px-1 transition-colors ${
-                  filters.isNearMe ? "bg-primary" : "bg-surface-container-high"
-                }`}
-              >
-                <View
-                  className={`w-6 h-6 rounded-full bg-white shadow-sm transition-transform ${
-                    filters.isNearMe ? "translate-x-6" : "translate-x-0"
-                  }`}
-                />
-              </Pressable>
+                trackColor={{ false: "#E2E8F0", true: Colors.light.tint }}
+                thumbColor="#ffffff"
+              />
             </View>
           </ScrollView>
 

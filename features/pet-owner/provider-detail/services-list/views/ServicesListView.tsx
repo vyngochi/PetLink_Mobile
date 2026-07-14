@@ -1,6 +1,9 @@
-import { Colors } from "@/constants/theme";
 import { toast } from "@/components/toast";
-import { useFavoritesStore, useIsProviderFavorite } from "@/features/pet-owner/shared/stores/favorites.store";
+import { Colors } from "@/constants/theme";
+import {
+  useFavoritesStore,
+  useIsProviderFavorite,
+} from "@/features/pet-owner/shared/stores/favorites.store";
 import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Href, useRouter } from "expo-router";
 import {
@@ -49,9 +52,6 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
     isError: isServicesError,
     refetch: refetchServices,
   } = useProviderServices(providerId);
-  const toggleProvider = useFavoritesStore((state) => state.toggleProvider);
-  const isFavorite = useIsProviderFavorite(providerId);
-
   const toggleProvider = useFavoritesStore((state) => state.toggleProvider);
   const isFavorite = useIsProviderFavorite(providerId);
 
@@ -128,7 +128,9 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
             <Pressable
               onPress={handleToggleFavorite}
               accessibilityRole="button"
-              accessibilityLabel={isFavorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"}
+              accessibilityLabel={
+                isFavorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"
+              }
               className="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md active:bg-white"
             >
               <Heart
