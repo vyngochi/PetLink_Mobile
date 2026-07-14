@@ -14,6 +14,7 @@ type BookingDetailActionsProps = {
   onReschedule?: () => void;
   onCancel?: () => void;
   onDispute?: () => void;
+  onViewDispute?: () => void;
   onRebook?: () => void;
 };
 
@@ -23,7 +24,23 @@ export function BookingDetailActions({
   onReview,
   onCancel,
   onDispute,
+  onViewDispute,
 }: BookingDetailActionsProps) {
+  if (status === "dispute") {
+    return (
+      <Pressable
+        onPress={onViewDispute}
+        accessibilityRole="button"
+        accessibilityLabel="Xem chi tiết khiếu nại"
+        className="w-full items-center justify-center rounded-full border border-red-500 py-3 active:opacity-60"
+      >
+        <Text className="font-mbold text-[15px] leading-5 text-destructive">
+          Xem chi tiết khiếu nại
+        </Text>
+      </Pressable>
+    );
+  }
+
   if (status === "checked_out") {
     return (
       <Pressable

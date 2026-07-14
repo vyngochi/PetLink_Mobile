@@ -1,7 +1,10 @@
 import { useState } from "react";
 
 import { useFieldErrors } from "@/features/authentication/shared/hooks/useFieldErrors";
-import { LOGIN_ERROR_MESSAGES } from "@/features/authentication/login/constants/login-error-messages";
+import {
+  LOGIN_BLOCKED_ROLE_MESSAGE,
+  LOGIN_ERROR_MESSAGES,
+} from "@/features/authentication/login/constants/login-error-messages";
 import { useLogin } from "@/features/authentication/login/hooks/useLogin";
 import {
   loginSchema,
@@ -34,6 +37,10 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
     },
     onError: (error) => {
       setErrorMessage(getApiErrorMessage(error, LOGIN_ERROR_MESSAGES));
+    },
+    onBlocked: () => {
+      setPassword("");
+      setErrorMessage(LOGIN_BLOCKED_ROLE_MESSAGE);
     },
   });
 
