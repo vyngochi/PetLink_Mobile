@@ -49,6 +49,8 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
     isError: isServicesError,
     refetch: refetchServices,
   } = useProviderServices(providerId);
+  const toggleProvider = useFavoritesStore((state) => state.toggleProvider);
+  const isFavorite = useIsProviderFavorite(providerId);
 
   if (isProviderLoading) {
     return (
@@ -77,9 +79,6 @@ export function ServicesListView({ providerId }: ServicesListViewProps) {
       </View>
     );
   }
-
-  const toggleProvider = useFavoritesStore((state) => state.toggleProvider);
-  const isFavorite = useIsProviderFavorite(providerId);
 
   const handleToggleFavorite = () => {
     toggleProvider({
