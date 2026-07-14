@@ -1,4 +1,3 @@
-import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
 import { toast } from "@/components/toast";
@@ -10,6 +9,7 @@ import {
   editProfileSchema,
   type EditProfileFormValues,
 } from "@/features/pet-owner/profile/utils/edit-profile.schema";
+import { pickImages } from "@/features/pet-owner/shared/utils/image-picker";
 import { getApiErrorMessage } from "@/lib/http";
 import { validate } from "@/lib/validation";
 
@@ -46,27 +46,18 @@ export function useEditProfileForm({
   });
 
   const pickAvatar = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const result = await pickImages({ allowsEditing: true });
 
-    if (!permission.granted) {
-      toast.error("Cần cấp quyền truy cập thư viện ảnh để chọn ảnh.", {
-        position: "bottom",
-      });
+    if (result.status === "error") {
+      toast.error(result.message, { position: "bottom" });
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-
-    if (result.canceled) {
+    if (result.status === "canceled") {
       return;
     }
 
-    setAvatarUri(result.assets[0].uri);
+    setAvatarUri(result.uris[0]);
   };
 
   const submit = () => {
