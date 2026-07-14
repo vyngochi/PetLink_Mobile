@@ -3,8 +3,6 @@ import type {
   BookingOptions,
   BookingServiceOption,
 } from "@/features/pet-owner/booking-flow/shared/types";
-import { paymentCards } from "@/features/pet-owner/payment-methods/constants/paymentMethods";
-import type { PaymentCard } from "@/features/pet-owner/payment-methods/types";
 import { serviceService } from "@/features/pet-owner/provider-detail/shared/services/service.service";
 import type {
   ApiProviderService,
@@ -50,9 +48,5 @@ export const bookingService = {
         .map(toServiceOption),
       days: buildBookingDays(),
     };
-  },
-
-  getPaymentCards: async (): Promise<PaymentCard[]> => {
-    return paymentCards;
   },
 };

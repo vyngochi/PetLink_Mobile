@@ -31,10 +31,10 @@ export const useCreateBooking = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ petName, ...payload }: CreateBookingInput) => {
+    mutationFn: async ({ petName, paymentMethod, ...payload }: CreateBookingInput) => {
       const response = await bookingService.createBooking({
         ...payload,
-        paymentMethod: "CASH",
+        paymentMethod: (paymentMethod as any) || "CASH",
       });
       try {
         await chatService.getOrCreateThread(response.data.data.id);

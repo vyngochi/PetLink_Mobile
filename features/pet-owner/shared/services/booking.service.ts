@@ -32,4 +32,7 @@ export const bookingService = {
       params: { serviceId, date },
     });
   },
+  createMomoPayment: (bookingId: string) => {
+    return api.post(`/mobile/bookings/${bookingId}/momo/create-payment`);
+  },
 };

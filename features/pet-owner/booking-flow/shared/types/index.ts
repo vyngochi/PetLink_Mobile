@@ -42,6 +42,7 @@ export interface CreateBookingInput {
   petId: string;
   petName: string;
   appointmentStart: string;
+  paymentMethod?: string;
 }
 
 export interface ConfirmedBooking {
