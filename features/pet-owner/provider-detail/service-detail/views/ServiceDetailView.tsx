@@ -1,6 +1,11 @@
+import { toast } from "@/components/toast";
 import { Colors } from "@/constants/theme";
+import {
+  useFavoritesStore,
+  useIsServiceFavorite,
+} from "@/features/pet-owner/shared/stores/favorites.store";
 import { useRouter } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft, Heart } from "lucide-react-native";
 import React, { useRef } from "react";
 import {
   ActivityIndicator,
@@ -25,6 +30,8 @@ export function ServiceDetailView({ serviceId }: ServiceDetailViewProps) {
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const { service, isLoading, isError, refetch } = useServiceDetail(serviceId);
+  const toggleService = useFavoritesStore((state) => state.toggleService);
+  const isFavorite = useIsServiceFavorite(serviceId);
 
   if (isLoading) {
     return (
@@ -71,6 +78,21 @@ export function ServiceDetailView({ serviceId }: ServiceDetailViewProps) {
       pathname: "/pet-owner/booking/create",
       params: { serviceId: service.id },
     });
+  };
+
+  const handleToggleFavorite = () => {
+    toggleService({
+      id: service.id,
+      name: service.name,
+      providerName: service.providerName,
+      imageUrl: service.thumbnailUrl,
+      price: service.price,
+      durationMinutes: service.durationMinutes,
+    });
+    toast.success(
+      isFavorite ? "Đã bỏ khỏi mục yêu thích" : "Đã thêm vào mục yêu thích",
+      { position: "bottom", duration: 600 },
+    );
   };
 
   const headerOpacity = scrollY.interpolate({
@@ -126,10 +148,24 @@ export function ServiceDetailView({ serviceId }: ServiceDetailViewProps) {
           </Pressable>
           <Animated.Text
             style={{ opacity: headerOpacity }}
-            className="ml-4 text-lg font-mbold text-foreground"
+            className="flex-1 ml-4 text-lg font-mbold text-foreground"
           >
             Chi tiết dịch vụ
           </Animated.Text>
+          <Pressable
+            onPress={handleToggleFavorite}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isFavorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"
+            }
+            className="flex items-center justify-center w-10 h-10 rounded-full shadow-sm bg-white/80 active:bg-white"
+          >
+            <Heart
+              size={20}
+              color="#ef4444"
+              fill={isFavorite ? "#ef4444" : "transparent"}
+            />
+          </Pressable>
         </SafeAreaView>
       </View>
 

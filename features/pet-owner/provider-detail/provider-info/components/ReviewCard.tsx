@@ -1,3 +1,4 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Star } from "lucide-react-native";
 import React from "react";
 import { Image, Text, View } from "react-native";
@@ -20,7 +21,12 @@ export function ReviewCard({ review }: ReviewCardProps) {
           <View className="items-center justify-center w-10 h-10 overflow-hidden rounded-full bg-muted">
             {review.userAvatar ? (
               <Image
-                source={{ uri: review.userAvatar }}
+                source={{
+                  uri: getImageUrl(review.userAvatar, {
+                    width: 40,
+                    height: 40,
+                  }),
+                }}
                 className="w-full h-full"
                 resizeMode="cover"
               />

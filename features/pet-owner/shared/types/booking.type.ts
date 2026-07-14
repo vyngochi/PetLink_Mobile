@@ -55,6 +55,8 @@ export interface ApiBooking {
   totalAmount: number;
   currency: string;
   note: string | null;
+  checkedOutAt?: string | null;
+  cancelReason?: string | null;
   service: ApiBookingService;
   provider: ApiBookingProvider;
   review?: ApiBookingReview | null;
@@ -110,6 +112,26 @@ export interface CreateBookingReviewPayload {
   rating: number;
   comment?: string;
   images?: string[];
+}
+
+export type BookingDisputeStatus =
+  | "PENDING"
+  | "RESOLVED_PROVIDER_WIN"
+  | "RESOLVED_CUSTOMER_WIN"
+  | "CANCELLED";
+
+export interface CreateBookingDisputePayload {
+  reason: string;
+  description?: string;
+}
+
+export interface ApiBookingDispute {
+  id: string;
+  bookingId: string;
+  reason: string;
+  description: string | null;
+  status: BookingDisputeStatus;
+  createdAt: string;
 }
 
 export interface CreateBookingApiPayload {

@@ -6,12 +6,14 @@ import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ProviderItem } from "../../shared/types/provider.type";
 
+const AVATAR_SIZE = 96;
+
 export function ClinicCard({
   provider,
   onSelect,
 }: {
   provider: ProviderItem;
-  onSelect: (v: string) => void;
+  onSelect: (id: string) => void;
 }) {
   const avatar = getImageUrl(provider.avatarUrl);
   return (

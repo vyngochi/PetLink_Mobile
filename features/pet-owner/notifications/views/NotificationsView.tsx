@@ -1,22 +1,44 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Colors } from "@/constants/theme";
 import {
   NotificationCard,
   NotificationHeader,
 } from "@/features/pet-owner/notifications/components";
+import {
+  useMarkAllNotificationsRead,
+  useMarkNotificationRead,
+} from "@/features/pet-owner/notifications/hooks/useNotificationMutations";
 import { useNotifications } from "@/features/pet-owner/notifications/hooks/useNotifications";
+import { CheckCheck } from "lucide-react-native";
 
 export function NotificationsView() {
   const router = useRouter();
-  const { sections } = useNotifications();
+  const { sections, unreadCount } = useNotifications();
+  const { mutate: markAllRead } = useMarkAllNotificationsRead();
+  const { mutate: markRead } = useMarkNotificationRead();
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <View className="px-5">
-        <NotificationHeader title="Thông báo" onBack={() => router.back()} />
+        <NotificationHeader
+          title="Thông báo"
+          onBack={() => router.back()}
+          right={
+            unreadCount > 0 ? (
+              <Pressable
+                onPress={() => markAllRead()}
+                accessibilityRole="button"
+                className="flex-row items-center justify-center p-2"
+              >
+                <CheckCheck size={20} color={Colors.light.tint} />
+              </Pressable>
+            ) : null
+          }
+        />
       </View>
 
       <ScrollView
@@ -35,12 +57,15 @@ export function NotificationsView() {
                   <NotificationCard
                     key={notification.id}
                     notification={notification}
-                    onPress={() =>
+                    onPress={() => {
+                      if (!notification.read) {
+                        markRead(notification.id);
+                      }
                       router.push({
                         pathname: "/pet-owner/notifications/[id]",
                         params: { id: notification.id },
-                      })
-                    }
+                      });
+                    }}
                   />
                 ))}
               </View>

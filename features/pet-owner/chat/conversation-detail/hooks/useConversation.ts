@@ -32,6 +32,7 @@ export function useConversation(threadId: string) {
     unreadCount: thread?.unreadCount || 0,
     isOnline: true,
     isPinned: false,
+    booking: thread?.booking,
   };
 
   // Setup Socket Listeners

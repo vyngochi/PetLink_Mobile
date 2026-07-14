@@ -1,13 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { toast } from "@/components/toast";
@@ -17,15 +10,17 @@ import {
   BookingDetailActions,
   BookingDetailPetCard,
   BookingDetailTopBar,
+  BookingDisputeSheet,
   BookingReviewModal,
   BookingReviewSummary,
   CheckInPassCard,
 } from "@/features/pet-owner/booking-detail/components";
 import { useBookingDetail } from "@/features/pet-owner/booking-detail/hooks/useBookingDetail";
 import { useBookingQr } from "@/features/pet-owner/booking-detail/hooks/useBookingQr";
-import { BookingStatusBadge } from "@/features/pet-owner/bookings/components";
-import { useCancelBooking } from "@/features/pet-owner/bookings/hooks/useCancelBooking";
-import { getApiErrorMessage } from "@/lib/http";
+import {
+  BookingStatusBadge,
+  CancelBookingSheet,
+} from "@/features/pet-owner/bookings/components";
 
 type BookingDetailViewProps = {
   bookingId: string;
@@ -35,8 +30,9 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [isReviewVisible, setReviewVisible] = useState(false);
+  const [isCancelVisible, setCancelVisible] = useState(false);
+  const [isDisputeVisible, setDisputeVisible] = useState(false);
   const { detail, isLoading } = useBookingDetail(bookingId);
-  const cancelBooking = useCancelBooking();
   const { qr, isLoading: isQrLoading } = useBookingQr(
     bookingId,
     detail?.qrAction ?? null,
@@ -67,37 +63,6 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
   }
 
   const qrAction = detail.qrAction;
-
-  const handleCancel = () => {
-    Alert.alert(
-      "Hủy lịch hẹn",
-      `Bạn có chắc muốn hủy lịch hẹn "${detail.serviceName}" cho ${detail.petName}?`,
-      [
-        { text: "Giữ lịch", style: "cancel" },
-        {
-          text: "Hủy lịch",
-          style: "destructive",
-          onPress: () => {
-            cancelBooking.mutate(detail.id, {
-              onSuccess: () => {
-                toast.success("Đã hủy lịch hẹn", { position: "bottom" });
-                router.back();
-              },
-              onError: (cancelError) => {
-                toast.error(
-                  getApiErrorMessage(cancelError, {
-                    fallback: "Không thể hủy lịch hẹn, vui lòng thử lại",
-                    network: "Không có kết nối mạng, vui lòng thử lại",
-                  }),
-                  { position: "bottom" },
-                );
-              },
-            });
-          },
-        },
-      ]
-    );
-  };
 
   const notifyComingSoon = () => {
     toast.info("Tính năng đang được phát triển", { position: "bottom" });
@@ -140,11 +105,39 @@ export function BookingDetailView({ bookingId }: BookingDetailViewProps) {
             canReview={detail.status === "completed" && !detail.review}
             onReview={() => setReviewVisible(true)}
             onReschedule={notifyComingSoon}
-            onCancel={handleCancel}
+            onCancel={() => setCancelVisible(true)}
+            onDispute={() => setDisputeVisible(true)}
             onRebook={notifyComingSoon}
           />
         </View>
       </ScrollView>
+
+      <CancelBookingSheet
+        visible={isCancelVisible}
+        bookingId={detail.id}
+        serviceName={detail.serviceName}
+        petName={detail.petName}
+        onClose={() => setCancelVisible(false)}
+        onSuccess={() => {
+          setCancelVisible(false);
+          toast.success("Đã hủy lịch hẹn", { position: "bottom" });
+          router.back();
+        }}
+      />
+
+      <BookingDisputeSheet
+        visible={isDisputeVisible}
+        bookingId={detail.id}
+        serviceName={detail.serviceName}
+        providerName={detail.providerName}
+        onClose={() => setDisputeVisible(false)}
+        onSuccess={() => {
+          setDisputeVisible(false);
+          toast.success("Đã gửi khiếu nại, chúng tôi sẽ xử lý sớm nhất", {
+            position: "bottom",
+          });
+        }}
+      />
 
       <BookingReviewModal
         visible={isReviewVisible}

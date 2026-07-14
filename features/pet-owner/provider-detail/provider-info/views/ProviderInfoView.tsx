@@ -1,6 +1,12 @@
+import { toast } from "@/components/toast";
 import { Colors } from "@/constants/theme";
+import {
+  useFavoritesStore,
+  useIsProviderFavorite,
+} from "@/features/pet-owner/shared/stores/favorites.store";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { useRouter } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft, Heart } from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,
@@ -23,6 +29,8 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
   const router = useRouter();
   const { provider, isLoading, isError, isNotFound, refetch } =
     useProviderDetail(providerId);
+  const toggleProvider = useFavoritesStore((state) => state.toggleProvider);
+  const isFavorite = useIsProviderFavorite(providerId);
 
   if (isLoading) {
     return (
@@ -52,6 +60,21 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
     );
   }
 
+  const handleToggleFavorite = () => {
+    toggleProvider({
+      id: provider.id,
+      name: provider.businessName,
+      category: provider.services.categories[0] ?? "Dịch vụ thú cưng",
+      imageUrl: provider.avatarUrl,
+      rating: provider.rating.average,
+      distanceKm: provider.location.distanceKm,
+    });
+    toast.success(
+      isFavorite ? "Đã bỏ khỏi mục yêu thích" : "Đã thêm vào mục yêu thích",
+      { position: "bottom", duration: 600 },
+    );
+  };
+
   return (
     <View className="flex-1 bg-background">
       <SafeAreaView
@@ -68,7 +91,12 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
 
           <View className="flex-row items-center flex-1 gap-3">
             <Image
-              source={{ uri: provider.avatarUrl }}
+              source={{
+                uri: getImageUrl(provider.avatarUrl, {
+                  width: 40,
+                  height: 40,
+                }),
+              }}
               className="w-10 h-10 border rounded-full border-border/50"
               resizeMode="cover"
             />
@@ -81,6 +109,21 @@ export function ProviderInfoView({ providerId }: ProviderInfoViewProps) {
               </Text>
             </View>
           </View>
+
+          <Pressable
+            onPress={handleToggleFavorite}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isFavorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"
+            }
+            className="flex items-center justify-center w-10 h-10 border rounded-full bg-card border-border/50 active:bg-muted"
+          >
+            <Heart
+              size={20}
+              color="#ef4444"
+              fill={isFavorite ? "#ef4444" : "transparent"}
+            />
+          </Pressable>
         </View>
       </SafeAreaView>
 
