@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { isMobileBlockedRole } from "@/features/authentication/shared/constants/roles";
-import type { AuthTokens, User } from "@/features/authentication/shared/types";
 import { authService } from "@/features/authentication/shared/services/auth.service";
+import type { AuthTokens, User } from "@/features/authentication/shared/types";
 import { secureStorage } from "@/lib/secure-storage";
 
 type AuthState = {
@@ -39,12 +39,12 @@ export const useAuthStore = create<AuthState>()(
           if (get().isAuthenticated) {
             await authService.removeDeviceToken();
           }
-                  set({
-          accessToken: null,
-          refreshToken: null,
-          user: null,
-          isAuthenticated: false,
-        });
+          set({
+            accessToken: null,
+            refreshToken: null,
+            user: null,
+            isAuthenticated: false,
+          });
         } catch (error) {
           console.error("Failed to remove device token:", error);
         }
