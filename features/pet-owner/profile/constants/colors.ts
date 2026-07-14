@@ -19,4 +19,5 @@ export const menuToneStyles: Record<
   secondary: { color: profileColors.secondary, bgColor: "#0064921f" },
   tertiary: { color: profileColors.tertiary, bgColor: "#8f4e001f" },
   neutral: { color: profileColors.outline, bgColor: "#6f7a6b1f" },
+  favorite: { color: profileColors.error, bgColor: "#ba1a1a1f" },
 };

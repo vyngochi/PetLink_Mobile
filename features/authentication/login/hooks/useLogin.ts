@@ -16,7 +16,7 @@ type UseLoginOptions = {
   onError?: (error: unknown) => void;
 };
 
-export const useLogin = ({ onError }: UseLoginOptions = {}) => {
+export const useLogin = ({ onSuccess, onError }: UseLoginOptions = {}) => {
   const queryClient = useQueryClient();
   const { mutate, isPending, error } = useMutation({
     mutationFn: async (payload: LoginPayload) => {
@@ -26,9 +26,19 @@ export const useLogin = ({ onError }: UseLoginOptions = {}) => {
     onSuccess: async (data) => {
       useAuthStore.getState().setTokens(data);
 
-      await queryClient.invalidateQueries({
-        queryKey: ["me"],
-      });
+      try {
+        const userRes = await authService.getMe();
+        const user = unwrapData<User>(userRes);
+        useAuthStore.getState().setUser(user);
+        
+        await queryClient.invalidateQueries({
+          queryKey: ["me"],
+        });
+
+        onSuccess?.(user);
+      } catch (err) {
+        console.error("Failed to fetch user after login", err);
+      }
 
       toast.success("Đăng nhập thành công", {
         position: "bottom",

@@ -5,4 +5,4 @@ export type GenderOption = {
   label: string;
 };
 
-export type { PetEditFormValues } from "@/features/pet-owner/pet-edit/utils/pet-edit.schema";
+export type { PetFormValues } from "@/features/pet-owner/pet-edit/utils/pet-form.schema";

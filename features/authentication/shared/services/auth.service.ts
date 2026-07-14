@@ -12,6 +12,12 @@ export const authService = {
   },
 
   getMe: () => {
-    return api.get("/auth/get-info");
+    return api.get("/auth/get-info", {
+      headers: { "Cache-Control": "no-store", Pragma: "no-cache" },
+    });
+  },
+
+  saveDeviceToken: (token: string) => {
+    return api.post("/mobile/users/device-token", { token });
   },
 };

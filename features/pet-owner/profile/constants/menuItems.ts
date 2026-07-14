@@ -1,4 +1,4 @@
-import { Bell, CreditCard, LifeBuoy, PawPrint } from "lucide-react-native";
+import { Bell, CreditCard, Heart, LifeBuoy, PawPrint } from "lucide-react-native";
 
 import type { ProfileMenuItem } from "@/features/pet-owner/profile/types";
 
@@ -11,10 +11,18 @@ export const profileMenuItems: ProfileMenuItem[] = [
     route: "/pet-owner/my-pets",
   },
   {
+    key: "favorites",
+    label: "Mục Yêu Thích",
+    icon: Heart,
+    tone: "favorite",
+    route: "/pet-owner/favorites",
+  },
+  {
     key: "payment-methods",
     label: "Phương thức thanh toán",
     icon: CreditCard,
     tone: "secondary",
+    route: "/pet-owner/payment-methods",
   },
   {
     key: "notifications",
