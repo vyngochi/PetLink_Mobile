@@ -1,5 +1,8 @@
 import type { ApiErrorMessageOptions } from "@/lib/http";
 
+export const LOGIN_BLOCKED_ROLE_MESSAGE =
+  "Tài khoản này không được sử dụng ứng dụng di động.";
+
 export const LOGIN_ERROR_MESSAGES: ApiErrorMessageOptions = {
   fallback: "Đăng nhập thất bại. Vui lòng thử lại.",
   network: "Không thể kết nối máy chủ. Vui lòng kiểm tra kết nối mạng.",
