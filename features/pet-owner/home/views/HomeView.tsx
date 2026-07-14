@@ -1,3 +1,5 @@
+import { useUserLocation } from "@/features/pet-owner/shared/hooks/useUserLocation";
+import { toApiCoords } from "@/features/pet-owner/shared/utils/coordinates";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
@@ -8,7 +10,6 @@ import { PopularClinicsSection } from "../components/PopularClinicsSection";
 import { QuickServicesSection } from "../components/QuickServicesSection";
 import { SearchBar } from "../components/SearchBar";
 import { PET_CARE_TIPS } from "../constants/home-mock";
-import { useGetCoors } from "../hooks/useGetCoors";
 
 export interface HomeViewProps {
   isLoggedIn?: boolean;
@@ -16,17 +17,14 @@ export interface HomeViewProps {
 
 export function HomeView({ isLoggedIn = false }: HomeViewProps) {
   const router = useRouter();
-  const { coors } = useGetCoors();
+  const { coords } = useUserLocation();
   const [refreshing, setRefreshing] = useState(false);
 
   const onJoinPress = () => {
     router.push({ pathname: "/(auth)/login" });
   };
 
-  const { providers, refetch } = useGetProviders({
-    userLat: coors?.userLat,
-    userLng: coors?.userLong,
-  });
+  const { providers, refetch } = useGetProviders({ ...toApiCoords(coords) });
 
   const onRefresh = async () => {
     setRefreshing(true);

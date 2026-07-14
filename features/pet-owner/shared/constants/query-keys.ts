@@ -1,3 +1,5 @@
+import type { LatLng } from "../services/routing.service";
+
 export const bookingKeys = {
   all: ["bookings"] as const,
   lists: () => [...bookingKeys.all, "list"] as const,
@@ -8,6 +10,17 @@ export const bookingKeys = {
     [...bookingKeys.all, "qr", bookingId, action] as const,
   availableSlots: (providerId: string, serviceId: string, date: string) =>
     [...bookingKeys.all, "available-slots", providerId, serviceId, date] as const,
+};
+
+export const routeKeys = {
+  all: ["routes"] as const,
+  driving: (from: LatLng | undefined, to: LatLng | undefined) =>
+    [
+      ...routeKeys.all,
+      "driving",
+      from ? `${from.lat},${from.lng}` : "no-origin",
+      to ? `${to.lat},${to.lng}` : "no-destination",
+    ] as const,
 };
 
 export const petKeys = {

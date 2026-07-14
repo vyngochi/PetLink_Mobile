@@ -1,9 +1,9 @@
-import type { Coords } from "@/features/pet-owner/shared/hooks/useCurrentCoords";
+import type { ApiCoords } from "@/features/pet-owner/shared/utils/coordinates";
 
 export const providerDetailKeys = {
   all: ["provider-detail"] as const,
   details: () => [...providerDetailKeys.all, "detail"] as const,
-  detail: (providerId: string, coords?: Coords) =>
+  detail: (providerId: string, coords?: ApiCoords) =>
     [...providerDetailKeys.details(), providerId, coords ?? null] as const,
   reviewLists: () => [...providerDetailKeys.all, "reviews"] as const,
   reviews: (providerId: string) =>

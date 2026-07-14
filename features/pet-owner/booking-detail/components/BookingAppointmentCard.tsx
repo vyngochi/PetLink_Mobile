@@ -1,13 +1,15 @@
+import { useRouter } from "expo-router";
 import type { LucideIcon } from "lucide-react-native";
 import {
   CalendarDays,
   Clock,
   MapPin,
+  Navigation,
   Scissors,
   Stethoscope,
 } from "lucide-react-native";
 import React from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import type { BookingDetail } from "@/features/pet-owner/booking-detail/types";
 
@@ -45,6 +47,7 @@ function DetailRow({ icon: Icon, label, value }: DetailRowProps) {
 export function BookingAppointmentCard({
   booking,
 }: BookingAppointmentCardProps) {
+  const router = useRouter();
   const ServiceIcon =
     booking.serviceType === "medical" ? Stethoscope : Scissors;
 
@@ -77,6 +80,18 @@ export function BookingAppointmentCard({
           label={booking.providerName}
           value={booking.providerAddress}
         />
+
+        <Pressable
+          onPress={() =>
+            router.push(`/pet-owner/provider/${booking.providerId}/directions`)
+          }
+          accessibilityRole="button"
+          accessibilityLabel="Chỉ đường tới cơ sở"
+          className="flex-row items-center justify-center gap-2 py-3 border rounded-full border-primary/40 bg-primary/5 active:opacity-80"
+        >
+          <Navigation size={16} className="text-primary" />
+          <Text className="font-mbold text-[14px] text-primary">Chỉ đường</Text>
+        </Pressable>
       </View>
     </View>
   );

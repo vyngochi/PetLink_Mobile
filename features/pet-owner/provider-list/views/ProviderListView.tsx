@@ -1,5 +1,10 @@
 import { Colors } from "@/constants/theme";
 import { useDebounce } from "@/features/pet-owner/home/hooks/useDebounce";
+import { useUserLocation } from "@/features/pet-owner/shared/hooks/useUserLocation";
+import {
+  resolveDistanceKm,
+  toApiCoords,
+} from "@/features/pet-owner/shared/utils/coordinates";
 import { Href, useRouter } from "expo-router";
 import { Search, SlidersHorizontal, X } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
@@ -12,7 +17,6 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useGetCoors } from "../../home/hooks/useGetCoors";
 import { useSearchStore } from "../../shared/stores/search.store";
 import { ProviderCard } from "../components/ProviderCard";
 import {
@@ -27,7 +31,8 @@ export function ProviderListView() {
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState<FilterState>({});
   const debouncedQuery = useDebounce(searchQuery, 300);
-  const { coors } = useGetCoors();
+
+  const { coords } = useUserLocation();
 
   const { isNearMe, ...restFilters } = filters;
   const {
@@ -42,16 +47,21 @@ export function ProviderListView() {
   } = useGetProviders({
     searchKey: debouncedQuery.trim() || undefined,
     ...restFilters,
-    userLat: coors?.userLat,
-    userLng: coors?.userLong,
+    ...toApiCoords(coords),
   });
 
   const sortedProviders = useMemo(() => {
     if (!isNearMe) return providers;
-    return [...providers].sort(
-      (a, b) => a.location.distanceKm - b.location.distanceKm,
-    );
-  }, [providers, isNearMe]);
+
+    const distanceOf = (provider: (typeof providers)[number]) =>
+      resolveDistanceKm(
+        provider.location.coordinates,
+        coords,
+        provider.location.distanceKm,
+      ) ?? Number.POSITIVE_INFINITY;
+
+    return [...providers].sort((a, b) => distanceOf(a) - distanceOf(b));
+  }, [providers, isNearMe, coords]);
 
   return (
     <View className="flex-1 bg-background">

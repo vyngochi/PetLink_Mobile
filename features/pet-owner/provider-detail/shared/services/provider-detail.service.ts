@@ -1,5 +1,5 @@
 import api from "@/api/client";
-import type { Coords } from "@/features/pet-owner/shared/hooks/useCurrentCoords";
+import type { ApiCoords } from "@/features/pet-owner/shared/utils/coordinates";
 
 export interface GetProviderReviewsParams {
   page?: number;
@@ -7,7 +7,7 @@ export interface GetProviderReviewsParams {
 }
 
 export const providerDetailService = {
-  getProviderDetail: (providerId: string, coords?: Coords) => {
+  getProviderDetail: (providerId: string, coords?: ApiCoords) => {
     return api.get(`/mobile/providers/provider-detail/${providerId}`, {
       params: coords,
     });
