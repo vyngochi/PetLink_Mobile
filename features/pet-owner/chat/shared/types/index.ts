@@ -1,6 +1,20 @@
 export type ConversationCategory = "doctor" | "service";
 
-export type ConversationFilter = "all" | ConversationCategory;
+export type ConversationFilter =
+  | "all"
+  | ConversationCategory
+  | "active"
+  | "cancelled";
+
+export interface ConversationBooking {
+  id: string;
+  status: string;
+  appointmentStart: string;
+  service: {
+    id: string;
+    name: string;
+  };
+}
 
 export interface Conversation {
   id: string;
@@ -12,6 +26,9 @@ export interface Conversation {
   unreadCount: number;
   isOnline: boolean;
   isPinned: boolean;
+  booking?: ConversationBooking;
+  createAt?: string;
+  lastMessageAt?: string;
 }
 
 export type MessageSender = "me" | "them";

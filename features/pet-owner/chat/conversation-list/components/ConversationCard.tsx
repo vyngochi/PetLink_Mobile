@@ -3,6 +3,7 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 
 import type { Conversation } from "@/features/pet-owner/chat/shared/types";
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { cn } from "@/lib/utils";
 
 type ConversationCardProps = {
@@ -15,6 +16,9 @@ export function ConversationCard({
   onPress,
 }: ConversationCardProps) {
   const hasUnread = conversation.unreadCount > 0;
+  const isNew = conversation.createAt
+    ? Date.now() - new Date(conversation.createAt).getTime() < 10 * 60 * 1000
+    : false;
 
   return (
     <Pressable
@@ -25,12 +29,14 @@ export function ConversationCard({
         "flex-row items-center gap-4 p-4 active:opacity-80",
         conversation.isPinned
           ? "rounded-[24px] border border-border bg-card shadow-sm"
-          : "rounded-[20px] border-b border-border/50 shadow-none"
+          : "rounded-[20px] border-b border-border/50 shadow-none",
       )}
     >
       <View>
         <Image
-          source={{ uri: conversation.avatarUrl }}
+          source={{
+            uri: getImageUrl(conversation.avatarUrl, { width: 56, height: 56 }),
+          }}
           accessibilityLabel={conversation.name}
           contentFit="cover"
           transition={200}
@@ -42,19 +48,28 @@ export function ConversationCard({
       </View>
 
       <View className="flex-1">
-        <View className="flex-row items-baseline justify-between gap-2">
-          <Text
-            className="flex-1 font-mbold text-[15px] leading-6 text-foreground"
-            numberOfLines={1}
-          >
-            {conversation.name}
-          </Text>
+        <View className="flex-row items-center justify-between gap-2">
+          <View className="flex-row items-center flex-1 gap-2">
+            <Text
+              className="font-mbold text-[15px] leading-6 text-foreground flex-shrink"
+              numberOfLines={1}
+            >
+              {conversation.name}
+            </Text>
+            {isNew && (
+              <View className="rounded bg-destructive/10 px-1.5 py-0.5">
+                <Text className="font-mbold text-[9px] uppercase leading-3 tracking-wider text-destructive">
+                  New
+                </Text>
+              </View>
+            )}
+          </View>
           <Text
             className={cn(
               "text-[11px] leading-4",
               hasUnread
                 ? "font-mbold text-primary"
-                : "font-default text-muted-foreground"
+                : "font-default text-muted-foreground",
             )}
           >
             {conversation.lastMessageAtLabel}
@@ -65,7 +80,7 @@ export function ConversationCard({
             "mt-1 text-[13px] leading-5",
             hasUnread
               ? "font-mbold text-foreground"
-              : "font-default text-muted-foreground"
+              : "font-default text-muted-foreground",
           )}
           numberOfLines={1}
         >

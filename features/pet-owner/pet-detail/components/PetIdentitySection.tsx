@@ -19,7 +19,7 @@ export function PetIdentitySection({ pet }: PetIdentitySectionProps) {
           {pet.name}
         </Text>
         <Text className="mt-1 font-default text-[16px] leading-6 text-muted-foreground">
-          {pet.breed} • {pet.gender} • {pet.ageLabel}
+          {pet.breed} • {pet.gender} • {pet.ageLabel} tuổi
         </Text>
       </View>
       <View className="flex-row items-center gap-1 rounded-full bg-primary/10 px-3 py-1">

@@ -14,9 +14,10 @@ interface BookingFlowState {
   timeSlotId: string | null;
   paymentCardId: string | null;
   confirmedBooking: ConfirmedBooking | null;
-  startFlow: (serviceId: string) => void;
+  startFlow: (serviceId: string, petId?: string | null) => void;
   nextStep: () => void;
   prevStep: () => void;
+  setStep: (step: BookingStep) => void;
   selectService: (serviceId: string) => void;
   selectPet: (petId: string) => void;
   selectDay: (dayId: string) => void;
@@ -38,7 +39,8 @@ const initialState = {
 
 export const useBookingFlowStore = create<BookingFlowState>((set) => ({
   ...initialState,
-  startFlow: (serviceId) => set({ ...initialState, serviceId }),
+  startFlow: (serviceId, petId = null) =>
+    set({ ...initialState, serviceId, petId }),
   nextStep: () =>
     set((state) => {
       const index = BOOKING_STEP_FLOW.indexOf(state.step);
@@ -51,9 +53,10 @@ export const useBookingFlowStore = create<BookingFlowState>((set) => ({
       const prevIndex = Math.max(index - 1, 0);
       return { step: BOOKING_STEP_FLOW[prevIndex] };
     }),
-  selectService: (serviceId) => set({ serviceId }),
+  setStep: (step) => set({ step }),
+  selectService: (serviceId) => set({ serviceId, timeSlotId: null }),
   selectPet: (petId) => set({ petId }),
-  selectDay: (dayId) => set({ dayId }),
+  selectDay: (dayId) => set({ dayId, timeSlotId: null }),
   selectTimeSlot: (timeSlotId) => set({ timeSlotId }),
   selectPaymentCard: (paymentCardId) => set({ paymentCardId }),
   setConfirmedBooking: (confirmedBooking) => set({ confirmedBooking }),

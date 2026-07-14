@@ -1,18 +1,13 @@
 import type { LucideIcon } from "lucide-react-native";
+import type { ImageSourcePropType } from "react-native";
 
-export type CardBrand = "visa" | "mastercard" | "generic";
+export type PaymentMethodId = "cash" | "momo";
 
-export type PaymentCard = {
-  id: string;
-  brand: CardBrand;
-  last4: string;
-  expiry: string;
-  isPrimary: boolean;
-};
-
-export type OtherPaymentMethod = {
-  id: string;
+export type PaymentMethod = {
+  id: PaymentMethodId;
   name: string;
-  icon: LucideIcon;
-  iconBgClass: string;
+  icon?: LucideIcon;
+  image?: ImageSourcePropType;
+  iconBgClass?: string;
+  isEnabled: boolean;
 };

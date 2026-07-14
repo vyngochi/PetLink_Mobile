@@ -1,6 +1,7 @@
+import { getImageUrl } from "@/lib/helper/cloudinary.helper";
 import { Image } from "expo-image";
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Dimensions, Pressable, Text, View } from "react-native";
 
 import type { AppNotification } from "@/features/pet-owner/notifications/types";
 import { NOTIFICATION_VISUALS } from "@/features/pet-owner/notifications/utils/notification-visuals";
@@ -61,7 +62,12 @@ export function NotificationCard({
 
       {showImage && (
         <Image
-          source={{ uri: notification.imageUrl }}
+          source={{
+            uri: getImageUrl(notification.imageUrl, {
+              width: Dimensions.get("window").width,
+              height: 128,
+            }),
+          }}
           accessibilityLabel={notification.title}
           contentFit="cover"
           transition={200}

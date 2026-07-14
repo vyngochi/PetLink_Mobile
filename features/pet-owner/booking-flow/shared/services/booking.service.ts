@@ -1,94 +1,52 @@
-import {
-  BOOKING_TIME_SLOTS,
-  buildBookingDays,
-} from "@/features/pet-owner/booking-flow/shared/constants/booking-flow-mock";
+import { buildBookingDays } from "@/features/pet-owner/booking-flow/shared/constants/booking-days";
 import type {
   BookingOptions,
   BookingServiceOption,
-  ConfirmedBooking,
-  CreateBookingPayload,
 } from "@/features/pet-owner/booking-flow/shared/types";
-import { myPets } from "@/features/pet-owner/my-pets/constants/pets";
-import { paymentCards } from "@/features/pet-owner/payment-methods/constants/paymentMethods";
-import type { PaymentCard } from "@/features/pet-owner/payment-methods/types";
-import { MOCK_SERVICE_DETAILS } from "@/features/pet-owner/provider-detail/service-detail/constants/service-detail-mock";
+import { serviceService } from "@/features/pet-owner/provider-detail/shared/services/service.service";
+import type {
+  ApiProviderService,
+  ProviderServicesResponse,
+} from "@/features/pet-owner/provider-detail/services-list/types/service.type";
 import type { ServiceDetailItem } from "@/features/pet-owner/provider-detail/service-detail/types/service-detail.type";
+import { getServiceKind } from "@/features/pet-owner/shared/utils/booking-format";
+import { unwrapData } from "@/lib/http";
 
-const delay = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+const SERVICES_PAGE_SIZE = 100;
 
-const MEDICAL_KEYWORDS = ["khám", "tiêm", "xét nghiệm", "siêu âm"];
+const isVisibleToCustomer = (service: ApiProviderService) =>
+  service.isActive && !service.isHiddenByAdmin;
 
-const toServiceOption = (service: ServiceDetailItem): BookingServiceOption => ({
+const toServiceOption = (
+  service: ApiProviderService,
+): BookingServiceOption => ({
   id: service.id,
   name: service.name,
   description: service.description ?? "",
   price: service.price,
-  durationMinutes: service.durationMinutes,
-  kind: MEDICAL_KEYWORDS.some((keyword) =>
-    service.name.toLowerCase().includes(keyword),
-  )
-    ? "medical"
-    : "grooming",
+  durationMinutes: service.duration,
+  kind: getServiceKind(service.name),
 });
 
 export const bookingService = {
   getBookingOptions: async (serviceId: string): Promise<BookingOptions> => {
-    await delay(600);
+    const detailResponse = await serviceService.getServiceDetail(serviceId);
+    const currentService = unwrapData<ServiceDetailItem>(detailResponse);
 
-    const currentService = MOCK_SERVICE_DETAILS.find(
-      (service) => service.id === serviceId,
+    const servicesResponse = await serviceService.getServicesByProvider(
+      currentService.providerId,
+      { pageSize: SERVICES_PAGE_SIZE },
     );
-    const providerServices = MOCK_SERVICE_DETAILS.filter(
-      (service) =>
-        !currentService || service.providerId === currentService.providerId,
-    );
+    const providerServices =
+      unwrapData<ProviderServicesResponse>(servicesResponse);
 
     return {
-      providerName: (currentService ?? providerServices[0])?.providerName ?? "",
-      pets: myPets.map((pet) => ({
-        id: pet.id,
-        name: pet.name,
-        breed: pet.breed,
-        imageUrl: pet.imageUrl,
-      })),
-      services: providerServices.map(toServiceOption),
+      providerId: currentService.providerId,
+      providerName: currentService.providerName,
+      services: providerServices.data
+        .filter(isVisibleToCustomer)
+        .map(toServiceOption),
       days: buildBookingDays(),
-      timeSlots: BOOKING_TIME_SLOTS,
-    };
-  },
-
-  getPaymentCards: async (): Promise<PaymentCard[]> => {
-    await delay(400);
-    return paymentCards;
-  },
-
-  createBooking: async (
-    payload: CreateBookingPayload,
-  ): Promise<ConfirmedBooking> => {
-    await delay(900);
-
-    const service = MOCK_SERVICE_DETAILS.find(
-      (item) => item.id === payload.serviceId,
-    );
-    const pet = myPets.find((item) => item.id === payload.petId);
-    const day = buildBookingDays().find((item) => item.id === payload.dayId);
-    const slot = BOOKING_TIME_SLOTS.find(
-      (item) => item.id === payload.timeSlotId,
-    );
-
-    if (!service || !pet || !day || !slot) {
-      throw new Error("Thông tin đặt lịch không hợp lệ");
-    }
-
-    return {
-      id: `booking-${Date.now()}`,
-      reference: `PL-${Math.floor(100000 + Math.random() * 900000)}`,
-      petName: pet.name,
-      serviceName: service.name,
-      providerName: service.providerName,
-      scheduledAtLabel: `${day.fullLabel}, ${slot.label}`,
-      totalPrice: service.price,
     };
   },
 };

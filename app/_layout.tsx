@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/toast";
 import { useAuthStore } from "@/features/authentication/shared/stores/auth.store";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "@/global.css";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useLoadFonts } from "@/hooks/useLoadFonts";
@@ -18,6 +19,7 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
+import { usePushNotifications } from "@/features/pet-owner/notifications/hooks/usePushNotifications";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -33,6 +35,9 @@ export default function RootLayout() {
   const { loaded, error } = useLoadFonts();
 
   const { isAuthenticated } = useAuthStore();
+  
+  // Initialize push notifications
+  usePushNotifications();
 
   useEffect(() => {
     if (loaded || error) {
@@ -45,23 +50,25 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Protected guard={!isAuthenticated}>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          </Stack.Protected>
-          <Stack.Screen name="pet-owner" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: "modal", title: "Modal" }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-        <PortalHost />
-        <Toaster />
-      </ThemeProvider>
-    </QueryProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryProvider>
+        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Protected guard={!isAuthenticated}>
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            </Stack.Protected>
+            <Stack.Screen name="pet-owner" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="modal"
+              options={{ presentation: "modal", title: "Modal" }}
+            />
+          </Stack>
+          <StatusBar style="auto" />
+          <PortalHost />
+          <Toaster />
+        </ThemeProvider>
+      </QueryProvider>
+    </GestureHandlerRootView>
   );
 }

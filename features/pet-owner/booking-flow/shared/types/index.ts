@@ -30,19 +30,19 @@ export interface BookingTimeSlot {
 }
 
 export interface BookingOptions {
+  providerId: string;
   providerName: string;
-  pets: BookingPetOption[];
   services: BookingServiceOption[];
   days: BookingDayOption[];
-  timeSlots: BookingTimeSlot[];
 }
 
-export interface CreateBookingPayload {
+export interface CreateBookingInput {
+  providerId: string;
   serviceId: string;
   petId: string;
-  dayId: string;
-  timeSlotId: string;
-  paymentCardId: string;
+  petName: string;
+  appointmentStart: string;
+  paymentMethod?: string;
 }
 
 export interface ConfirmedBooking {

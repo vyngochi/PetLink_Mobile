@@ -10,6 +10,9 @@ export type User = {
   phone: string;
   fullName: string | null;
   avatar: string | null;
+  customers?: {
+    location: string | null;
+  } | null;
   role: string;
   createAt: string;
   updateAt: string;

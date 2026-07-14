@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "PetLink_Mobile",
-    "slug": "PetLink_Mobile",
+    "name": "PetLink",
+    "slug": "petlink",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/favicon-for-app/apple-icon.png",
@@ -9,15 +9,31 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "vn.io.petlink.mobile",
+      "icon": "./assets/images/app-icon-ios.png",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false
+        },
+        "NSFaceIDUsageDescription": "Cho phép PetLink dùng Face ID để bảo vệ phiên đăng nhập của bạn"
+      }
     },
     "android": {
+      "package": "com.petlink.mobile",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/images/favicon-for-app/apple-icon.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
@@ -37,11 +53,39 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Cho phép PetLink dùng vị trí của bạn để tìm cơ sở gần nhất và chỉ đường."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Cho phép PetLink truy cập thư viện ảnh của bạn",
+          "cameraPermission": "Cho phép PetLink sử dụng máy ảnh để chụp ảnh thú cưng",
+          "microphonePermission": "Cho phép PetLink sử dụng micro khi quay video"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/favicon-for-app/apple-icon.png",
+          "color": "#ffffff"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "84e8d420-6e34-4148-b2ef-243b16502026"
+      }
+    },
+    "owner": "nhanle6"
   }
 }

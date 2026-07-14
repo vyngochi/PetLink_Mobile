@@ -1,0 +1,38 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": false,
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://api.petlink.io.vn/api",
+        "EXPO_PUBLIC_CLOUDINARY_URL": "https://res.cloudinary.com/dd3i7nbiz/image/upload"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://api.petlink.io.vn/api",
+        "EXPO_PUBLIC_CLOUDINARY_URL": "https://res.cloudinary.com/dd3i7nbiz/image/upload"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "trinhan2014@icloud.com",
+        "ascAppId": "6790819972",
+        "appleTeamId": "445T78T533"
+      }
+    }
+  }
+}

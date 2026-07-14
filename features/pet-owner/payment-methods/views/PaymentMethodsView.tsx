@@ -1,33 +1,28 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import React from "react";
+import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Plus } from "lucide-react-native";
+import { Check } from "lucide-react-native";
 
 import { Colors } from "@/constants/theme";
 import {
-  AddCardButton,
-  OtherMethodRow,
-  PaymentCard,
   PaymentMethodsHeader,
   SecurityBanner,
 } from "@/features/pet-owner/payment-methods/components";
 import { usePaymentMethods } from "@/features/pet-owner/payment-methods/hooks/usePaymentMethods";
+import { cn } from "@/lib/utils";
 
 export function PaymentMethodsView() {
   const router = useRouter();
-  const { cards: initialCards, otherMethods } = usePaymentMethods();
-  const [cards, setCards] = useState(initialCards);
+  const { methods, toggleMethod, isLoading } = usePaymentMethods();
 
-  const handleSetPrimary = (cardId: string) => {
-    setCards((prev) =>
-      prev.map((card) => ({ ...card, isPrimary: card.id === cardId })),
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator size="large" color={Colors.light.tint} />
+      </View>
     );
-  };
-
-  const handleAddPaymentMethod = () => {
-    router.push("/pet-owner/add-payment-method");
-  };
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top", "bottom"]}>
@@ -44,50 +39,63 @@ export function PaymentMethodsView() {
       >
         <View className="mb-8">
           <Text className="mb-4 font-mbold text-[18px] leading-6 text-foreground">
-            Thẻ của bạn
+            Lựa chọn của bạn
           </Text>
           <View className="gap-4">
-            {cards.map((card) => (
-              <PaymentCard
-                key={card.id}
-                card={card}
-                onSetPrimary={(selected) => handleSetPrimary(selected.id)}
-              />
-            ))}
-            <AddCardButton onPress={handleAddPaymentMethod} />
-          </View>
-        </View>
-
-        <View className="mb-8">
-          <Text className="mb-4 font-mbold text-[18px] leading-6 text-foreground">
-            Phương thức khác
-          </Text>
-          <View className="gap-3">
-            {otherMethods.map((method) => (
-              <OtherMethodRow key={method.id} method={method} />
-            ))}
+            {methods.map((method) => {
+              const selected = method.isEnabled;
+              return (
+                <Pressable
+                  key={method.id}
+                  onPress={() => toggleMethod(method.id)}
+                  className={cn(
+                    "flex-row items-center gap-4 rounded-[20px] border-2 bg-card p-4 shadow-sm",
+                    selected ? "border-primary" : "border-border/50",
+                  )}
+                >
+                  <View
+                    className={cn(
+                      "h-11 w-11 items-center justify-center rounded-xl",
+                      method.iconBgClass || "bg-muted/50",
+                    )}
+                  >
+                    {(() => {
+                      if (method.icon) {
+                        const Icon = method.icon;
+                        return <Icon size={22} color="#ffffff" />;
+                      }
+                      if (method.image) {
+                        return (
+                          <Image
+                            source={method.image}
+                            className="h-11 w-11 rounded-xl"
+                            resizeMode="cover"
+                          />
+                        );
+                      }
+                      return null;
+                    })()}
+                  </View>
+                  <View className="flex-1">
+                    <Text className="font-mbold text-[15px] text-foreground">
+                      {method.name}
+                    </Text>
+                  </View>
+                  {selected ? (
+                    <View className="h-6 w-6 items-center justify-center rounded-full bg-primary">
+                      <Check size={14} color="#ffffff" strokeWidth={3} />
+                    </View>
+                  ) : (
+                    <View className="h-6 w-6 rounded-full border-2 border-border" />
+                  )}
+                </Pressable>
+              );
+            })}
           </View>
         </View>
 
         <SecurityBanner />
       </ScrollView>
-
-      <View className="px-5 pt-3">
-        <Pressable
-          onPress={handleAddPaymentMethod}
-          accessibilityRole="button"
-          accessibilityLabel="Thêm phương thức thanh toán"
-          style={({ pressed }) => ({
-            transform: [{ scale: pressed ? 0.98 : 1 }],
-          })}
-          className="h-14 flex-row items-center justify-center gap-2 rounded-full bg-primary shadow-sm"
-        >
-          <Plus size={20} color={Colors.light.background} />
-          <Text className="font-mbold text-[16px] leading-6 text-primary-foreground">
-            Thêm phương thức thanh toán
-          </Text>
-        </Pressable>
-      </View>
     </SafeAreaView>
   );
 }

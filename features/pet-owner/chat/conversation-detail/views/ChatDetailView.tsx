@@ -1,6 +1,8 @@
+import { Colors } from "@/constants/theme";
 import { useRouter } from "expo-router";
 import React, { useRef } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -16,6 +18,7 @@ import {
   ChatDetailHeader,
   ChatInputBar,
   MessageBubble,
+  BookingInfoWidget,
 } from "@/features/pet-owner/chat/conversation-detail/components";
 import { useConversation } from "@/features/pet-owner/chat/conversation-detail/hooks/useConversation";
 
@@ -25,7 +28,7 @@ type ChatDetailViewProps = {
 
 export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
   const router = useRouter();
-  const { conversation, messages, sendMessage } =
+  const { conversation, messages, sendMessage, isLoading } =
     useConversation(conversationId);
   const scrollRef = useRef<ScrollView>(null);
 
@@ -60,22 +63,35 @@ export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView
-          ref={scrollRef}
-          contentContainerClassName="gap-4 px-5 py-6"
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          onContentSizeChange={() =>
-            scrollRef.current?.scrollToEnd({ animated: true })
-          }
-        >
-          <ChatDateSeparator label="Hôm nay" />
-          {messages.map((message) => (
-            <MessageBubble key={message.id} message={message} />
-          ))}
-        </ScrollView>
+        {isLoading ? (
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="large" color={Colors.light.tint} />
+          </View>
+        ) : (
+          <ScrollView
+            ref={scrollRef}
+            contentContainerClassName="gap-4 px-5 py-6 flex-grow"
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            onContentSizeChange={() =>
+              scrollRef.current?.scrollToEnd({ animated: true })
+            }
+          >
+            {conversation.booking && (
+              <BookingInfoWidget booking={conversation.booking} />
+            )}
+            {messages.length > 0 && <ChatDateSeparator label="Hôm nay" />}
+            {messages.map((message) => (
+              <MessageBubble key={message.id} message={message} />
+            ))}
+          </ScrollView>
+        )}
 
-        <ChatInputBar onSend={sendMessage} onAttach={notifyComingSoon} />
+        <ChatInputBar 
+          onSend={sendMessage} 
+          onAttach={notifyComingSoon} 
+          disabled={conversation.booking?.status === "CANCELLED"} 
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

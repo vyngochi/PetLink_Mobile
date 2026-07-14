@@ -13,23 +13,24 @@ import { BookingSuccessView } from "@/features/pet-owner/booking-flow/success/vi
 
 interface BookingFlowViewProps {
   serviceId: string;
+  petId?: string;
 }
 
-const STEP_TITLES = {
+const STEP_TITLES: Record<string, string> = {
   schedule: "Đặt lịch hẹn",
   review: "Xác nhận đặt lịch",
   success: "Hoàn tất",
-} as const;
+};
 
-export function BookingFlowView({ serviceId }: BookingFlowViewProps) {
+export function BookingFlowView({ serviceId, petId }: BookingFlowViewProps) {
   const router = useRouter();
   const step = useBookingFlowStore((state) => state.step);
   const startFlow = useBookingFlowStore((state) => state.startFlow);
   const prevStep = useBookingFlowStore((state) => state.prevStep);
 
   useEffect(() => {
-    startFlow(serviceId);
-  }, [serviceId, startFlow]);
+    startFlow(serviceId, petId ?? null);
+  }, [serviceId, petId, startFlow]);
 
   if (step === "success") {
     return <BookingSuccessView />;
@@ -56,9 +57,9 @@ export function BookingFlowView({ serviceId }: BookingFlowViewProps) {
 
       {step === "schedule" ? (
         <BookingScheduleView serviceId={serviceId} />
-      ) : (
+      ) : step === "review" ? (
         <BookingReviewView />
-      )}
+      ) : null}
     </SafeAreaView>
   );
 }

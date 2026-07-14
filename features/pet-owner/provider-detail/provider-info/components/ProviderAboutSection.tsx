@@ -1,13 +1,19 @@
+import { useRouter } from "expo-router";
 import { Clock, CreditCard, MapPin } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
-import { ProviderItem } from "../../../provider-list/types/provider.type";
+import { MapPreview } from "@/features/pet-owner/shared/components";
+import { ProviderItem } from "@/features/pet-owner/shared/types/provider.type";
+import { isValidCoords } from "@/features/pet-owner/shared/utils/coordinates";
 
 interface ProviderAboutSectionProps {
   provider: ProviderItem;
 }
 
 export function ProviderAboutSection({ provider }: ProviderAboutSectionProps) {
+  const router = useRouter();
+  const coordinates = provider.location.coordinates;
+
   return (
     <View className="px-5 py-4 bg-background">
       <Text className="mb-3 text-lg font-mbold text-foreground">
@@ -36,6 +42,18 @@ export function ProviderAboutSection({ provider }: ProviderAboutSectionProps) {
           </Text>
         </View>
       </View>
+
+      {isValidCoords(coordinates) ? (
+        <View className="mb-4">
+          <MapPreview
+            destination={coordinates}
+            title={provider.businessName}
+            onPress={() =>
+              router.push(`/pet-owner/provider/${provider.id}/directions`)
+            }
+          />
+        </View>
+      ) : null}
 
       <View className="flex-row items-start gap-3 mb-4">
         <Clock size={20} className="text-muted-foreground mt-0.5" />

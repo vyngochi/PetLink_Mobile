@@ -8,18 +8,28 @@ const STATUS_CONFIG: Record<
   BookingStatus,
   { label: string; container: string; text: string }
 > = {
-  confirmed: {
-    label: "Đã xác nhận",
-    container: "bg-primary/10",
-    text: "text-primary",
-  },
   pending: {
     label: "Chờ xác nhận",
     container: "bg-amber-500/15",
     text: "text-amber-600",
   },
+  confirmed: {
+    label: "Đã xác nhận",
+    container: "bg-primary/10",
+    text: "text-primary",
+  },
+  checked_in: {
+    label: "Đã check-in",
+    container: "bg-sky-500/15",
+    text: "text-sky-600",
+  },
+  checked_out: {
+    label: "Đã check-out",
+    container: "bg-violet-500/15",
+    text: "text-violet-600",
+  },
   completed: {
-    label: "Hoàn thành",
+    label: "Hoàn tất",
     container: "bg-muted",
     text: "text-muted-foreground",
   },
@@ -27,6 +37,21 @@ const STATUS_CONFIG: Record<
     label: "Đã hủy",
     container: "bg-destructive/10",
     text: "text-destructive",
+  },
+  rejected: {
+    label: "Bị từ chối",
+    container: "bg-destructive/10",
+    text: "text-destructive",
+  },
+  dispute: {
+    label: "Đang tranh chấp",
+    container: "bg-orange-500/15",
+    text: "text-orange-600",
+  },
+  no_arrival: {
+    label: "Không đến",
+    container: "bg-rose-500/15",
+    text: "text-rose-600",
   },
 };
 
