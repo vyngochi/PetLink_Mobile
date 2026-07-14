@@ -1,4 +1,3 @@
-import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
 import { toast } from "@/components/toast";
@@ -9,6 +8,7 @@ import {
   type PetFormValues,
 } from "@/features/pet-owner/pet-edit/utils/pet-form.schema";
 import { isLocalImageUri } from "@/features/pet-owner/shared/utils/image-form-data";
+import { pickImages } from "@/features/pet-owner/shared/utils/image-picker";
 import { validate, type FieldErrors } from "@/lib/validation";
 
 type UsePetFormOptions = {
@@ -67,52 +67,33 @@ export function usePetForm({ pet, onSubmit }: UsePetFormOptions) {
       return;
     }
 
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const result = await pickImages({ selectionLimit: remainingPhotoSlots });
 
-    if (!permission.granted) {
-      toast.error("Cần cấp quyền truy cập thư viện ảnh để chọn ảnh.", {
-        position: "bottom",
-      });
+    if (result.status === "error") {
+      toast.error(result.message, { position: "bottom" });
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsMultipleSelection: true,
-      selectionLimit: remainingPhotoSlots,
-      quality: 0.8,
-    });
-
-    if (result.canceled) {
+    if (result.status === "canceled") {
       return;
     }
 
-    setPhotos((prev) => [...prev, ...result.assets.map((asset) => asset.uri)]);
+    setPhotos((prev) => [...prev, ...result.uris]);
   };
 
   const pickImage = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const result = await pickImages({ allowsEditing: true });
 
-    if (!permission.granted) {
-      setErrors((prev) => ({
-        ...prev,
-        imageUrl: "Cần cấp quyền truy cập thư viện ảnh để chọn ảnh.",
-      }));
+    if (result.status === "error") {
+      setErrors((prev) => ({ ...prev, imageUrl: result.message }));
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-
-    if (result.canceled) {
+    if (result.status === "canceled") {
       return;
     }
 
-    setImageUrlValue(result.assets[0].uri);
+    setImageUrlValue(result.uris[0]);
     clearError("imageUrl");
   };
 
