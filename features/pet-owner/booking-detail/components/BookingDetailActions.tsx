@@ -13,6 +13,7 @@ type BookingDetailActionsProps = {
   onReview?: () => void;
   onReschedule?: () => void;
   onCancel?: () => void;
+  onDispute?: () => void;
   onRebook?: () => void;
 };
 
@@ -22,8 +23,24 @@ export function BookingDetailActions({
   onReview,
   onReschedule,
   onCancel,
+  onDispute,
   onRebook,
 }: BookingDetailActionsProps) {
+  if (status === "checked_out") {
+    return (
+      <Pressable
+        onPress={onDispute}
+        accessibilityRole="button"
+        accessibilityLabel="Khiếu nại dịch vụ"
+        className="w-full items-center justify-center rounded-full border border-red-500 py-3 active:opacity-60"
+      >
+        <Text className="font-mbold text-[15px] leading-5 text-destructive">
+          Khiếu nại dịch vụ
+        </Text>
+      </Pressable>
+    );
+  }
+
   if (isInProgressBooking(status)) {
     return null;
   }
