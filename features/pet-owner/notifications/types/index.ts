@@ -20,6 +20,7 @@ export interface AppNotification {
   time: string;
   section: string;
   read: boolean;
+  data?: Record<string, unknown> | null;
   category?: string;
   detailMessage?: string;
   imageUrl?: string;
