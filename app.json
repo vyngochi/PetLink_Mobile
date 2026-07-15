@@ -12,8 +12,12 @@
       "supportsTablet": false,
       "bundleIdentifier": "vn.io.petlink.mobile",
       "icon": "./assets/images/app-icon-ios.png",
+      "entitlements": {
+        "aps-environment": "production"
+      },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"],
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": false
         },
