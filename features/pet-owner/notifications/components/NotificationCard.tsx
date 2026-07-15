@@ -25,9 +25,12 @@ export function NotificationCard({
       accessibilityLabel={notification.title}
       style={({ pressed }) => ({
         transform: [{ scale: pressed ? 0.98 : 1 }],
-        opacity: notification.read ? 0.9 : 1,
       })}
-      className="rounded-[20px] border border-border bg-card p-4 shadow-sm"
+      className={`rounded-[20px] border p-4 shadow-sm ${
+        notification.read
+          ? "border-border bg-card opacity-80"
+          : "border-primary/20 bg-primary/10"
+      }`}
     >
       <View className="flex-row gap-4">
         <View
