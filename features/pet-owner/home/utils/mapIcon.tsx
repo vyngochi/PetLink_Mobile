@@ -6,6 +6,12 @@ export const mapIcon = (item: string) => {
       return "Hospital";
     case "Hotel":
       return "Hotel";
+    case "Spa":
+      return "Bubbles";
+    case "Boarding":
+      return "MapPinHouse";
+    case "Training":
+      return "Brain";
     default:
       return "PawPrint";
   }

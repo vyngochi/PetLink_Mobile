@@ -6,7 +6,13 @@ export const mapName = (v: string) => {
       return "Thú y";
     case "Hotel":
       return "Khách sạn";
+    case "Spa":
+      return "Spa";
+    case "Boarding":
+      return "Lưu trú";
+    case "Training":
+      return "Huấn luyện";
     default:
-      return "Unknown";
+      return "Petlink";
   }
 };

@@ -62,6 +62,7 @@ export function PopularClinicsSection({
   const onSelect = (id: string) => {
     router.push(`/pet-owner/provider/${id}` as Href);
   };
+
   return (
     <View className="mt-8">
       <View className="flex-row items-center justify-between mb-4">
@@ -73,7 +74,7 @@ export function PopularClinicsSection({
         </Pressable>
       </View>
       <View className="flex-col gap-4">
-        {providers.map((provider) => (
+        {providers.slice(0, 3).map((provider) => (
           <ClinicCard
             key={provider.id}
             provider={provider}
