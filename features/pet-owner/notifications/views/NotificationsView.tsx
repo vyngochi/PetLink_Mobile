@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import React from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -17,9 +17,15 @@ import { BellOff, CheckCheck } from "lucide-react-native";
 
 export function NotificationsView() {
   const router = useRouter();
-  const { sections, unreadCount } = useNotifications();
+  const { sections, unreadCount, refetch } = useNotifications();
   const { mutate: markAllRead } = useMarkAllNotificationsRead();
   const { mutate: markRead } = useMarkNotificationRead();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
