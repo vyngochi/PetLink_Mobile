@@ -12,6 +12,8 @@ export const mapIcon = (item: string) => {
       return "MapPinHouse";
     case "Training":
       return "Brain";
+    case "Other":
+      return "BookHeart";
     default:
       return "PawPrint";
   }

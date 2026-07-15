@@ -12,6 +12,8 @@ export const mapName = (v: string) => {
       return "Lưu trú";
     case "Training":
       return "Huấn luyện";
+    case "Other":
+      return "Khác";
     default:
       return "Petlink";
   }
