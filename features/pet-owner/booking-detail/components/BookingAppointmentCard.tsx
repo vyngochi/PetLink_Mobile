@@ -7,11 +7,14 @@ import {
   Navigation,
   Scissors,
   Stethoscope,
+  MessageSquare,
 } from "lucide-react-native";
-import React from "react";
-import { Pressable, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, Text, View, ActivityIndicator } from "react-native";
 
+import { Colors } from "@/constants/theme";
 import type { BookingDetail } from "@/features/pet-owner/booking-detail/types";
+import { chatService } from "@/features/pet-owner/chat/shared/services/chat.service";
 
 type BookingAppointmentCardProps = {
   booking: BookingDetail;
@@ -48,6 +51,22 @@ export function BookingAppointmentCard({
   booking,
 }: BookingAppointmentCardProps) {
   const router = useRouter();
+  const [isChatLoading, setIsChatLoading] = useState(false);
+
+  const handleChat = async () => {
+    try {
+      setIsChatLoading(true);
+      const thread = await chatService.getOrCreateThread(booking.id);
+      if (thread && thread.id) {
+        router.push(`/pet-owner/chat/${thread.id}`);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsChatLoading(false);
+    }
+  };
+
   const ServiceIcon =
     booking.serviceType === "medical" ? Stethoscope : Scissors;
 
@@ -81,17 +100,36 @@ export function BookingAppointmentCard({
           value={booking.providerAddress}
         />
 
-        <Pressable
-          onPress={() =>
-            router.push(`/pet-owner/provider/${booking.providerId}/directions`)
-          }
-          accessibilityRole="button"
-          accessibilityLabel="Chỉ đường tới cơ sở"
-          className="flex-row items-center justify-center gap-2 py-3 border rounded-full border-primary/40 bg-primary/5 active:opacity-80"
-        >
-          <Navigation size={16} className="text-primary" />
-          <Text className="font-mbold text-[14px] text-primary">Chỉ đường</Text>
-        </Pressable>
+        <View className="flex-row items-center gap-3">
+          <Pressable
+            onPress={() =>
+              router.push(`/pet-owner/provider/${booking.providerId}/directions`)
+            }
+            accessibilityRole="button"
+            accessibilityLabel="Chỉ đường tới cơ sở"
+            className="flex-1 flex-row items-center justify-center gap-2 py-3 border rounded-full border-primary/40 bg-primary/5 active:opacity-80"
+          >
+            <Navigation size={16} className="text-primary" />
+            <Text className="font-mbold text-[14px] text-primary">Chỉ đường</Text>
+          </Pressable>
+
+          {booking.status !== "cancelled" && (
+            <Pressable
+              onPress={handleChat}
+              disabled={isChatLoading}
+              accessibilityRole="button"
+              accessibilityLabel="Nhắn tin"
+              className="flex-row items-center justify-center py-3 px-6 border rounded-full border-primary/40 bg-primary/5 active:opacity-80"
+              style={{ opacity: isChatLoading ? 0.6 : 1 }}
+            >
+              {isChatLoading ? (
+                <ActivityIndicator size="small" color={Colors.light.tint} />
+              ) : (
+                <MessageSquare size={20} className="text-primary" />
+              )}
+            </Pressable>
+          )}
+        </View>
       </View>
     </View>
   );

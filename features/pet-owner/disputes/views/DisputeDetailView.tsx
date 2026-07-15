@@ -1,5 +1,6 @@
+import { useFocusEffect } from "expo-router";
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react-native";
-import React from "react";
+import React, { useCallback } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import {
   SafeAreaView,
@@ -74,8 +75,14 @@ const getStatusConfig = (status: BookingDisputeStatus) => {
 };
 
 export function DisputeDetailView({ disputeId }: DisputeDetailViewProps) {
-  const { data: dispute, isLoading, isError } = useDisputeDetail(disputeId);
+  const { data: dispute, isLoading, isError, refetch } = useDisputeDetail(disputeId);
   const insets = useSafeAreaInsets();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return (
