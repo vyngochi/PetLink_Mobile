@@ -6,7 +6,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { useRootNavigationState, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AppState, Platform } from "react-native";
+import { AppState, InteractionManager, Platform } from "react-native";
 import { notificationKeys } from "./useGetNotifications";
 
 export interface PushNotificationState {
@@ -17,15 +17,6 @@ export interface PushNotificationState {
 type NotificationPayload = {
   bookingId?: string;
 };
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
 
 async function ensureAndroidChannel() {
   if (Platform.OS !== "android") return;
@@ -82,7 +73,6 @@ export const usePushNotifications = (): PushNotificationState => {
     useState<Notifications.Notification>();
 
   const isNavigationReady = Boolean(useRootNavigationState()?.key);
-  const lastResponse = Notifications.useLastNotificationResponse();
 
   const syncedToken = useRef<string | null>(null);
   const handledResponseId = useRef<string | null>(null);
@@ -109,6 +99,23 @@ export const usePushNotifications = (): PushNotificationState => {
       router.push("/pet-owner/notifications");
     },
     [router],
+  );
+
+  const handleResponse = useCallback(
+    (response: Notifications.NotificationResponse | null) => {
+      if (!response) return;
+
+      const responseId = response.notification.request.identifier;
+      if (handledResponseId.current === responseId) return;
+      handledResponseId.current = responseId;
+
+      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+
+      const payload = (response.notification.request.content.data ??
+        {}) as NotificationPayload;
+      navigateFromPayload(payload);
+    },
+    [navigateFromPayload, queryClient],
   );
 
   useEffect(() => {
@@ -143,47 +150,57 @@ export const usePushNotifications = (): PushNotificationState => {
   }, [isAuthenticated, syncToken]);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (hydrating || !isAuthenticated || !isNavigationReady) return;
 
-    const subscription = Notifications.addPushTokenListener((token) => {
-      syncToken(token.data).catch((error) => {
-        console.warn("[push] Cập nhật device token mới thất bại:", error);
+    let active = true;
+    const subscriptions: { remove: () => void }[] = [];
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      if (!active) return;
+
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldPlaySound: true,
+          shouldSetBadge: true,
+          shouldShowBanner: true,
+          shouldShowList: true,
+        }),
       });
+
+      subscriptions.push(
+        Notifications.addNotificationReceivedListener((incoming) => {
+          setNotification(incoming);
+          queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+        }),
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          handleResponse(response);
+        }),
+        Notifications.addPushTokenListener((token) => {
+          syncToken(token.data).catch((error) => {
+            console.warn("[push] Cập nhật device token mới thất bại:", error);
+          });
+        }),
+      );
+
+      Notifications.getLastNotificationResponseAsync()
+        .then((response) => {
+          if (active) handleResponse(response);
+        })
+        .catch(() => {});
     });
 
-    return () => subscription.remove();
-  }, [isAuthenticated, syncToken]);
-
-  useEffect(() => {
-    const subscription = Notifications.addNotificationReceivedListener(
-      (incoming) => {
-        setNotification(incoming);
-        queryClient.invalidateQueries({ queryKey: notificationKeys.all });
-      },
-    );
-
-    return () => subscription.remove();
-  }, [queryClient]);
-
-  useEffect(() => {
-    if (!lastResponse || !isNavigationReady || !isAuthenticated) return;
-
-    const responseId = lastResponse.notification.request.identifier;
-    if (handledResponseId.current === responseId) return;
-    handledResponseId.current = responseId;
-
-    queryClient.invalidateQueries({ queryKey: notificationKeys.all });
-
-    const payload = (lastResponse.notification.request.content.data ??
-      {}) as NotificationPayload;
-
-    navigateFromPayload(payload);
+    return () => {
+      active = false;
+      task.cancel();
+      subscriptions.forEach((subscription) => subscription.remove());
+    };
   }, [
-    lastResponse,
-    isNavigationReady,
+    hydrating,
     isAuthenticated,
-    navigateFromPayload,
+    isNavigationReady,
+    handleResponse,
     queryClient,
+    syncToken,
   ]);
 
   return {

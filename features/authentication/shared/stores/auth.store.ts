@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { isMobileBlockedRole } from "@/features/authentication/shared/constants/roles";
-import { authService } from "@/features/authentication/shared/services/auth.service";
 import type { AuthTokens, User } from "@/features/authentication/shared/types";
 import { secureStorage } from "@/lib/secure-storage";
 
@@ -42,6 +41,9 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           if (get().isAuthenticated) {
+            const { authService } = await import(
+              "@/features/authentication/shared/services/auth.service"
+            );
             await authService.removeDeviceToken();
           }
         } catch (error) {

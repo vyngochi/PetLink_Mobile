@@ -31,14 +31,17 @@ configureReanimatedLogger({
   strict: false,
 });
 
+function NotificationsGate() {
+  usePushNotifications();
+  useNotificationRealtime();
+  return null;
+}
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { loaded, error } = useLoadFonts();
 
   const { isAuthenticated } = useAuthStore();
-
-  usePushNotifications();
-  useNotificationRealtime();
 
   useEffect(() => {
     if (loaded || error) {
@@ -53,6 +56,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryProvider>
+        <NotificationsGate />
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
