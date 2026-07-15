@@ -22,6 +22,15 @@ function toAppNotification(item: NotificationApiItem): AppNotification {
       ? date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
       : date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
 
+  let parsedData = item.data;
+  if (typeof item.data === "string") {
+    try {
+      parsedData = JSON.parse(item.data);
+    } catch (e) {
+      console.warn("Failed to parse notification data", e);
+    }
+  }
+
   return {
     id: item.id,
     type: toNotificationType(item.type),
@@ -30,7 +39,7 @@ function toAppNotification(item: NotificationApiItem): AppNotification {
     time,
     section: isToday ? "Hôm nay" : "Cũ hơn",
     read: item.readAt != null,
-    data: item.data,
+    data: parsedData,
   };
 }
 

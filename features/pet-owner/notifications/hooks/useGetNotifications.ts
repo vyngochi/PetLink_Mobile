@@ -11,7 +11,7 @@ export interface NotificationApiItem {
   type: string;
   title: string;
   message: string;
-  data: Record<string, unknown> | null;
+  data: any;
   readAt: string | null;
   createAt: string;
 }
