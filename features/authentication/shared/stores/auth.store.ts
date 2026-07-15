@@ -17,6 +17,8 @@ type AuthState = {
   logout: () => Promise<void>;
 };
 
+let isLoggingOut = false;
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -35,18 +37,23 @@ export const useAuthStore = create<AuthState>()(
         set({ user, isAuthenticated: true });
       },
       logout: async () => {
+        if (isLoggingOut) return;
+        isLoggingOut = true;
+
         try {
           if (get().isAuthenticated) {
             await authService.removeDeviceToken();
           }
+        } catch (error) {
+          console.error("Failed to remove device token:", error);
+        } finally {
           set({
             accessToken: null,
             refreshToken: null,
             user: null,
             isAuthenticated: false,
           });
-        } catch (error) {
-          console.error("Failed to remove device token:", error);
+          isLoggingOut = false;
         }
       },
     }),

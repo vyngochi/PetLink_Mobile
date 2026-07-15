@@ -1,81 +1,92 @@
 import { useMemo } from "react";
+
 import type {
   AppNotification,
   NotificationSection,
-  NotificationType,
 } from "@/features/pet-owner/notifications/types";
-import { useGetNotifications } from "./useGetNotifications";
+import { toNotificationType } from "@/features/pet-owner/notifications/utils/notification-visuals";
+import {
+  useGetNotifications,
+  type NotificationApiItem,
+} from "./useGetNotifications";
+
+function toAppNotification(item: NotificationApiItem): AppNotification {
+  const date = new Date(item.createAt);
+  const isValidDate = !Number.isNaN(date.getTime());
+  const isToday =
+    isValidDate && date.toDateString() === new Date().toDateString();
+
+  const time = !isValidDate
+    ? ""
+    : isToday
+      ? date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
+      : date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
+
+  return {
+    id: item.id,
+    type: toNotificationType(item.type),
+    title: item.title,
+    message: item.message,
+    time,
+    section: isToday ? "Hôm nay" : "Cũ hơn",
+    read: item.readAt != null,
+    data: item.data,
+  };
+}
 
 export function useNotifications() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } = useGetNotifications();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+  } = useGetNotifications();
 
   const sections = useMemo<NotificationSection[]>(() => {
     const grouped: NotificationSection[] = [];
-    const now = new Date();
-
     const items = data?.pages.flatMap((page) => page.items) ?? [];
 
-    items.forEach((item) => {
-      const date = new Date(item.createdAt);
-      const isToday = date.toDateString() === now.toDateString();
-      const sectionTitle = isToday ? "Hôm nay" : "Cũ hơn";
-      
-      const appNotification: AppNotification = {
-        id: item.id,
-        type: (item.type?.toLowerCase().includes("promo") ? "promo" : "booking") as NotificationType,
-        title: item.title,
-        message: item.body,
-        time: date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }),
-        section: sectionTitle,
-        read: item.isRead,
-      };
+    for (const item of items) {
+      const notification = toAppNotification(item);
+      const existing = grouped.find(
+        (section) => section.title === notification.section,
+      );
 
-      const existing = grouped.find((section) => section.title === sectionTitle);
       if (existing) {
-        existing.items.push(appNotification);
+        existing.items.push(notification);
       } else {
-        grouped.push({ title: sectionTitle, items: [appNotification] });
+        grouped.push({ title: notification.section, items: [notification] });
       }
-    });
+    }
 
     return grouped;
   }, [data]);
 
-  const unreadCount = useMemo(() => {
-     return sections.reduce((acc, section) => acc + section.items.filter(i => !i.read).length, 0);
-  }, [sections]);
+  const unreadCount = data?.pages[0]?.unreadCount ?? 0;
 
-  return { 
-    sections, 
-    unreadCount, 
-    fetchNextPage, 
-    hasNextPage, 
-    isFetchingNextPage, 
+  return {
+    sections,
+    unreadCount,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading,
-    refetch 
+    refetch,
   };
 }
 
 export function useNotificationDetail(id?: string) {
   const { data } = useGetNotifications();
-  
-  return useMemo<AppNotification | undefined>(() => {
-    if (!id || !data) return undefined;
-    
-    const item = data.pages.flatMap((page) => page.items).find((item) => item.id === id);
-    if (!item) return undefined;
 
-    const date = new Date(item.createdAt);
-    
-    return {
-      id: item.id,
-      type: (item.type?.toLowerCase().includes("promo") ? "promo" : "booking") as NotificationType,
-      title: item.title,
-      message: item.body,
-      time: date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }),
-      section: "",
-      read: item.isRead,
-      data: item.data, // Attach raw data for detail view
-    };
+  return useMemo<AppNotification | undefined>(() => {
+    if (!id) return undefined;
+
+    const item = data?.pages
+      .flatMap((page) => page.items)
+      .find((entry) => entry.id === id);
+
+    return item ? toAppNotification(item) : undefined;
   }, [data, id]);
 }

@@ -17,3 +17,13 @@ export const NOTIFICATION_VISUALS: Record<
   vaccination: { Icon: Syringe, color: "#C2410C" },
   promo: { Icon: Gift, color: "#006E1C" },
 };
+
+export function toNotificationType(type?: string | null): NotificationType {
+  const value = (type ?? "").toUpperCase();
+
+  if (value.includes("PROMO")) return "promo";
+  if (value.includes("VACCIN")) return "vaccination";
+  if (value.startsWith("BOOKING_")) return "booking";
+
+  return "appointment";
+}
