@@ -39,7 +39,7 @@ export function SearchBar() {
     setSearchQuery(name);
     setInputText(name);
     setIsFocused(false);
-    router.push(`/pet-owner/services/${id}` as Href);
+    router.push(`/pet-owner/service/${id}` as Href);
   };
 
   const showSuggestions = isFocused && inputText.length > 0;
