@@ -40,7 +40,6 @@ Below are some actual screenshots of the application. The interface is meticulou
 | :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: |
 | <img src="./assets/screenshots/screen1.png" width="200" alt="Screen 1" /> | <img src="./assets/screenshots/screen2.png" width="200" alt="Screen 2" /> | <img src="./assets/screenshots/screen3.png" width="200" alt="Screen 3" /> | <img src="./assets/screenshots/screen4.png" width="200" alt="Screen 4" /> |
 
-_(Note: Please ensure you have placed the downloaded screenshots into the `assets/screenshots/` directory for them to display correctly)._
 
 ## Installation & Setup
 
